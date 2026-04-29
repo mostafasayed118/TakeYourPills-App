@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Add Medication - TakeYourPills</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-container": "#506765",
+                        "tertiary-container": "#6f7675",
+                        "surface-container-high": "#e2e8f8",
+                        "on-primary-fixed-variant": "#1f4e4b",
+                        "secondary-fixed": "#cfe8e5",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-secondary": "#ffffff",
+                        "surface-container-low": "#f0f3ff",
+                        "on-surface": "#151c27",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#161d1d",
+                        "surface-container-highest": "#dce2f3",
+                        "surface-variant": "#dce2f3",
+                        "on-tertiary-fixed-variant": "#414848",
+                        "outline": "#707977",
+                        "surface": "#f9f9ff",
+                        "on-secondary-fixed": "#081f1e",
+                        "surface-bright": "#f9f9ff",
+                        "primary-fixed-dim": "#a0d0cb",
+                        "inverse-primary": "#a0d0cb",
+                        "tertiary-fixed-dim": "#c1c8c7",
+                        "inverse-surface": "#2a313d",
+                        "secondary": "#4c6361",
+                        "on-surface-variant": "#404847",
+                        "background": "#f9f9ff",
+                        "surface-dim": "#d3daea",
+                        "secondary-fixed-dim": "#b3cbc9",
+                        "outline-variant": "#c0c8c6",
+                        "on-secondary-fixed-variant": "#344b49",
+                        "on-background": "#151c27",
+                        "on-primary": "#ffffff",
+                        "on-primary-container": "#f3fffd",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#00201e",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#cce5e2",
+                        "primary": "#366460",
+                        "primary-fixed": "#bbece7",
+                        "primary-container": "#4f7d79",
+                        "surface-tint": "#386663",
+                        "surface-container": "#e7eefe",
+                        "on-tertiary-container": "#f7fefd",
+                        "inverse-on-surface": "#ebf1ff",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed": "#dde4e3",
+                        "tertiary": "#565d5d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "16px",
+                        "xl": "32px",
+                        "unit": "4px",
+                        "lg": "24px",
+                        "gutter": "16px",
+                        "xs": "4px",
+                        "container-padding": "20px",
+                        "sm": "8px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Manrope"],
+                        "label-caps": ["Manrope"],
+                        "headline-md": ["Manrope"],
+                        "title-sm": ["Manrope"],
+                        "body-sm": ["Manrope"],
+                        "body-base": ["Manrope"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "title-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-base": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Custom Ambient Shadow from Guidelines */
+        .ambient-shadow {
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Hide scrollbar for horizontal scroll areas */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-base antialiased selection:bg-primary-container selection:text-on-primary-container min-h-screen">
+<div class="w-full max-w-[600px] mx-auto min-h-screen flex flex-col relative pb-xl">
+<!-- Contextual Header (Task-Focused: Add Medication) -->
+<header class="h-16 px-container-padding flex items-center justify-between sticky top-0 z-50 bg-background/90 backdrop-blur-md">
+<button class="w-11 h-11 flex items-center justify-start text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[24px]">close</span>
+</button>
+<h1 class="font-title-sm text-title-sm text-on-surface">Add Medication</h1>
+<button class="w-11 h-11 flex items-center justify-end font-title-sm text-title-sm text-primary hover:text-primary-container transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                Save
+            </button>
+</header>
+<!-- Main Form Canvas -->
+<main class="flex-1 flex flex-col gap-lg px-container-padding pt-sm">
+<!-- Section 1: Identity & Dosage (Bento Card) -->
+<section class="bg-surface rounded-xl p-md ambient-shadow flex flex-col">
+<div class="flex flex-col gap-xs mb-md">
+<label class="font-label-caps text-label-caps text-on-surface-variant" for="med-name">Medication Name</label>
+<input class="w-full bg-surface-container-low border border-surface-container-low focus:border-primary rounded-lg px-md py-sm font-title-sm text-title-sm text-on-surface placeholder:text-outline-variant outline-none transition-colors h-12" id="med-name" placeholder="e.g. Amoxicillin" type="text"/>
+</div>
+<div class="h-[1px] w-full bg-surface-container-high mb-md"></div>
+<div class="flex gap-md w-full">
+<div class="flex flex-col gap-xs flex-1">
+<label class="font-label-caps text-label-caps text-on-surface-variant" for="med-dosage">Dosage</label>
+<input class="w-full bg-surface-container-low border border-surface-container-low focus:border-primary rounded-lg px-md py-sm font-body-base text-body-base text-on-surface placeholder:text-outline-variant outline-none transition-colors h-12" id="med-dosage" placeholder="500" type="number"/>
+</div>
+<div class="flex flex-col gap-xs w-[100px]">
+<label class="font-label-caps text-label-caps text-on-surface-variant" for="med-unit">Unit</label>
+<div class="relative">
+<select class="w-full bg-surface-container-low border border-surface-container-low focus:border-primary rounded-lg pl-md pr-[32px] py-sm font-body-base text-body-base text-on-surface outline-none transition-colors h-12 appearance-none" id="med-unit">
+<option>mg</option>
+<option>mcg</option>
+<option>g</option>
+<option>ml</option>
+</select>
+<span class="material-symbols-outlined absolute right-sm top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 2: Appearance Selector -->
+<section class="bg-surface rounded-xl p-md ambient-shadow flex flex-col gap-md">
+<div class="font-label-caps text-label-caps text-on-surface-variant">Appearance</div>
+<div class="flex gap-md overflow-x-auto no-scrollbar pb-xs">
+<!-- Active Icon -->
+<button class="shrink-0 w-[56px] h-[56px] rounded-full bg-primary-container border-2 border-primary flex items-center justify-center text-on-primary-container transition-transform active:scale-95">
+<span class="material-symbols-outlined text-[28px] fill">pill</span>
+</button>
+<!-- Inactive Icons -->
+<button class="shrink-0 w-[56px] h-[56px] rounded-full bg-surface-container-low border border-transparent hover:border-outline-variant flex items-center justify-center text-on-surface-variant transition-all active:scale-95">
+<span class="material-symbols-outlined text-[28px]">medication</span>
+</button>
+<button class="shrink-0 w-[56px] h-[56px] rounded-full bg-surface-container-low border border-transparent hover:border-outline-variant flex items-center justify-center text-on-surface-variant transition-all active:scale-95">
+<span class="material-symbols-outlined text-[28px]">prescriptions</span>
+</button>
+<button class="shrink-0 w-[56px] h-[56px] rounded-full bg-surface-container-low border border-transparent hover:border-outline-variant flex items-center justify-center text-on-surface-variant transition-all active:scale-95">
+<span class="material-symbols-outlined text-[28px]">water_drop</span>
+</button>
+<button class="shrink-0 w-[56px] h-[56px] rounded-full bg-surface-container-low border border-transparent hover:border-outline-variant flex items-center justify-center text-on-surface-variant transition-all active:scale-95">
+<span class="material-symbols-outlined text-[28px]">syringe</span>
+</button>
+</div>
+</section>
+<!-- Section 3: Routine & Schedule -->
+<section class="bg-surface rounded-xl p-md ambient-shadow flex flex-col">
+<div class="flex flex-col gap-sm mb-lg">
+<div class="font-label-caps text-label-caps text-on-surface-variant">Frequency</div>
+<div class="flex flex-wrap gap-sm">
+<button class="px-md py-[10px] rounded-xl bg-primary-container text-on-primary-container font-title-sm text-body-sm transition-colors border border-transparent">
+                            Every day
+                        </button>
+<button class="px-md py-[10px] rounded-xl bg-surface-container-low text-on-surface-variant hover:bg-surface-container font-title-sm text-body-sm transition-colors border border-transparent">
+                            Specific days
+                        </button>
+<button class="px-md py-[10px] rounded-xl bg-surface-container-low text-on-surface-variant hover:bg-surface-container font-title-sm text-body-sm transition-colors border border-transparent">
+                            As needed
+                        </button>
+</div>
+</div>
+<div class="h-[1px] w-full bg-surface-container-high mb-lg"></div>
+<div class="flex flex-col gap-sm">
+<div class="font-label-caps text-label-caps text-on-surface-variant mb-xs">Schedule Times</div>
+<!-- Time Item -->
+<div class="flex items-center justify-between p-sm pl-md rounded-lg bg-surface-container-low border border-transparent">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary text-[20px]">schedule</span>
+<span class="font-title-sm text-title-sm text-on-surface">08:00 AM</span>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Time Item -->
+<div class="flex items-center justify-between p-sm pl-md rounded-lg bg-surface-container-low border border-transparent">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary text-[20px]">schedule</span>
+<span class="font-title-sm text-title-sm text-on-surface">08:00 PM</span>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Add Time Action -->
+<button class="flex items-center justify-center gap-sm p-sm rounded-lg border border-dashed border-outline-variant text-primary hover:bg-primary-container/10 transition-colors mt-xs h-12">
+<span class="material-symbols-outlined text-[20px]">add</span>
+<span class="font-title-sm text-body-base">Add another time</span>
+</button>
+</div>
+</section>
+<!-- Section 4: Inventory & Tracking -->
+<section class="bg-surface rounded-xl p-md ambient-shadow flex flex-col gap-md">
+<div class="font-label-caps text-label-caps text-on-surface-variant mb-xs">Inventory Tracking</div>
+<div class="flex items-center justify-between">
+<label class="font-body-base text-body-base text-on-surface" for="current-qty">Current quantity</label>
+<input class="w-[100px] bg-surface-container-low border border-surface-container-low focus:border-primary rounded-lg px-md py-sm font-title-sm text-body-base text-on-surface text-center outline-none transition-colors h-11" id="current-qty" placeholder="0" type="number"/>
+</div>
+<div class="h-[1px] w-full bg-surface-container-high my-xs"></div>
+<div class="flex items-center justify-between">
+<label class="font-body-base text-body-base text-on-surface flex items-center gap-xs" for="refill-qty">
+<span class="material-symbols-outlined text-[18px] text-tertiary-container">notifications_active</span>
+                        Remind me at
+                    </label>
+<div class="flex items-center gap-sm">
+<input class="w-[80px] bg-surface-container-low border border-surface-container-low focus:border-primary rounded-lg px-md py-sm font-title-sm text-body-base text-on-surface text-center outline-none transition-colors h-11" id="refill-qty" placeholder="10" type="number"/>
+<span class="font-body-sm text-body-sm text-on-surface-variant">pills</span>
+</div>
+</div>
+</section>
+<!-- Bottom Action Button for extra reachability -->
+<div class="mt-md mb-xl">
+<button class="w-full h-14 bg-primary text-on-primary rounded-xl font-title-sm text-title-sm flex items-center justify-center gap-sm ambient-shadow hover:opacity-90 transition-opacity active:scale-[0.98]">
+<span class="material-symbols-outlined">check</span>
+                    Save Medication
+                </button>
+</div>
+</main>
+</div>
+</body></html>

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TakeYourPills - Progress</title>
+<!-- Google Fonts: Manrope -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Design System Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-container": "#506765",
+                    "tertiary-container": "#6f7675",
+                    "surface-container-high": "#e2e8f8",
+                    "on-primary-fixed-variant": "#1f4e4b",
+                    "secondary-fixed": "#cfe8e5",
+                    "on-tertiary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-secondary": "#ffffff",
+                    "surface-container-low": "#f0f3ff",
+                    "on-surface": "#151c27",
+                    "on-error": "#ffffff",
+                    "on-tertiary-fixed": "#161d1d",
+                    "surface-container-highest": "#dce2f3",
+                    "surface-variant": "#dce2f3",
+                    "on-tertiary-fixed-variant": "#414848",
+                    "outline": "#707977",
+                    "surface": "#f9f9ff",
+                    "on-secondary-fixed": "#081f1e",
+                    "surface-bright": "#f9f9ff",
+                    "primary-fixed-dim": "#a0d0cb",
+                    "inverse-primary": "#a0d0cb",
+                    "tertiary-fixed-dim": "#c1c8c7",
+                    "inverse-surface": "#2a313d",
+                    "secondary": "#4c6361",
+                    "on-surface-variant": "#404847",
+                    "background": "#f9f9ff",
+                    "surface-dim": "#d3daea",
+                    "secondary-fixed-dim": "#b3cbc9",
+                    "outline-variant": "#c0c8c6",
+                    "on-secondary-fixed-variant": "#344b49",
+                    "on-background": "#151c27",
+                    "on-primary": "#ffffff",
+                    "on-primary-container": "#f3fffd",
+                    "error-container": "#ffdad6",
+                    "on-primary-fixed": "#00201e",
+                    "on-error-container": "#93000a",
+                    "secondary-container": "#cce5e2",
+                    "primary": "#366460",
+                    "primary-fixed": "#bbece7",
+                    "primary-container": "#4f7d79",
+                    "surface-tint": "#386663",
+                    "surface-container": "#e7eefe",
+                    "on-tertiary-container": "#f7fefd",
+                    "inverse-on-surface": "#ebf1ff",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed": "#dde4e3",
+                    "tertiary": "#565d5d"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "16px",
+                    "xl": "32px",
+                    "unit": "4px",
+                    "lg": "24px",
+                    "gutter": "16px",
+                    "xs": "4px",
+                    "container-padding": "20px",
+                    "sm": "8px"
+            },
+            "fontFamily": {
+                    "display-lg": ["Manrope"],
+                    "label-caps": ["Manrope"],
+                    "headline-md": ["Manrope"],
+                    "title-sm": ["Manrope"],
+                    "body-sm": ["Manrope"],
+                    "body-base": ["Manrope"]
+            },
+            "fontSize": {
+                    "display-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                    "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                    "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                    "title-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                    "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                    "body-base": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen selection:bg-primary-container selection:text-on-primary-container antialiased">
+<!-- TopAppBar Shared Component -->
+<header class="fixed top-0 z-50 w-full bg-white/90 backdrop-blur-md shadow-sm">
+<div class="flex justify-between items-center px-5 h-16 w-full max-w-[600px] mx-auto">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-title-sm text-title-sm">
+                    U
+                 </div>
+<h1 class="text-teal-800 font-bold text-xl tracking-tight">TakeYourPills</h1>
+</div>
+<button class="text-teal-700 hover:bg-slate-50 transition-colors p-2 rounded-full active:opacity-80 duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">notifications</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-[88px] pb-[104px] px-container-padding max-w-[600px] mx-auto flex flex-col gap-lg">
+<!-- Header Text -->
+<section class="flex flex-col gap-xs px-xs">
+<h2 class="font-headline-md text-headline-md text-on-surface">Your Progress</h2>
+<p class="font-body-base text-body-base text-on-surface-variant">Consistency is key. You're building great habits!</p>
+</section>
+<!-- Hero Adherence Metric -->
+<section class="bg-surface-container-lowest rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.04)] p-lg flex flex-col items-center relative overflow-hidden">
+<div class="absolute -top-16 -right-16 w-48 h-48 bg-primary-fixed rounded-full blur-[40px] opacity-60"></div>
+<div class="relative z-10 flex flex-col items-center w-full">
+<h3 class="font-label-caps text-label-caps text-tertiary uppercase tracking-widest mb-md">30-Day Adherence</h3>
+<div class="relative flex items-center justify-center w-[140px] h-[140px] mb-sm">
+<!-- Background Track -->
+<svg class="absolute inset-0 w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<circle class="text-surface-container-high" cx="50" cy="50" fill="none" r="44" stroke="currentColor" stroke-width="8"></circle>
+<!-- Progress Arc (approx 92% of 276 circumference = 254) -->
+<circle class="text-primary" cx="50" cy="50" fill="none" r="44" stroke="currentColor" stroke-dasharray="276" stroke-dashoffset="22" stroke-linecap="round" stroke-width="8"></circle>
+</svg>
+<div class="flex items-baseline text-primary">
+<span class="font-display-lg text-display-lg">92</span>
+<span class="font-title-sm text-title-sm ml-unit">%</span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-secondary bg-surface px-md py-xs rounded-full inline-flex items-center gap-xs border border-tertiary-fixed">
+<span class="material-symbols-outlined text-[16px] text-primary">trending_up</span>
+                    Up 4% from last month
+                </p>
+</div>
+</section>
+<!-- Weekly Streak Row -->
+<section class="bg-surface-container-lowest rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.04)] p-md flex flex-col gap-md">
+<div class="flex justify-between items-center px-xs">
+<h3 class="font-title-sm text-title-sm text-on-surface">Weekly Streak</h3>
+<div class="flex items-center gap-xs text-on-primary-container bg-primary-container px-sm py-xs rounded-full shadow-sm">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<span class="font-body-sm text-body-sm font-semibold">14 Days</span>
+</div>
+</div>
+<div class="flex justify-between items-center mt-xs px-xs">
+<!-- Day 1 (Completed) -->
+<div class="flex flex-col items-center gap-sm">
+<span class="font-label-caps text-label-caps text-on-surface-variant">M</span>
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-sm">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+</div>
+<!-- Day 2 (Completed) -->
+<div class="flex flex-col items-center gap-sm">
+<span class="font-label-caps text-label-caps text-on-surface-variant">T</span>
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-sm">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+</div>
+<!-- Day 3 (Completed) -->
+<div class="flex flex-col items-center gap-sm">
+<span class="font-label-caps text-label-caps text-on-surface-variant">W</span>
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-sm">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+</div>
+<!-- Day 4 (Today/Completed) -->
+<div class="flex flex-col items-center gap-sm relative">
+<span class="font-label-caps text-label-caps text-primary">T</span>
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-sm ring-2 ring-primary-fixed ring-offset-2 ring-offset-surface-container-lowest">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+</div>
+<!-- Day 5 (Future) -->
+<div class="flex flex-col items-center gap-sm">
+<span class="font-label-caps text-label-caps text-tertiary">F</span>
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center text-tertiary">
+</div>
+</div>
+<!-- Day 6 (Future) -->
+<div class="flex flex-col items-center gap-sm">
+<span class="font-label-caps text-label-caps text-tertiary">S</span>
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center text-tertiary">
+</div>
+</div>
+<!-- Day 7 (Future) -->
+<div class="flex flex-col items-center gap-sm">
+<span class="font-label-caps text-label-caps text-tertiary">S</span>
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center text-tertiary">
+</div>
+</div>
+</div>
+</section>
+<!-- Trend Chart (Taken vs Missed) -->
+<section class="bg-surface-container-lowest rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.04)] p-md flex flex-col gap-md">
+<h3 class="font-title-sm text-title-sm text-on-surface px-xs">Past 4 Weeks</h3>
+<div class="h-32 flex items-end justify-between gap-2 px-md mt-sm border-b border-tertiary-fixed pb-2 relative">
+<!-- Background Grid Lines (Decorative) -->
+<div class="absolute inset-0 flex flex-col justify-between pointer-events-none pb-2 opacity-30">
+<div class="w-full h-[1px] bg-outline-variant"></div>
+<div class="w-full h-[1px] bg-outline-variant"></div>
+<div class="w-full h-[1px] bg-outline-variant"></div>
+</div>
+<!-- Week 1 Bar -->
+<div class="flex flex-col items-center gap-sm flex-1 z-10">
+<div class="flex items-end gap-1 w-full justify-center h-24">
+<div class="w-5 bg-secondary-container rounded-t-[4px] h-[75%] relative"></div>
+<div class="w-5 bg-error-container rounded-t-[4px] h-[25%] relative"></div>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">W1</span>
+</div>
+<!-- Week 2 Bar -->
+<div class="flex flex-col items-center gap-sm flex-1 z-10">
+<div class="flex items-end gap-1 w-full justify-center h-24">
+<div class="w-5 bg-secondary-container rounded-t-[4px] h-[85%] relative"></div>
+<div class="w-5 bg-error-container rounded-t-[4px] h-[15%] relative"></div>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">W2</span>
+</div>
+<!-- Week 3 Bar -->
+<div class="flex flex-col items-center gap-sm flex-1 z-10">
+<div class="flex items-end gap-1 w-full justify-center h-24">
+<div class="w-5 bg-secondary-container rounded-t-[4px] h-[95%] relative"></div>
+<div class="w-5 bg-error-container rounded-t-[4px] h-[5%] relative"></div>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">W3</span>
+</div>
+<!-- Week 4 Bar (Current) -->
+<div class="flex flex-col items-center gap-sm flex-1 z-10">
+<div class="flex items-end gap-1 w-full justify-center h-24">
+<div class="w-5 bg-primary rounded-t-[4px] h-[100%] relative shadow-sm"></div>
+<div class="w-5 bg-error rounded-t-[4px] h-[0%] relative"></div>
+</div>
+<span class="font-label-caps text-label-caps text-primary">W4</span>
+</div>
+</div>
+<div class="flex justify-center gap-lg mt-unit">
+<div class="flex items-center gap-xs">
+<div class="w-3 h-3 rounded-[2px] bg-primary"></div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Taken</span>
+</div>
+<div class="flex items-center gap-xs">
+<div class="w-3 h-3 rounded-[2px] bg-error-container"></div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Missed</span>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar Shared Component -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-[20px] bg-white shadow-[0px_-4px_20px_rgba(0,0,0,0.04)] dark:bg-slate-900 md:hidden">
+<div class="flex justify-around items-center h-20 px-4 pb-safe max-w-[600px] mx-auto">
+<!-- Home -->
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-3 py-1 hover:text-teal-600 dark:hover:text-teal-400 transition-all scale-95 active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined mb-1">home</span>
+<span class="font-manrope text-[10px] font-medium">Home</span>
+</a>
+<!-- Meds -->
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-3 py-1 hover:text-teal-600 dark:hover:text-teal-400 transition-all scale-95 active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined mb-1">medication</span>
+<span class="font-manrope text-[10px] font-medium">Meds</span>
+</a>
+<!-- Calendar -->
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-3 py-1 hover:text-teal-600 dark:hover:text-teal-400 transition-all scale-95 active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined mb-1">calendar_today</span>
+<span class="font-manrope text-[10px] font-medium">Calendar</span>
+</a>
+<!-- Progress (Active) -->
+<a class="flex flex-col items-center justify-center text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-teal-900/30 rounded-xl px-3 py-1 scale-95 active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">insights</span>
+<span class="font-manrope text-[10px] font-medium text-teal-800 dark:text-teal-100 font-bold">Progress</span>
+</a>
+<!-- Settings -->
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-3 py-1 hover:text-teal-600 dark:hover:text-teal-400 transition-all scale-95 active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined mb-1">settings</span>
+<span class="font-manrope text-[10px] font-medium">Settings</span>
+</a>
+</div>
+</nav>
+</body></html>

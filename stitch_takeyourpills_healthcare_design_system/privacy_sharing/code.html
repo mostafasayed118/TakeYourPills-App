@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Privacy &amp; Sharing Settings</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-container": "#506765",
+                        "tertiary-container": "#6f7675",
+                        "surface-container-high": "#e2e8f8",
+                        "on-primary-fixed-variant": "#1f4e4b",
+                        "secondary-fixed": "#cfe8e5",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-secondary": "#ffffff",
+                        "surface-container-low": "#f0f3ff",
+                        "on-surface": "#151c27",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#161d1d",
+                        "surface-container-highest": "#dce2f3",
+                        "surface-variant": "#dce2f3",
+                        "on-tertiary-fixed-variant": "#414848",
+                        "outline": "#707977",
+                        "surface": "#f9f9ff",
+                        "on-secondary-fixed": "#081f1e",
+                        "surface-bright": "#f9f9ff",
+                        "primary-fixed-dim": "#a0d0cb",
+                        "inverse-primary": "#a0d0cb",
+                        "tertiary-fixed-dim": "#c1c8c7",
+                        "inverse-surface": "#2a313d",
+                        "secondary": "#4c6361",
+                        "on-surface-variant": "#404847",
+                        "background": "#f9f9ff",
+                        "surface-dim": "#d3daea",
+                        "secondary-fixed-dim": "#b3cbc9",
+                        "outline-variant": "#c0c8c6",
+                        "on-secondary-fixed-variant": "#344b49",
+                        "on-background": "#151c27",
+                        "on-primary": "#ffffff",
+                        "on-primary-container": "#f3fffd",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#00201e",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#cce5e2",
+                        "primary": "#366460",
+                        "primary-fixed": "#bbece7",
+                        "primary-container": "#4f7d79",
+                        "surface-tint": "#386663",
+                        "surface-container": "#e7eefe",
+                        "on-tertiary-container": "#f7fefd",
+                        "inverse-on-surface": "#ebf1ff",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed": "#dde4e3",
+                        "tertiary": "#565d5d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "16px",
+                        "xl": "32px",
+                        "unit": "4px",
+                        "lg": "24px",
+                        "gutter": "16px",
+                        "xs": "4px",
+                        "container-padding": "20px",
+                        "sm": "8px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Manrope"],
+                        "label-caps": ["Manrope"],
+                        "headline-md": ["Manrope"],
+                        "title-sm": ["Manrope"],
+                        "body-sm": ["Manrope"],
+                        "body-base": ["Manrope"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "title-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-base": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #f9f9ff; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .material-symbols-outlined.filled { font-variation-settings: 'FILL' 1; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-base antialiased selection:bg-primary-container selection:text-on-primary-container min-h-screen flex flex-col items-center">
+<div class="w-full max-w-[390px] relative bg-background min-h-screen overflow-x-hidden shadow-2xl pb-xl">
+<!-- TopAppBar (JSON) -->
+<header class="fixed top-0 w-full max-w-[390px] mx-auto z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 shadow-sm flex justify-between items-center px-5 h-16 transition-colors">
+<!-- Leading: Avatar -->
+<div class="h-8 w-8 rounded-full overflow-hidden bg-surface-variant flex-shrink-0 cursor-pointer">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="portrait of a smiling middle aged woman with short brown hair in soft natural daylight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGe9tHp8oNn2XlsE8ghX5s8VTKCKEGrpIPndj6Qj3ejS9rqiYUB_YdNu94DHlJrzi-kfQnWGvfFkPV9qDCr9wfR90a3ck__-Bgqpe-zIvnPWUUdXNi5M_4I4cr2UDmPsjqf-qLh4c9E68CWMJ1ai76o3pTDkZhgnnOZV_I6JsvR1b2A0p33xCYwFCxwq1RU8q8EJ83wptO5SzmSlCvcMc3kEEJUkKb8yu0ZwP9gl1sjMVyRlZ5WtpTlEV_O2VH4MI6cDReeU-shaw"/>
+</div>
+<!-- Headline -->
+<h1 class="text-teal-800 dark:text-teal-100 font-bold text-xl tracking-tight font-display-lg" style="font-size: 20px; line-height: 28px;">TakeYourPills</h1>
+<!-- Trailing: Icon -->
+<button class="flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors p-2 rounded-full -mr-2">
+<span class="material-symbols-outlined text-slate-500 dark:text-slate-400" data-icon="notifications">notifications</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-[88px] px-container-padding flex flex-col gap-lg">
+<!-- Context Header -->
+<section>
+<button class="flex items-center gap-sm text-primary hover:opacity-80 transition-opacity mb-sm group">
+<span class="material-symbols-outlined text-[20px] group-hover:-translate-x-1 transition-transform">arrow_back</span>
+<span class="font-label-caps text-label-caps uppercase tracking-wider">Settings</span>
+</button>
+<h2 class="font-headline-md text-headline-md text-on-background">Privacy &amp; Sharing</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs pr-md">Manage who can view your medication routines and how your data is displayed.</p>
+</section>
+<!-- Network Sharing Section -->
+<section class="flex flex-col gap-md">
+<!-- Caregiver Card -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-[0px_4px_20px_rgba(0,0,0,0.04)] border border-outline-variant/30 flex justify-between items-center">
+<div class="flex items-start gap-md flex-1">
+<div class="h-10 w-10 rounded-full bg-secondary-container flex flex-shrink-0 items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined filled text-[20px]">diversity_1</span>
+</div>
+<div class="flex flex-col pt-0.5">
+<h3 class="font-title-sm text-title-sm text-on-background">Share with Caregiver</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-unit leading-snug">Let family see your daily adherence.</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer ml-sm flex-shrink-0">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-surface-variant rounded-full peer peer-checked:bg-primary after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full shadow-sm"></div>
+</label>
+</div>
+<!-- Provider Card -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-[0px_4px_20px_rgba(0,0,0,0.04)] border border-outline-variant/30 flex justify-between items-center">
+<div class="flex items-start gap-md flex-1">
+<div class="h-10 w-10 rounded-full bg-surface-variant flex flex-shrink-0 items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[20px]">stethoscope</span>
+</div>
+<div class="flex flex-col pt-0.5">
+<h3 class="font-title-sm text-title-sm text-on-background">Share with Provider</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-unit leading-snug">Send automated monthly reports to your doctor.</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer ml-sm flex-shrink-0">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-surface-variant rounded-full peer peer-checked:bg-primary after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-outline-variant after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white shadow-sm"></div>
+</label>
+</div>
+<!-- Data Summary Glassmorphism Note -->
+<div class="bg-primary-container/10 rounded-lg p-md mt-sm flex flex-col gap-sm border border-primary-container/20">
+<h4 class="font-label-caps text-label-caps text-primary uppercase tracking-widest flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">info</span> What gets shared
+                    </h4>
+<ul class="flex flex-col gap-2">
+<li class="flex items-start gap-2 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-[18px] mt-[1px]">check</span>
+<span>Overall daily routine completion percentage.</span>
+</li>
+<li class="flex items-start gap-2 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-[18px] mt-[1px]">check</span>
+<span>Alerts for missed critical doses.</span>
+</li>
+<li class="flex items-start gap-2 font-body-sm text-body-sm text-tertiary/70">
+<span class="material-symbols-outlined text-[18px] mt-[1px]">close</span>
+<span>Specific medication names are <strong>never</strong> shared.</span>
+</li>
+</ul>
+</div>
+</section>
+<div class="h-px w-full bg-outline-variant/30 my-xs"></div>
+<!-- Device Privacy Section -->
+<section class="flex flex-col gap-md">
+<h3 class="font-title-sm text-title-sm text-on-background">On This Device</h3>
+<!-- Notification Privacy Card -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-[0px_4px_20px_rgba(0,0,0,0.04)] border border-outline-variant/30 flex justify-between items-center relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary rounded-l-xl"></div>
+<div class="flex items-start gap-md flex-1 pl-xs">
+<div class="h-10 w-10 rounded-full bg-surface-container-high flex flex-shrink-0 items-center justify-center text-primary">
+<span class="material-symbols-outlined filled text-[20px]">notifications_paused</span>
+</div>
+<div class="flex flex-col pt-0.5">
+<h3 class="font-title-sm text-title-sm text-on-background">Notification Privacy</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-unit leading-snug">Hide medication names on your lock screen.</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer ml-sm flex-shrink-0">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-surface-variant rounded-full peer peer-checked:bg-primary after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full shadow-sm"></div>
+</label>
+</div>
+<p class="font-body-sm text-body-sm text-tertiary px-sm text-center italic opacity-80">
+                    Lock screen alerts will simply say "Time for your medication".
+                </p>
+</section>
+</main>
+<!-- Navigation Shell Suppressed per "Automatic Suppression" rule for Task-Focused sub-pages -->
+</div>
+</body></html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Provider Messaging - TakeYourPills</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-container": "#506765",
+                        "tertiary-container": "#6f7675",
+                        "surface-container-high": "#e2e8f8",
+                        "on-primary-fixed-variant": "#1f4e4b",
+                        "secondary-fixed": "#cfe8e5",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-secondary": "#ffffff",
+                        "surface-container-low": "#f0f3ff",
+                        "on-surface": "#151c27",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#161d1d",
+                        "surface-container-highest": "#dce2f3",
+                        "surface-variant": "#dce2f3",
+                        "on-tertiary-fixed-variant": "#414848",
+                        "outline": "#707977",
+                        "surface": "#f9f9ff",
+                        "on-secondary-fixed": "#081f1e",
+                        "surface-bright": "#f9f9ff",
+                        "primary-fixed-dim": "#a0d0cb",
+                        "inverse-primary": "#a0d0cb",
+                        "tertiary-fixed-dim": "#c1c8c7",
+                        "inverse-surface": "#2a313d",
+                        "secondary": "#4c6361",
+                        "on-surface-variant": "#404847",
+                        "background": "#f9f9ff",
+                        "surface-dim": "#d3daea",
+                        "secondary-fixed-dim": "#b3cbc9",
+                        "outline-variant": "#c0c8c6",
+                        "on-secondary-fixed-variant": "#344b49",
+                        "on-background": "#151c27",
+                        "on-primary": "#ffffff",
+                        "on-primary-container": "#f3fffd",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#00201e",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#cce5e2",
+                        "primary": "#366460",
+                        "primary-fixed": "#bbece7",
+                        "primary-container": "#4f7d79",
+                        "surface-tint": "#386663",
+                        "surface-container": "#e7eefe",
+                        "on-tertiary-container": "#f7fefd",
+                        "inverse-on-surface": "#ebf1ff",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed": "#dde4e3",
+                        "tertiary": "#565d5d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "16px",
+                        "xl": "32px",
+                        "unit": "4px",
+                        "lg": "24px",
+                        "gutter": "16px",
+                        "xs": "4px",
+                        "container-padding": "20px",
+                        "sm": "8px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Manrope"],
+                        "label-caps": ["Manrope"],
+                        "headline-md": ["Manrope"],
+                        "title-sm": ["Manrope"],
+                        "body-sm": ["Manrope"],
+                        "body-base": ["Manrope"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "title-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-base": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Hide scrollbar for clean look */
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-[#dce2f3] flex justify-center min-h-screen">
+<!-- Mobile Device Container (iPhone 15 width approx) -->
+<main class="w-full max-w-[390px] h-[884px] bg-background flex flex-col relative shadow-[0px_4px_20px_rgba(0,0,0,0.1)] overflow-hidden">
+<!-- Secure Banner -->
+<div class="bg-primary-container text-on-primary-container flex items-center justify-center gap-xs py-1 px-md z-20">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">lock</span>
+<span class="font-label-caps text-label-caps uppercase tracking-wider text-[10px]">End-to-end Encrypted Clinical Chat</span>
+</div>
+<!-- Custom Chat Header -->
+<header class="bg-surface-container-lowest flex items-center px-md py-sm border-b border-outline-variant z-10 shrink-0">
+<button aria-label="Go back" class="w-11 h-11 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<div class="flex items-center gap-sm ml-xs flex-1">
+<div class="relative w-10 h-10 rounded-full overflow-hidden border border-outline-variant shrink-0">
+<img alt="Dr. Sarah Miller" class="w-full h-full object-cover" data-alt="professional female doctor in white coat with a warm reassuring smile in a bright modern clinical setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDS84unDYk6oJRCAk_4EWDVhH56lIB1aFdNSKpyN4V1qRvVLWOzjD9NbEn5w_iu6j4b4pytAWuFrVvDvkfPj4Ok2DfgteaFRWvjwIyIba9JGeksti7wAEjc-jUzR1DO4IVeVQtFqvrBZ55kDGYRYlPS7sKVnnJa3dp7fkCYSWGUXRWGH7AaqFTD_dDzKvJOeK79ALz7U1aiUSrFexk7cA8eJMWzI1q8qdZQIMdRCfyiVAH8Sx0zpxNf9vp4csQF4wwoeZzGTa6nFgA"/>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-[#4ade80] border-2 border-surface-container-lowest rounded-full"></div>
+</div>
+<div>
+<h1 class="font-title-sm text-title-sm text-on-surface leading-tight">Dr. Sarah Miller</h1>
+<p class="font-body-sm text-body-sm text-secondary leading-tight">Cardiology Dept.</p>
+</div>
+</div>
+<button aria-label="More options" class="w-11 h-11 flex items-center justify-center text-primary hover:bg-primary-fixed rounded-full transition-colors">
+<span class="material-symbols-outlined">info</span>
+</button>
+</header>
+<!-- Chat Canvas -->
+<div class="flex-1 overflow-y-auto p-md flex flex-col gap-md bg-surface">
+<!-- Date Separator -->
+<div class="flex justify-center mt-sm mb-xs">
+<span class="bg-surface-container-highest text-on-surface-variant font-label-caps text-label-caps px-sm py-1 rounded-full text-[10px]">TODAY, 9:41 AM</span>
+</div>
+<!-- Doctor Message -->
+<div class="flex gap-sm max-w-[85%]">
+<div class="w-8 h-8 rounded-full overflow-hidden shrink-0 self-end mb-1">
+<img alt="Dr. Miller" class="w-full h-full object-cover" data-alt="professional female doctor in white coat with a warm reassuring smile in a bright modern clinical setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZ4f0Efn4IZIp5fBZ9X_s1oO4ZfMYY5yVcwdiMIUegKjsibJQM9_QAG4Vitq6xT14AOIY-YCeQ-zCqO_9mROQFtKdIY-HcWJiNpQzTS8y_Ew8nCnk10UA3uYFu3ICBZeyvbyfYwnDiI-cdAllG6HEuMjvy-azX3heNWJ00CSW_yWTi7M0MCkrn01mDu793QQPoRmtTWgI9LU6ywBnDyumqHdlLyFPXxy7PysgM_xmcG_Ar28nBuy1H1lhZb2z1sBjl1XdBDMutNWs"/>
+</div>
+<div class="bg-surface-container-high text-on-surface font-body-base text-body-base p-md rounded-2xl rounded-bl-sm shadow-[0px_2px_8px_rgba(0,0,0,0.02)]">
+                    Hello! How have you been feeling since we adjusted your morning Lisinopril dosage last week?
+                </div>
+</div>
+<!-- User Message -->
+<div class="flex flex-col gap-unit max-w-[85%] self-end">
+<div class="bg-primary text-on-primary font-body-base text-body-base p-md rounded-2xl rounded-br-sm shadow-[0px_2px_8px_rgba(0,0,0,0.04)] self-end">
+                    Much better, thank you. The morning dizziness has completely stopped.
+                </div>
+<span class="font-body-sm text-[11px] text-outline self-end mr-1">Read 10:02 AM</span>
+</div>
+<!-- Doctor Message -->
+<div class="flex gap-sm max-w-[85%] mt-sm">
+<div class="w-8 h-8 rounded-full overflow-hidden shrink-0 self-end mb-1">
+<img alt="Dr. Miller" class="w-full h-full object-cover" data-alt="professional female doctor in white coat with a warm reassuring smile in a bright modern clinical setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBebz_OAaZN91aGrwXNQcRPzau5-4xV_28Psd6wxCyqcmg9NCr2e_6esG1IoXSs24Mp95MYnIyQRy16Y8Zt0UA4xKNBs8NvKaSSeRZLNAP82BUIDk5DzXI2Qe6B0_OlHJNrU1TsVxR50pPlq3uBJyz_YDUmV7ECXa6GhFsJ8Rsucu6BpMu0DZCmLg85ZmhtCyp80S20KQW6Hng_oFG6oo-VPcAhSG9p-Gp-Gx6Rh5ZqinGJbvwO18EKNsfmQ3NQ7G1dAuljOqvuQkg"/>
+</div>
+<div class="bg-surface-container-high text-on-surface font-body-base text-body-base p-md rounded-2xl rounded-bl-sm shadow-[0px_2px_8px_rgba(0,0,0,0.02)]">
+                    That is excellent news. Before our virtual follow-up tomorrow, could you please send over your recent medication adherence report?
+                </div>
+</div>
+<!-- User Attachment Message -->
+<div class="flex flex-col gap-unit max-w-[90%] self-end mt-sm">
+<!-- Attachment Card -->
+<div class="bg-surface-container-lowest border border-outline-variant p-sm rounded-xl flex items-center gap-md shadow-[0px_4px_20px_rgba(0,0,0,0.04)]">
+<div class="w-10 h-10 bg-secondary-container text-on-secondary-container rounded-lg flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span>
+</div>
+<div class="flex-1 min-w-0">
+<h4 class="font-title-sm text-body-base text-on-surface truncate">Adherence Report</h4>
+<p class="font-body-sm text-[12px] text-secondary truncate">Last 30 Days • PDF</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant">check_circle</span>
+</div>
+<!-- Follow up text -->
+<div class="bg-primary text-on-primary font-body-base text-body-base p-md rounded-2xl rounded-br-sm shadow-[0px_2px_8px_rgba(0,0,0,0.04)] self-end mt-unit">
+                    Just attached it above! I've been taking everything on schedule.
+                </div>
+<span class="font-body-sm text-[11px] text-outline self-end mr-1">Delivered</span>
+</div>
+<!-- Empty space for scrolling -->
+<div class="h-4"></div>
+</div>
+<!-- Composer Area -->
+<div class="bg-surface-container-lowest border-t border-outline-variant px-md py-sm pb-lg shrink-0 flex flex-col gap-sm z-10">
+<!-- Quick Action Suggestion -->
+<div class="flex gap-sm overflow-x-auto hide-scrollbar pb-xs">
+<button class="bg-secondary-fixed text-on-secondary-fixed font-title-sm text-[13px] px-sm py-2 rounded-full border border-secondary-fixed-dim flex items-center gap-xs whitespace-nowrap hover:bg-secondary-fixed-dim transition-colors">
+<span class="material-symbols-outlined text-[18px]">attachment</span>
+                    Attach Adherence Report
+                </button>
+<button class="bg-surface-container-high text-on-surface-variant font-title-sm text-[13px] px-sm py-2 rounded-full border border-outline-variant flex items-center gap-xs whitespace-nowrap hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-[18px]">calendar_month</span>
+                    Request Appointment
+                </button>
+</div>
+<!-- Input Bar -->
+<div class="flex items-end gap-xs">
+<button class="w-10 h-10 shrink-0 flex items-center justify-center text-secondary hover:text-primary transition-colors rounded-full mb-1">
+<span class="material-symbols-outlined text-[24px]">add_circle</span>
+</button>
+<div class="flex-1 bg-surface-container-high rounded-[20px] px-md py-2 flex items-center min-h-[44px]">
+<textarea class="w-full bg-transparent border-none focus:ring-0 resize-none font-body-base text-body-base text-on-surface placeholder:text-outline py-1" placeholder="Type a secure message..." rows="1" style="max-height: 100px;"></textarea>
+</div>
+<button class="w-11 h-11 shrink-0 bg-primary text-on-primary flex items-center justify-center rounded-full shadow-[0px_4px_12px_rgba(54,100,96,0.2)] hover:bg-surface-tint transition-colors mb-1">
+<span class="material-symbols-outlined text-[20px] ml-1">send</span>
+</button>
+</div>
+</div>
+</main>
+</body></html>

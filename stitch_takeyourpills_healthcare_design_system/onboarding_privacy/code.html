@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TakeYourPills - Onboarding Privacy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-container": "#506765",
+                        "tertiary-container": "#6f7675",
+                        "surface-container-high": "#e2e8f8",
+                        "on-primary-fixed-variant": "#1f4e4b",
+                        "secondary-fixed": "#cfe8e5",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-secondary": "#ffffff",
+                        "surface-container-low": "#f0f3ff",
+                        "on-surface": "#151c27",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#161d1d",
+                        "surface-container-highest": "#dce2f3",
+                        "surface-variant": "#dce2f3",
+                        "on-tertiary-fixed-variant": "#414848",
+                        "outline": "#707977",
+                        "surface": "#f9f9ff",
+                        "on-secondary-fixed": "#081f1e",
+                        "surface-bright": "#f9f9ff",
+                        "primary-fixed-dim": "#a0d0cb",
+                        "inverse-primary": "#a0d0cb",
+                        "tertiary-fixed-dim": "#c1c8c7",
+                        "inverse-surface": "#2a313d",
+                        "secondary": "#4c6361",
+                        "on-surface-variant": "#404847",
+                        "background": "#f9f9ff",
+                        "surface-dim": "#d3daea",
+                        "secondary-fixed-dim": "#b3cbc9",
+                        "outline-variant": "#c0c8c6",
+                        "on-secondary-fixed-variant": "#344b49",
+                        "on-background": "#151c27",
+                        "on-primary": "#ffffff",
+                        "on-primary-container": "#f3fffd",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#00201e",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#cce5e2",
+                        "primary": "#366460",
+                        "primary-fixed": "#bbece7",
+                        "primary-container": "#4f7d79",
+                        "surface-tint": "#386663",
+                        "surface-container": "#e7eefe",
+                        "on-tertiary-container": "#f7fefd",
+                        "inverse-on-surface": "#ebf1ff",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed": "#dde4e3",
+                        "tertiary": "#565d5d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "16px",
+                        "xl": "32px",
+                        "unit": "4px",
+                        "lg": "24px",
+                        "gutter": "16px",
+                        "xs": "4px",
+                        "container-padding": "20px",
+                        "sm": "8px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Manrope"],
+                        "label-caps": ["Manrope"],
+                        "headline-md": ["Manrope"],
+                        "title-sm": ["Manrope"],
+                        "body-sm": ["Manrope"],
+                        "body-base": ["Manrope"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "title-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-base": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        /* Custom Ambient Shadow from Style Guide */
+        .ambient-shadow {
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-[#e2e8f8] flex justify-center min-h-screen">
+<!-- Mobile Device Container (iPhone 15 width approx 390px) -->
+<main class="w-full max-w-[390px] min-h-screen bg-background relative flex flex-col overflow-hidden shadow-2xl">
+<!-- Top Bar: Progress & Skip -->
+<header class="px-container-padding pt-12 pb-2 flex items-center justify-between z-10 relative">
+<button aria-label="Go back" class="w-11 h-11 flex items-center justify-center rounded-full bg-surface-container-lowest text-on-surface ambient-shadow">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<!-- Progress Pill Indicator -->
+<div class="flex gap-2 items-center">
+<div class="h-2 w-4 rounded-full bg-surface-container-highest"></div>
+<div class="h-2 w-8 rounded-full bg-primary"></div> <!-- Active Step 2 -->
+<div class="h-2 w-4 rounded-full bg-surface-container-highest"></div>
+<div class="h-2 w-4 rounded-full bg-surface-container-highest"></div>
+</div>
+<button class="font-label-caps text-label-caps text-on-surface-variant px-2 py-2">SKIP</button>
+</header>
+<!-- Hero Visual Area -->
+<section class="px-container-padding mt-4 relative z-0">
+<!-- Glassmorphic Image Card -->
+<div class="w-full aspect-square rounded-[32px] overflow-hidden relative ambient-shadow bg-surface-container-low">
+<img class="w-full h-full object-cover opacity-80" data-alt="Soft, ethereal abstract 3D fluid shape in muted sage green and soft white tones, representing safety, calmness, and a secure sanctuary space, soft studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2F_ow_BAGEpW5bkbOOYsw6lJUk-zyBBXVE5xtD3nWsAhXD7NxxCOhno--6GKkr1knVbevSqcFmEfPrngrbt-vLVKBYtggE-36PwQOIIQSA-f1Hw15dz9trBITo6cXaVtsSQhPlMeG0OhhbB3fdshe8m4eqBkGNjux58l7lvDLPv_dIy-pOCj4wCAmaLkDddeEY_UY--ReFXaX6TiADUksnzrf0vHcDkWYGw5gvpAbmecz3q3Mwb2iAC-dAxKnN5lRU90dm-tuhEg"/>
+<!-- Floating Glassmorphic Badge -->
+<div class="absolute bottom-6 left-6 right-6 backdrop-blur-xl bg-white/60 p-4 rounded-[20px] flex items-center gap-4 border border-white/40 ambient-shadow">
+<div class="w-12 h-12 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined" data-icon="lock" style="font-variation-settings: 'FILL' 1;">lock</span>
+</div>
+<div>
+<h3 class="font-title-sm text-title-sm text-on-surface">Your Data Safe</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Encrypted &amp; deeply personal.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Content Area -->
+<section class="px-container-padding mt-8 flex-1 flex flex-col relative z-10">
+<h1 class="font-display-lg text-display-lg text-on-surface mb-4">
+                Your health,<br/>your sanctuary.
+            </h1>
+<p class="font-body-base text-body-base text-on-surface-variant mb-8">
+                Medication details are incredibly personal. You have absolute control over what is stored, tracked, and shared.
+            </p>
+<!-- Feature List (Bento-inspired items instead of standard list) -->
+<div class="flex flex-col gap-5 mb-8">
+<!-- Feature 1 -->
+<div class="flex items-start gap-4 bg-surface-container-lowest p-4 rounded-2xl ambient-shadow border border-surface-container">
+<div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined" data-icon="save" style="font-variation-settings: 'FILL' 1;">save</span>
+</div>
+<div>
+<h4 class="font-title-sm text-title-sm text-on-surface mb-1">Local by Default</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Your history is stored securely on your device unless you actively choose to sync it.</p>
+</div>
+</div>
+<!-- Feature 2 -->
+<div class="flex items-start gap-4 bg-surface-container-lowest p-4 rounded-2xl ambient-shadow border border-surface-container">
+<div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined" data-icon="group_add" style="font-variation-settings: 'FILL' 1;">group_add</span>
+</div>
+<div>
+<h4 class="font-title-sm text-title-sm text-on-surface mb-1">Selective Sharing</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Invite a caregiver to view your schedule only when you feel it's necessary.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Bottom Action Area -->
+<footer class="p-container-padding pb-8 mt-auto w-full bg-gradient-to-t from-background via-background to-transparent z-20">
+<button class="w-full h-14 bg-primary text-on-primary rounded-full font-title-sm text-title-sm flex items-center justify-center gap-2 hover:bg-primary-container hover:text-on-primary-container transition-colors">
+                Continue
+                <span class="material-symbols-outlined text-[20px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<p class="text-center font-body-sm text-body-sm text-on-surface-variant mt-4">
+                Review our full <a class="text-primary underline decoration-primary/40 underline-offset-4" href="#">Privacy Policy</a>
+</p>
+</footer>
+</main>
+</body></html>

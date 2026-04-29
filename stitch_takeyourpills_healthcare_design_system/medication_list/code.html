@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TakeYourPills - Medications</title>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Design System Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-container": "#506765",
+                    "tertiary-container": "#6f7675",
+                    "surface-container-high": "#e2e8f8",
+                    "on-primary-fixed-variant": "#1f4e4b",
+                    "secondary-fixed": "#cfe8e5",
+                    "on-tertiary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-secondary": "#ffffff",
+                    "surface-container-low": "#f0f3ff",
+                    "on-surface": "#151c27",
+                    "on-error": "#ffffff",
+                    "on-tertiary-fixed": "#161d1d",
+                    "surface-container-highest": "#dce2f3",
+                    "surface-variant": "#dce2f3",
+                    "on-tertiary-fixed-variant": "#414848",
+                    "outline": "#707977",
+                    "surface": "#f9f9ff",
+                    "on-secondary-fixed": "#081f1e",
+                    "surface-bright": "#f9f9ff",
+                    "primary-fixed-dim": "#a0d0cb",
+                    "inverse-primary": "#a0d0cb",
+                    "tertiary-fixed-dim": "#c1c8c7",
+                    "inverse-surface": "#2a313d",
+                    "secondary": "#4c6361",
+                    "on-surface-variant": "#404847",
+                    "background": "#f9f9ff",
+                    "surface-dim": "#d3daea",
+                    "secondary-fixed-dim": "#b3cbc9",
+                    "outline-variant": "#c0c8c6",
+                    "on-secondary-fixed-variant": "#344b49",
+                    "on-background": "#151c27",
+                    "on-primary": "#ffffff",
+                    "on-primary-container": "#f3fffd",
+                    "error-container": "#ffdad6",
+                    "on-primary-fixed": "#00201e",
+                    "on-error-container": "#93000a",
+                    "secondary-container": "#cce5e2",
+                    "primary": "#366460",
+                    "primary-fixed": "#bbece7",
+                    "primary-container": "#4f7d79",
+                    "surface-tint": "#386663",
+                    "surface-container": "#e7eefe",
+                    "on-tertiary-container": "#f7fefd",
+                    "inverse-on-surface": "#ebf1ff",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed": "#dde4e3",
+                    "tertiary": "#565d5d"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "16px",
+                    "xl": "32px",
+                    "unit": "4px",
+                    "lg": "24px",
+                    "gutter": "16px",
+                    "xs": "4px",
+                    "container-padding": "20px",
+                    "sm": "8px"
+            },
+            "fontFamily": {
+                    "display-lg": ["Manrope"],
+                    "label-caps": ["Manrope"],
+                    "headline-md": ["Manrope"],
+                    "title-sm": ["Manrope"],
+                    "body-sm": ["Manrope"],
+                    "body-base": ["Manrope"]
+            },
+            "fontSize": {
+                    "display-lg": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "title-sm": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "body-base": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background antialiased min-h-screen relative pb-[100px]">
+<!-- TopAppBar (Shared Component) -->
+<header class="fixed top-0 w-full z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 shadow-sm flex justify-center">
+<div class="flex justify-between items-center px-5 h-16 w-full max-w-[600px]">
+<div class="flex items-center gap-3 active:opacity-80 duration-200">
+<!-- Leading Avatar -->
+<div class="w-8 h-8 rounded-full bg-surface-container overflow-hidden border border-outline-variant">
+<img alt="User Profile" data-alt="Close up portrait of a young woman with a gentle smile, soft natural daytime lighting, blurred background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMlbjD9Psb6rAo57SIif3M6LIDNUNZ2Y0Kz-sCysgZpdlWgjiHunWeJYM5NKrvnqIvs_qbccBe4BUG8rIIe_GI16_6DecR2IDCUmM5vtvb2y1y0ZsuCTB9hcdlyPqJwJqjzSTXPS9LBBP41EMOGBLYZ2h-pHf7nkm9oczG93Z54Q0J4zZ8muLcWtiTSIew9umeLXzdNP1MxWWgEQnsJCKdNZeWuXbiGGyvhZp0e5sPqqWFtrCNygtiKd7xcLqR543bLSqNNzFLxfc"/>
+</div>
+<!-- Brand Logo / Headline -->
+<span class="text-teal-800 dark:text-teal-100 font-bold text-xl tracking-tight">TakeYourPills</span>
+</div>
+<!-- Trailing Icon -->
+<button class="text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors p-2 rounded-full active:opacity-80 duration-200 flex items-center justify-center">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="w-full max-w-[600px] mx-auto pt-24 px-container-padding flex flex-col gap-lg">
+<!-- Header Section -->
+<div>
+<h1 class="font-display-lg text-display-lg text-on-surface mb-sm">My Meds</h1>
+<p class="font-body-base text-body-base text-on-surface-variant">Stay on track with your daily routine.</p>
+</div>
+<!-- Highlight Card (Bento Style) -->
+<div class="bg-primary text-on-primary rounded-[24px] p-lg shadow-[0_8px_30px_rgba(54,100,96,0.15)] relative overflow-hidden flex flex-col gap-md">
+<!-- Decorative gradient blur -->
+<div class="absolute -right-12 -top-12 w-48 h-48 bg-primary-fixed/20 rounded-full blur-3xl pointer-events-none"></div>
+<div class="flex justify-between items-center relative z-10">
+<span class="font-label-caps text-label-caps text-primary-fixed tracking-wider">UPCOMING DOSE</span>
+<div class="bg-on-primary/10 rounded-full px-3 py-1 flex items-center gap-1 backdrop-blur-sm">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span class="font-label-caps text-label-caps">IN 2 HRS</span>
+</div>
+</div>
+<div class="relative z-10">
+<h2 class="font-headline-md text-headline-md mb-1">Amoxicillin</h2>
+<p class="font-body-base text-body-base text-primary-fixed-dim">500mg • 1 Capsule</p>
+</div>
+<div class="flex justify-between items-end mt-sm relative z-10">
+<div class="flex gap-2">
+<span class="bg-on-primary/10 border border-on-primary/20 text-on-primary font-label-caps text-label-caps px-3 py-1.5 rounded-full flex items-center gap-1 backdrop-blur-sm">
+<span class="material-symbols-outlined text-[14px]">restaurant</span> With Food
+                    </span>
+</div>
+<div class="w-12 h-12 bg-surface-container-lowest text-primary rounded-full flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+</div>
+</div>
+</div>
+<!-- Section Title -->
+<div class="flex justify-between items-end mt-sm">
+<h3 class="font-title-sm text-title-sm text-on-surface">Active Prescriptions</h3>
+<button class="font-body-sm text-body-sm text-primary font-medium">See All</button>
+</div>
+<!-- Medication List (Cards) -->
+<div class="flex flex-col gap-md">
+<!-- Med Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-[0_4px_20px_rgba(0,0,0,0.04)] border border-outline-variant/30 flex flex-col gap-md relative overflow-hidden transition-all hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)]">
+<!-- Category Accent Line -->
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-secondary"></div>
+<div class="flex justify-between items-start pl-2">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">pill</span>
+</div>
+<div>
+<h4 class="font-title-sm text-title-sm text-on-surface">Lisinopril</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">10mg • Daily</p>
+</div>
+</div>
+<span class="bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps px-2 py-1 rounded-md">8:00 AM</span>
+</div>
+<div class="pl-2">
+<!-- Progress / Inventory -->
+<div class="flex justify-between items-center mb-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Supply</span>
+<span class="font-title-sm text-title-sm text-on-surface">24 <span class="text-on-surface-variant font-normal text-[14px]">/ 30</span></span>
+</div>
+<div class="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 80%;"></div>
+</div>
+</div>
+</div>
+<!-- Med Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-[0_4px_20px_rgba(0,0,0,0.04)] border border-outline-variant/30 flex flex-col gap-md relative overflow-hidden transition-all hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)]">
+<!-- Category Accent Line -->
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-tertiary"></div>
+<div class="flex justify-between items-start pl-2">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">medication_liquid</span>
+</div>
+<div>
+<h4 class="font-title-sm text-title-sm text-on-surface">Sertraline</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">50mg • Daily</p>
+</div>
+</div>
+<span class="bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps px-2 py-1 rounded-md">9:00 PM</span>
+</div>
+<div class="pl-2">
+<!-- Progress / Inventory -->
+<div class="flex justify-between items-center mb-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Supply</span>
+<span class="font-title-sm text-title-sm text-on-surface">12 <span class="text-on-surface-variant font-normal text-[14px]">/ 30</span></span>
+</div>
+<div class="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-tertiary rounded-full" style="width: 40%;"></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button -->
+<div class="fixed w-full max-w-[600px] bottom-[100px] left-1/2 -translate-x-1/2 z-40 flex justify-end px-container-padding pointer-events-none">
+<button class="w-14 h-14 bg-primary text-on-primary rounded-[20px] shadow-[0_8px_20px_rgba(54,100,96,0.25)] flex items-center justify-center hover:bg-surface-tint transition-transform active:scale-95 pointer-events-auto">
+<span class="material-symbols-outlined text-[28px]">add</span>
+</button>
+</div>
+<!-- BottomNavBar (Shared Component - Active: Meds) -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-[20px] bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 shadow-[0px_-4px_20px_rgba(0,0,0,0.04)] flex justify-center">
+<div class="flex justify-around items-center h-20 px-4 pb-safe w-full max-w-[600px]">
+<!-- Home -->
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-3 py-1 hover:text-teal-600 dark:hover:text-teal-400 transition-all scale-95 active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-manrope text-[10px] font-medium mt-1">Home</span>
+</a>
+<!-- Meds (ACTIVE) -->
+<a class="flex flex-col items-center justify-center text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-teal-900/30 rounded-xl px-3 py-1 hover:text-teal-600 dark:hover:text-teal-400 transition-all scale-95 active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">medication</span>
+<span class="font-manrope text-[10px] font-medium mt-1">Meds</span>
+</a>
+<!-- Calendar -->
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-3 py-1 hover:text-teal-600 dark:hover:text-teal-400 transition-all scale-95 active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-manrope text-[10px] font-medium mt-1">Calendar</span>
+</a>
+<!-- Progress -->
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-3 py-1 hover:text-teal-600 dark:hover:text-teal-400 transition-all scale-95 active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">insights</span>
+<span class="font-manrope text-[10px] font-medium mt-1">Progress</span>
+</a>
+<!-- Settings -->
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-3 py-1 hover:text-teal-600 dark:hover:text-teal-400 transition-all scale-95 active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-manrope text-[10px] font-medium mt-1">Settings</span>
+</a>
+</div>
+</nav>
+</body></html>
