@@ -15,7 +15,11 @@ _DoseLog _$DoseLogFromJson(Map<String, dynamic> json) => _DoseLog(
       ? null
       : DateTime.parse(json['actualTime'] as String),
   status:
-      $enumDecodeNullable(_$DoseLogStatusEnumMap, json['status']) ??
+      $enumDecodeNullable(
+        _$DoseLogStatusEnumMap,
+        json['status'],
+        unknownValue: DoseLogStatus.pending,
+      ) ??
       DoseLogStatus.pending,
   snoozeCount: (json['snoozeCount'] as num?)?.toInt() ?? 0,
   notes: json['notes'] as String?,

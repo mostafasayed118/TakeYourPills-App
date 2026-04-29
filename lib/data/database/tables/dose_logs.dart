@@ -1,11 +1,14 @@
 import 'package:drift/drift.dart';
-import 'medications.dart';
-import 'schedules.dart';
 
+import 'schedules.dart';
+import 'medications.dart';
+
+@DataClassName('DoseLogData')
 class DoseLogs extends Table {
   IntColumn get id => integer().autoIncrement()();
-  IntColumn get medicationId => integer().customConstraint('NOT NULL REFERENCES medications(id)')();
-  IntColumn? get scheduleId => integer().nullable().customConstraint('REFERENCES schedules(id)')();
+  IntColumn get medicationId => integer().references(Medications, #id)();
+  IntColumn? get scheduleId =>
+      integer().nullable().references(Schedules, #id)();
   TextColumn get scheduledTime => text()();
   DateTimeColumn? get actualTime => dateTime().nullable()();
   IntColumn get status => integer()();

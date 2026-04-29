@@ -1,11 +1,11 @@
-import 'dart:convert';
+import 'package:takeyourpills_healthcare_app/core/entities/medication.dart'
+    as domain;
+import 'package:takeyourpills_healthcare_app/data/database/app_database.dart';
 
-import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
-import 'package:takeyourpills_healthcare_app/data/database/tables/medications.dart';
-
+/// Maps between Drift's [MedicationData] and domain [domain.Medication].
 class MedicationMapper {
-  static Medication toEntity(MedicationData model) {
-    return Medication(
+  static domain.Medication toEntity(MedicationData model) {
+    return domain.Medication(
       id: model.id,
       name: model.name,
       dosageAmount: model.dosageAmount,
@@ -27,7 +27,7 @@ class MedicationMapper {
     );
   }
 
-  static MedicationData toModel(Medication entity) {
+  static MedicationData toModel(domain.Medication entity) {
     return MedicationData(
       id: entity.id,
       name: entity.name,
@@ -50,11 +50,11 @@ class MedicationMapper {
     );
   }
 
-  static List<Medication> toEntityList(List<MedicationData> models) {
+  static List<domain.Medication> toEntityList(List<MedicationData> models) {
     return models.map(toEntity).toList();
   }
 
-  static List<MedicationData> toModelList(List<Medication> entities) {
+  static List<MedicationData> toModelList(List<domain.Medication> entities) {
     return entities.map(toModel).toList();
   }
 }

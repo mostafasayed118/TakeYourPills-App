@@ -1,18 +1,23 @@
 import 'package:drift/drift.dart';
 import 'package:takeyourpills_healthcare_app/data/database/app_database.dart';
 import 'package:takeyourpills_healthcare_app/data/database/mappers/medication_mapper.dart';
+import 'package:takeyourpills_healthcare_app/data/database/mappers/schedule_mapper.dart';
+import 'package:takeyourpills_healthcare_app/data/database/mappers/dose_log_mapper.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/schedule.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/dose_log.dart';
-import 'mappers/schedule_mapper.dart';
-import 'mappers/dose_log_mapper.dart';
 
+/// Local data source for medication-related operations.
+///
+/// Bridges the gap between the Drift database layer and the
+/// domain entity layer using mappers for type conversion.
 class MedicationLocalDatasource {
   final AppDatabase _db;
 
   MedicationLocalDatasource(this._db);
 
-  // Medications
+  // ── Medications ──────────────────────────────────────────────
+
   Future<List<Medication>> getAllMedications() async {
     final models = await _db.getAllMedications();
     return MedicationMapper.toEntityList(models);
@@ -25,16 +30,16 @@ class MedicationLocalDatasource {
 
   Future<int> createMedication(Medication medication) async {
     final model = MedicationMapper.toModel(medication);
-    return await _db.createMedication(model);
+    return _db.createMedication(model);
   }
 
   Future<int> updateMedication(Medication medication) async {
     final model = MedicationMapper.toModel(medication);
-    return await _db.updateMedication(model);
+    return _db.updateMedicationRow(model);
   }
 
   Future<int> deleteMedication(int id) async {
-    return await _db.deleteMedication(id);
+    return _db.deleteMedication(id);
   }
 
   Future<List<Medication>> getActiveMedications() async {
@@ -42,47 +47,68 @@ class MedicationLocalDatasource {
     return MedicationMapper.toEntityList(models);
   }
 
-  // Schedules
+  /// Watch all medications as a reactive stream.
+  Stream<List<Medication>> watchAllMedications() {
+    return _db.watchAllMedications().map(MedicationMapper.toEntityList);
+  }
+
+  /// Batch insert multiple medications in a single transaction.
+  Future<void> bulkInsertMedications(List<Medication> medications) async {
+    return _db.batch((batch) {
+      for (final med in medications) {
+        final model = MedicationMapper.toModel(med);
+        batch.insert(_db.medications, model);
+      }
+    });
+  }
+
+  // ── Schedules ────────────────────────────────────────────────
+
   Future<List<Schedule>> getSchedulesForMedication(int medicationId) async {
     final models = await _db.getSchedulesForMedication(medicationId);
-    return models.map(ScheduleMapper.toEntity).toList();
+    return ScheduleMapper.toEntityList(models);
   }
 
   Future<int> createSchedule(Schedule schedule) async {
     final companion = ScheduleMapper.toCompanion(schedule);
-    return await _db.createSchedule(companion);
+    return _db.createSchedule(companion);
   }
 
   Future<int> updateSchedule(Schedule schedule) async {
     final companion = ScheduleMapper.toCompanion(schedule);
-    return await _db.updateSchedule(companion);
+    return _db.updateScheduleRow(companion);
   }
 
   Future<int> deleteSchedule(int id) async {
-    return await _db.deleteSchedule(id);
+    return _db.deleteSchedule(id);
   }
 
   Future<int> deleteSchedulesForMedication(int medicationId) async {
-    return await _db.deleteSchedulesForMedication(medicationId);
+    return _db.deleteSchedulesForMedication(medicationId);
   }
 
-  // Dose Logs
+  // ── Dose Logs ────────────────────────────────────────────────
+
   Future<List<DoseLog>> getDoseLogsForMedication(int medicationId) async {
     final models = await _db.getDoseLogsForMedication(medicationId);
-    return models.map(DoseLogMapper.toEntity).toList();
+    return DoseLogMapper.toEntityList(models);
   }
 
   Future<int> createDoseLog(DoseLog doseLog) async {
     final companion = DoseLogMapper.toCompanion(doseLog);
-    return await _db.createDoseLog(companion);
+    return _db.createDoseLog(companion);
   }
 
-  Future<List<DoseLog>> getDoseLogsForDateRange(DateTime start, DateTime end) async {
+  Future<List<DoseLog>> getDoseLogsForDateRange(
+    DateTime start,
+    DateTime end,
+  ) async {
     final models = await _db.getDoseLogsForDateRange(start, end);
-    return models.map(DoseLogMapper.toEntity).toList();
+    return DoseLogMapper.toEntityList(models);
   }
 
-  // Refill Tracking
+  // ── Refill Tracking ──────────────────────────────────────────
+
   Future<int> createOrUpdateRefillTracking({
     required int medicationId,
     required int currentQuantity,
@@ -90,7 +116,8 @@ class MedicationLocalDatasource {
     DateTime? lastRefillDate,
     String? notes,
   }) async {
-    final existing = await _db.getRefillTrackingForMedication(medicationId);
+    final existing =
+        await _db.getRefillTrackingForMedication(medicationId);
     final companion = RefillTrackingCompanion(
       medicationId: Value(medicationId),
       currentQuantity: Value(currentQuantity),
@@ -99,14 +126,15 @@ class MedicationLocalDatasource {
       notes: Value(notes),
     );
     if (existing != null) {
-      return await _db.updateRefillTracking(companion);
+      return _db.updateRefillTracking(companion);
     } else {
-      return await _db.createRefillTracking(companion);
+      return _db.createRefillTracking(companion);
     }
   }
 
   Future<int> updateCurrentQuantity(int medicationId, int newQuantity) async {
-    final existing = await _db.getRefillTrackingForMedication(medicationId);
+    final existing =
+        await _db.getRefillTrackingForMedication(medicationId);
     if (existing != null) {
       final companion = RefillTrackingCompanion(
         medicationId: Value(medicationId),
@@ -115,31 +143,20 @@ class MedicationLocalDatasource {
         lastRefillDate: Value(existing.lastRefillDate),
         notes: Value(existing.notes),
       );
-      return await _db.updateRefillTracking(companion);
+      return _db.updateRefillTracking(companion);
     }
     return 0;
   }
 
-  Future<({int quantity, int threshold})?> getRefillInfo(int medicationId) async {
-    final tracking = await _db.getRefillTrackingForMedication(medicationId);
+  Future<({int quantity, int threshold})?> getRefillInfo(
+    int medicationId,
+  ) async {
+    final tracking =
+        await _db.getRefillTrackingForMedication(medicationId);
     if (tracking == null) return null;
-    return (quantity: tracking.currentQuantity, threshold: tracking.refillThreshold);
-  }
-
-  // Stream of all medications for real-time updates
-  Stream<List<Medication>> watchAllMedications() {
-    return _db.select(_db.medications).watch().map((rows) {
-      return rows.map((row) => MedicationMapper.toEntity(row.readTable(_db.medications))).toList();
-    });
-  }
-
-  // Batch operations
-  Future<void> bulkInsertMedications(List<Medication> medications) async {
-    return _db.batch((batch) {
-      for (final med in medications) {
-        final model = MedicationMapper.toModel(med);
-        batch.insert(_db.medications, model);
-      }
-    });
+    return (
+      quantity: tracking.currentQuantity,
+      threshold: tracking.refillThreshold,
+    );
   }
 }

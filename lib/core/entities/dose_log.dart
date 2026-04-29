@@ -8,24 +8,31 @@ enum DoseLogStatus { pending, taken, snoozed, skipped, missed }
 extension DoseLogStatusX on DoseLogStatus {
   String get label {
     switch (this) {
-      case DoseLogStatus.pending: return 'Pending';
-      case DoseLogStatus.taken: return 'Taken';
-      case DoseLogStatus.snoozed: return 'Snoozed';
-      case DoseLogStatus.skipped: return 'Skipped';
-      case DoseLogStatus.missed: return 'Missed';
+      case DoseLogStatus.pending:
+        return 'Pending';
+      case DoseLogStatus.taken:
+        return 'Taken';
+      case DoseLogStatus.snoozed:
+        return 'Snoozed';
+      case DoseLogStatus.skipped:
+        return 'Skipped';
+      case DoseLogStatus.missed:
+        return 'Missed';
     }
   }
 }
 
 @freezed
-class DoseLog with _$DoseLog {
+abstract class DoseLog with _$DoseLog {
   const factory DoseLog({
     required int id,
     required int medicationId,
     int? scheduleId,
     required String scheduledTime,
     DateTime? actualTime,
-    @Default(DoseLogStatus.pending) DoseLogStatus status,
+    @JsonKey(unknownEnumValue: DoseLogStatus.pending)
+    @Default(DoseLogStatus.pending)
+    DoseLogStatus status,
     @Default(0) int snoozeCount,
     String? notes,
     required DateTime createdAt,

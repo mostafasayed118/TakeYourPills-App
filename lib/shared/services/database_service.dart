@@ -1,13 +1,5 @@
-import 'dart:io';
 import 'package:drift/drift.dart';
-import 'package:drift/native.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
 import 'package:takeyourpills_healthcare_app/data/database/app_database.dart';
-import 'package:takeyourpills_healthcare_app/data/database/tables/medications.dart';
-import 'package:takeyourpills_healthcare_app/data/database/tables/schedules.dart';
-import 'package:takeyourpills_healthcare_app/data/database/tables/dose_logs.dart';
-import 'package:takeyourpills_healthcare_app/data/database/tables/refill_tracking.dart';
 
 /// Database service that manages the Drift database instance.
 /// This is a singleton service that provides access to the database and DAOs.
@@ -24,7 +16,7 @@ class DatabaseService {
 
   /// Initialize the database service. Must be called once at app startup.
   Future<void> init() async {
-    _db = AppDatabase(_openConnection());
+    _db = AppDatabase();
   }
 
   /// Get the AppDatabase instance.
@@ -66,7 +58,7 @@ class DatabaseService {
   }
 
   Future<int> updateMedication(MedicationData medication) {
-    return _db.updateMedication(medication);
+    return _db.updateMedicationRow(medication);
   }
 
   Future<int> deleteMedication(int id) {
@@ -76,13 +68,5 @@ class DatabaseService {
   /// Close the database connection.
   Future<void> close() async {
     await _db.close();
-  }
-
-  LazyDatabase _openConnection() {
-    return LazyDatabase(() async {
-      final dbFolder = await getApplicationDocumentsDirectory();
-      final file = File(p.join(dbFolder.path, 'takeyourpills.db'));
-      return NativeDatabase(file);
-    });
   }
 }

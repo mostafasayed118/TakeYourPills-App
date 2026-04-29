@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 
+@DataClassName('MedicationData')
 class Medications extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get name => text()();

@@ -16,6 +16,9 @@ part 'app_database.g.dart';
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
+  /// For testing only
+  AppDatabase.forTesting(super.e);
+
   @override
   int get schemaVersion => 2;
 
@@ -39,44 +42,53 @@ class AppDatabase extends _$AppDatabase {
     },
   );
 
-  // Medications
-  Future<int> createMedication(Medication medication) {
+  // ── Medications ──────────────────────────────────────────────
+
+  Future<int> createMedication(MedicationData medication) {
     return into(medications).insert(medication);
   }
 
-  Future<int> updateMedication(Medication medication) {
-    return (update(
-      medications,
-    )..where((t) => t.id.equals(medication.id))).write(medication);
+  Future<int> updateMedicationRow(MedicationData medication) {
+    return (update(medications)
+          ..where((t) => t.id.equals(medication.id)))
+        .write(medication);
   }
 
   Future<int> deleteMedication(int id) {
     return (delete(medications)..where((t) => t.id.equals(id))).go();
   }
 
-  Future<Medication?> getMedicationById(int id) {
-    return (select(
-      medications,
-    )..where((t) => t.id.equals(id))).getSingleOrNull();
+  Future<MedicationData?> getMedicationById(int id) {
+    return (select(medications)..where((t) => t.id.equals(id)))
+        .getSingleOrNull();
   }
 
-  Future<List<Medication>> getAllMedications() {
-    return select(medications).get();
+  Future<List<MedicationData>> getAllMedications() {
+    return (select(medications)
+          ..orderBy([(t) => OrderingTerm.desc(t.createdAt)]))
+        .get();
   }
 
-  Future<List<Medication>> getActiveMedications() {
+  Future<List<MedicationData>> getActiveMedications() {
     return (select(medications)..where((t) => t.isPaused.equals(false))).get();
   }
 
-  // Schedules
+  Stream<List<MedicationData>> watchAllMedications() {
+    return (select(medications)
+          ..orderBy([(t) => OrderingTerm.desc(t.createdAt)]))
+        .watch();
+  }
+
+  // ── Schedules ────────────────────────────────────────────────
+
   Future<int> createSchedule(SchedulesCompanion schedule) {
     return into(schedules).insert(schedule);
   }
 
-  Future<int> updateSchedule(SchedulesCompanion schedule) {
-    return (update(
-      schedules,
-    )..where((t) => t.id.equals(schedule.id.value))).write(schedule);
+  Future<int> updateScheduleRow(SchedulesCompanion schedule) {
+    return (update(schedules)
+          ..where((t) => t.id.equals(schedule.id.value)))
+        .write(schedule);
   }
 
   Future<int> deleteSchedule(int id) {
@@ -84,41 +96,47 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<int> deleteSchedulesForMedication(int medicationId) {
-    return (delete(
-      schedules,
-    )..where((t) => t.medicationId.equals(medicationId))).go();
+    return (delete(schedules)
+          ..where((t) => t.medicationId.equals(medicationId)))
+        .go();
   }
 
-  Future<List<Schedule>> getSchedulesForMedication(int medicationId) {
-    return (select(
-      schedules,
-    )..where((t) => t.medicationId.equals(medicationId))).get();
+  Future<List<ScheduleData>> getSchedulesForMedication(int medicationId) {
+    return (select(schedules)
+          ..where((t) => t.medicationId.equals(medicationId)))
+        .get();
   }
 
-  // Dose Logs
+  // ── Dose Logs ────────────────────────────────────────────────
+
   Future<int> createDoseLog(DoseLogsCompanion doseLog) {
     return into(doseLogs).insert(doseLog);
   }
 
-  Future<List<DoseLog>> getDoseLogsForMedication(int medicationId) {
-    return (select(
-      doseLogs,
-    )..where((t) => t.medicationId.equals(medicationId))).get();
+  Future<List<DoseLogData>> getDoseLogsForMedication(int medicationId) {
+    return (select(doseLogs)
+          ..where((t) => t.medicationId.equals(medicationId)))
+        .get();
   }
 
-  Future<List<DoseLog>> getDoseLogsForDateRange(DateTime start, DateTime end) {
+  Future<List<DoseLogData>> getDoseLogsForDateRange(
+    DateTime start,
+    DateTime end,
+  ) {
     return (select(doseLogs)
           ..where(
-            (t) =>
-                t.scheduledTime.isBiggerOrEqualValue(start.toIso8601String()),
+            (t) => t.scheduledTime
+                .isBiggerOrEqualValue(start.toIso8601String()),
           )
           ..where(
-            (t) => t.scheduledTime.isSmallerOrEqualValue(end.toIso8601String()),
+            (t) => t.scheduledTime
+                .isSmallerOrEqualValue(end.toIso8601String()),
           ))
         .get();
   }
 
-  // Refill Tracking
+  // ── Refill Tracking ──────────────────────────────────────────
+
   Future<int> createRefillTracking(RefillTrackingCompanion refill) {
     return into(refillTracking).insert(refill);
   }
@@ -129,10 +147,12 @@ class AppDatabase extends _$AppDatabase {
         .write(refill);
   }
 
-  Future<RefillTracking?> getRefillTrackingForMedication(int medicationId) {
-    return (select(
-      refillTracking,
-    )..where((t) => t.medicationId.equals(medicationId))).getSingleOrNull();
+  Future<RefillTrackingData?> getRefillTrackingForMedication(
+    int medicationId,
+  ) {
+    return (select(refillTracking)
+          ..where((t) => t.medicationId.equals(medicationId)))
+        .getSingleOrNull();
   }
 }
 

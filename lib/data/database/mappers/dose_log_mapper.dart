@@ -1,16 +1,18 @@
-import 'package:takeyourpills_healthcare_app/core/entities/dose_log.dart';
-import 'package:takeyourpills_healthcare_app/data/database/tables/dose_logs.dart';
+import 'package:takeyourpills_healthcare_app/core/entities/dose_log.dart'
+    as domain;
 import 'package:drift/drift.dart';
+import 'package:takeyourpills_healthcare_app/data/database/app_database.dart';
 
+/// Maps between Drift's [DoseLogData] and domain [domain.DoseLog].
 class DoseLogMapper {
-  static DoseLog toEntity(DoseLogData model) {
-    return DoseLog(
+  static domain.DoseLog toEntity(DoseLogData model) {
+    return domain.DoseLog(
       id: model.id,
       medicationId: model.medicationId,
       scheduleId: model.scheduleId,
       scheduledTime: model.scheduledTime,
       actualTime: model.actualTime,
-      status: DoseLogStatus.values[model.status],
+      status: domain.DoseLogStatus.values[model.status],
       snoozeCount: model.snoozeCount,
       notes: model.notes,
       createdAt: model.createdAt,
@@ -18,7 +20,7 @@ class DoseLogMapper {
     );
   }
 
-  static DoseLogData toModel(DoseLog entity) {
+  static DoseLogData toModel(domain.DoseLog entity) {
     return DoseLogData(
       id: entity.id,
       medicationId: entity.medicationId,
@@ -33,7 +35,7 @@ class DoseLogMapper {
     );
   }
 
-  static DoseLogsCompanion toCompanion(DoseLog entity) {
+  static DoseLogsCompanion toCompanion(domain.DoseLog entity) {
     return DoseLogsCompanion(
       id: entity.id == 0 ? const Value.absent() : Value(entity.id),
       medicationId: Value(entity.medicationId),
@@ -54,7 +56,7 @@ class DoseLogMapper {
     );
   }
 
-  static List<DoseLog> toEntityList(List<DoseLogData> models) {
+  static List<domain.DoseLog> toEntityList(List<DoseLogData> models) {
     return models.map(toEntity).toList();
   }
 }

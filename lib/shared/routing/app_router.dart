@@ -14,20 +14,28 @@ class AppRouter {
     return GoRouter(
       initialLocation: AppRoutes.root,
       redirect: (context, state) {
-        final onboardingComplete = false;
-        final isOnboardingRoute = state.matchedLocation == AppRoutes.onboarding;
-        if (!onboardingComplete && !isOnboardingRoute)
+        // TODO: Read from PreferenceService once implemented
+        const onboardingComplete = false;
+        final isOnboardingRoute =
+            state.matchedLocation == AppRoutes.onboarding;
+        if (!onboardingComplete && !isOnboardingRoute) {
           return AppRoutes.onboarding;
-        if (onboardingComplete && isOnboardingRoute) return AppRoutes.dashboard;
+        }
+        if (onboardingComplete && isOnboardingRoute) {
+          return AppRoutes.dashboard;
+        }
         return null;
       },
       routes: [
-        GoRoute(path: AppRoutes.root, redirect: (_, __) => AppRoutes.dashboard),
+        GoRoute(
+          path: AppRoutes.root,
+          redirect: (_, __) => AppRoutes.dashboard,
+        ),
         GoRoute(
           path: AppRoutes.onboarding,
           name: 'onboarding',
           pageBuilder: (c, s) =>
-              _pageBuilder(c: c, s: s, child: OnboardingPage()),
+              _fadeTransition(c: c, s: s, child: const OnboardingPage()),
         ),
         ShellRoute(
           builder: (c, s, child) => _MainScaffold(child: child),
@@ -36,21 +44,25 @@ class AppRouter {
               path: AppRoutes.dashboard,
               name: 'dashboard',
               pageBuilder: (c, s) =>
-                  _pageBuilder(c: c, s: s, child: DashboardPage()),
+                  _fadeTransition(c: c, s: s, child: const DashboardPage()),
             ),
             GoRoute(
               path: AppRoutes.medications,
               name: 'medications',
-              pageBuilder: (c, s) =>
-                  _pageBuilder(c: c, s: s, child: MedicationListPage()),
+              pageBuilder: (c, s) => _fadeTransition(
+                c: c,
+                s: s,
+                child: const MedicationListPage(),
+              ),
             ),
+            // Add/Edit medication (/:medId is 'new' for create, or a numeric ID for edit)
             GoRoute(
               path: '${AppRoutes.addMedication}/:medId',
               name: 'addMedication',
               pageBuilder: (c, s) {
                 final medId = s.pathParameters['medId'];
                 final isEditing = medId != null && medId != 'new';
-                return _pageBuilder(
+                return _fadeTransition(
                   c: c,
                   s: s,
                   child: AddEditMedicationPage(
@@ -60,36 +72,58 @@ class AppRouter {
                 );
               },
             ),
+            // Medication detail
+            GoRoute(
+              path: '/medication/:id',
+              name: 'medicationDetail',
+              pageBuilder: (c, s) {
+                final medId = int.tryParse(s.pathParameters['id'] ?? '');
+                if (medId == null) {
+                  return _fadeTransition(
+                    c: c,
+                    s: s,
+                    child: const Scaffold(
+                      body: Center(child: Text('Medication not found')),
+                    ),
+                  );
+                }
+                return _fadeTransition(
+                  c: c,
+                  s: s,
+                  child: MedicationDetailPage(medicationId: medId),
+                );
+              },
+            ),
             GoRoute(
               path: AppRoutes.calendar,
               name: 'calendar',
-              pageBuilder: (c, s) => _pageBuilder(
+              pageBuilder: (c, s) => _fadeTransition(
                 c: c,
                 s: s,
-                child: Scaffold(
-                  body: Center(child: Text('Calendar - Coming Soon')),
+                child: const Scaffold(
+                  body: Center(child: Text('Calendar — Coming Soon')),
                 ),
               ),
             ),
             GoRoute(
               path: AppRoutes.history,
               name: 'history',
-              pageBuilder: (c, s) => _pageBuilder(
+              pageBuilder: (c, s) => _fadeTransition(
                 c: c,
                 s: s,
-                child: Scaffold(
-                  body: Center(child: Text('History - Coming Soon')),
+                child: const Scaffold(
+                  body: Center(child: Text('History — Coming Soon')),
                 ),
               ),
             ),
             GoRoute(
               path: AppRoutes.progress,
               name: 'progress',
-              pageBuilder: (c, s) => _pageBuilder(
+              pageBuilder: (c, s) => _fadeTransition(
                 c: c,
                 s: s,
-                child: Scaffold(
-                  body: Center(child: Text('Progress - Coming Soon')),
+                child: const Scaffold(
+                  body: Center(child: Text('Progress — Coming Soon')),
                 ),
               ),
             ),
@@ -97,50 +131,31 @@ class AppRouter {
               path: AppRoutes.settings,
               name: 'settings',
               pageBuilder: (c, s) =>
-                  _pageBuilder(c: c, s: s, child: SettingsPage()),
+                  _fadeTransition(c: c, s: s, child: const SettingsPage()),
             ),
             GoRoute(
               path: AppRoutes.messaging,
               name: 'messaging',
-              pageBuilder: (c, s) => _pageBuilder(
+              pageBuilder: (c, s) => _fadeTransition(
                 c: c,
                 s: s,
-                child: Scaffold(
-                  body: Center(child: Text('Provider Messaging - Coming Soon')),
+                child: const Scaffold(
+                  body: Center(
+                    child: Text('Provider Messaging — Coming Soon'),
+                  ),
                 ),
               ),
-            ),
-            // Detail route
-            GoRoute(
-              path: AppRoutes.medicationDetail,
-              name: 'medicationDetail',
-              pageBuilder: (c, s) {
-                final medId = int.tryParse(s.pathParameters['id'] ?? '');
-                if (medId == null) {
-                  return _pageBuilder(
-                    c: c,
-                    s: s,
-                    child: Scaffold(
-                      body: Center(child: Text('Medication not found')),
-                    ),
-                  );
-                }
-                return _pageBuilder(
-                  c: c,
-                  s: s,
-                  child: MedicationDetailPage(medicationId: medId),
-                );
-              },
             ),
           ],
         ),
       ],
-      errorBuilder: (c, s) =>
-          Scaffold(body: Center(child: Text('Error: ${s.error}'))),
+      errorBuilder: (c, s) => Scaffold(
+        body: Center(child: Text('Page not found: ${s.error}')),
+      ),
     );
   }
 
-  static CustomTransitionPage _pageBuilder({
+  static CustomTransitionPage _fadeTransition({
     required BuildContext c,
     required GoRouterState s,
     required Widget child,
@@ -154,35 +169,42 @@ class AppRouter {
   }
 }
 
+/// Shell scaffold with bottom navigation bar.
 class _MainScaffold extends StatelessWidget {
   final Widget child;
   const _MainScaffold({required this.child});
 
   @override
   Widget build(BuildContext context) {
-    final cr = GoRouter.of(context).routeInformationProvider.value.uri.path;
-    final tr = [
+    final currentPath =
+        GoRouter.of(context).routeInformationProvider.value.uri.path;
+
+    final tabRoutes = [
       AppRoutes.dashboard,
       AppRoutes.medications,
       AppRoutes.calendar,
       AppRoutes.progress,
       AppRoutes.settings,
     ];
-    final si = tr.indexWhere((r) => r == cr);
-    final si2 = si == -1 ? 0 : si;
+
+    final selectedIndex = tabRoutes.indexWhere((r) => currentPath == r);
+    final effectiveIndex = selectedIndex == -1 ? 0 : selectedIndex;
+
+    // Hide bottom nav for non-tab routes
+    final isTabRoute = selectedIndex != -1;
+
     return Scaffold(
       body: child,
-      bottomNavigationBar: cr == AppRoutes.onboarding
-          ? const SizedBox.shrink()
-          : BottomNavigationBar(
+      bottomNavigationBar: isTabRoute
+          ? BottomNavigationBar(
               type: BottomNavigationBarType.fixed,
-              currentIndex: si2,
+              currentIndex: effectiveIndex,
               selectedItemColor: AppColors.primary,
               unselectedItemColor: AppColors.onSurfaceVariant,
               backgroundColor: AppColors.surface,
               elevation: 8,
               onTap: (i) {
-                if (i != si2) context.go(tr[i]);
+                if (i != effectiveIndex) context.go(tabRoutes[i]);
               },
               items: const [
                 BottomNavigationBarItem(
@@ -211,7 +233,8 @@ class _MainScaffold extends StatelessWidget {
                   label: 'Settings',
                 ),
               ],
-            ),
+            )
+          : null,
     );
   }
 }

@@ -3,6 +3,10 @@ import 'package:takeyourpills_healthcare_app/core/entities/schedule.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/dose_log.dart';
 import 'package:takeyourpills_healthcare_app/data/datasources/medication_local_datasource.dart';
 
+/// Abstract contract for medication data operations.
+///
+/// This interface decouples the domain/presentation layers from
+/// the concrete data implementation, enabling testability.
 abstract class MedicationRepository {
   // Medications
   Future<List<Medication>> getAllMedications();
@@ -38,6 +42,7 @@ abstract class MedicationRepository {
   Future<({int quantity, int threshold})?> getRefillInfo(int medicationId);
 }
 
+/// Concrete implementation of [MedicationRepository] using local datasource.
 class MedicationRepositoryImpl implements MedicationRepository {
   final MedicationLocalDatasource _localDatasource;
 

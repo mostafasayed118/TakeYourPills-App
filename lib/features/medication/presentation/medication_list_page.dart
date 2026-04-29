@@ -1,30 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
+import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository_impl.dart';
 import 'package:takeyourpills_healthcare_app/features/medication/presentation/cubit/medication_list_cubit.dart';
-import 'package:takeyourpills_healthcare_app/features/medication/presentation/cubit/medication_list_state.dart';
 import 'package:takeyourpills_healthcare_app/shared/theme/app_colors.dart';
 import 'package:takeyourpills_healthcare_app/shared/theme/app_text_styles.dart';
 import 'package:takeyourpills_healthcare_app/shared/components/app_button.dart';
 import 'package:takeyourpills_healthcare_app/shared/components/empty_state_widget.dart';
 
+/// Displays the user's medication list with real data from Drift.
 class MedicationListPage extends StatelessWidget {
   const MedicationListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          MedicationListCubit(context.read())..loadMedications(),
-      child: const MedicationListView(),
+      create: (context) => MedicationListCubit(
+        context.read<MedicationRepository>(),
+      )..loadMedications(),
+      child: const _MedicationListView(),
     );
   }
 }
 
-class MedicationListView extends StatelessWidget {
-  const MedicationListView({super.key});
+class _MedicationListView extends StatelessWidget {
+  const _MedicationListView();
 
   @override
   Widget build(BuildContext context) {
@@ -44,54 +45,46 @@ class MedicationListView extends StatelessWidget {
           title: const Text('My Medications'),
           backgroundColor: AppColors.surface,
           scrolledUnderElevation: 0,
-          actions: [
-            IconButton(
-              onPressed: () {
-                // Navigate to add page, passing no medId means create new
-                context.go('/add-medication/new');
-              },
-              icon: const Icon(Icons.add_circle_outline),
-            ),
-          ],
+        ),
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () async {
+            await context.push('/add-medication/new');
+            // Reload after returning from add screen
+            if (context.mounted) {
+              context.read<MedicationListCubit>().loadMedications();
+            }
+          },
+          backgroundColor: AppColors.primary,
+          foregroundColor: AppColors.onPrimary,
+          icon: const Icon(Icons.add),
+          label: const Text('Add'),
         ),
         body: BlocBuilder<MedicationListCubit, MedicationListState>(
           builder: (context, state) {
-            if (state is MedicationListLoading) {
+            if (state is MedicationListLoading ||
+                state is MedicationListInitial) {
               return const Center(child: CircularProgressIndicator());
             }
             if (state is MedicationListError) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.error, size: 60, color: AppColors.error),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Error: ${state.message}',
-                      style: AppTextStyles.bodyMedium,
-                    ),
-                    const SizedBox(height: 16),
-                    AppButton(
-                      text: 'Retry',
-                      onPressed: () =>
-                          context.read<MedicationListCubit>().loadMedications(),
-                      isPrimary: true,
-                    ),
-                  ],
-                ),
-              );
+              return _buildErrorState(context, state.message);
             }
             if (state is MedicationListEmpty) {
               return EmptyStateWidget(
                 title: 'No medications yet',
-                subtitle: 'Add your first medication to get started',
+                subtitle:
+                    'Add your first medication to start tracking your doses',
                 icon: const Icon(
-                  Icons.medication,
+                  Icons.medication_outlined,
                   size: 80,
                   color: AppColors.surfaceContainerHigh,
                 ),
                 actionLabel: 'Add Medication',
-                onAction: () => context.go('/add-medication/new'),
+                onAction: () async {
+                  await context.push('/add-medication/new');
+                  if (context.mounted) {
+                    context.read<MedicationListCubit>().loadMedications();
+                  }
+                },
               );
             }
             if (state is MedicationListLoaded) {
@@ -104,6 +97,44 @@ class MedicationListView extends StatelessWidget {
     );
   }
 
+  Widget _buildErrorState(BuildContext context, String message) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 40),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, size: 60, color: AppColors.error),
+            const SizedBox(height: 16),
+            Text(
+              'Something went wrong',
+              style: AppTextStyles.headlineMedium,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              message,
+              style: AppTextStyles.bodySmall.copyWith(
+                color: AppColors.onSurfaceVariant,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: 160,
+              child: AppButton(
+                text: 'Retry',
+                onPressed: () =>
+                    context.read<MedicationListCubit>().loadMedications(),
+                isPrimary: true,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildMedicationList(
     BuildContext context,
     List<Medication> medications,
@@ -111,37 +142,114 @@ class MedicationListView extends StatelessWidget {
     return RefreshIndicator(
       onRefresh: () => context.read<MedicationListCubit>().refresh(),
       child: ListView.builder(
+        padding: const EdgeInsets.only(top: 8, bottom: 100),
         itemCount: medications.length,
         itemBuilder: (context, index) {
-          final med = medications[index];
-          return _buildMedicationCard(context, med);
+          return _MedicationCard(
+            medication: medications[index],
+            onTap: () async {
+              await context.push(
+                '/medication/${medications[index].id}',
+              );
+              if (context.mounted) {
+                context.read<MedicationListCubit>().loadMedications();
+              }
+            },
+            onEdit: () async {
+              await context.push(
+                '/add-medication/${medications[index].id}',
+              );
+              if (context.mounted) {
+                context.read<MedicationListCubit>().loadMedications();
+              }
+            },
+            onPause: (isPaused) => context
+                .read<MedicationListCubit>()
+                .pauseMedication(medications[index].id, isPaused),
+            onDelete: () => _confirmDelete(
+              context,
+              medications[index],
+            ),
+          );
         },
       ),
     );
   }
 
-  Widget _buildMedicationCard(BuildContext context, Medication med) {
-    final isPaused = med.isPaused;
+  void _confirmDelete(BuildContext context, Medication med) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Delete Medication'),
+        content: Text(
+          'Are you sure you want to delete "${med.name}"?\n'
+          'This will also remove all associated schedules and logs.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              context.read<MedicationListCubit>().deleteMedication(med.id);
+            },
+            child: const Text(
+              'Delete',
+              style: TextStyle(color: AppColors.error),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Individual medication card with premium design.
+class _MedicationCard extends StatelessWidget {
+  final Medication medication;
+  final VoidCallback onTap;
+  final VoidCallback onEdit;
+  final void Function(bool) onPause;
+  final VoidCallback onDelete;
+
+  const _MedicationCard({
+    required this.medication,
+    required this.onTap,
+    required this.onEdit,
+    required this.onPause,
+    required this.onDelete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isPaused = medication.isPaused;
+
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
+        border: isPaused
+            ? Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.5))
+            : null,
+        boxShadow: [
           BoxShadow(
-            color: Color(0x0A000000),
-            blurRadius: 20,
-            offset: Offset(0, 4),
+            color: const Color(0x0A000000),
+            blurRadius: isPaused ? 8 : 20,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: () => context.go('/medication-details/${med.id}'),
+        onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
+              // Icon
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -159,70 +267,86 @@ class MedicationListView extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 16),
+              // Details
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(med.name, style: AppTextStyles.titleSmall),
+                    Text(
+                      medication.name,
+                      style: AppTextStyles.titleSmall.copyWith(
+                        color: isPaused
+                            ? AppColors.onSurfaceVariant
+                            : AppColors.onSurface,
+                      ),
+                    ),
                     const SizedBox(height: 4),
                     Text(
-                      '${med.dosageAmount} ${med.dosageUnit}',
+                      '${medication.dosageAmount} ${medication.dosageUnit}',
                       style: AppTextStyles.bodySmall.copyWith(
                         color: AppColors.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '${med.scheduleTimes} • ${med.frequencyType}',
+                      _formatFrequency(medication.frequencyType),
                       style: AppTextStyles.bodySmall.copyWith(
                         color: AppColors.onSurfaceVariant,
                       ),
                     ),
-                    if (isPaused)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.surfaceContainerHigh,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(
-                            'PAUSED',
-                            style: AppTextStyles.bodySmall.copyWith(
-                              fontSize: 9,
-                              color: AppColors.onSurfaceVariant,
-                            ),
-                          ),
+                    if (isPaused) ...[
+                      const SizedBox(height: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
                         ),
-                      ),
-                    if (med.pillsRemaining != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4),
+                        decoration: BoxDecoration(
+                          color: AppColors.surfaceContainerHigh,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                         child: Text(
-                          '${med.pillsRemaining} pills remaining',
+                          'PAUSED',
                           style: AppTextStyles.bodySmall.copyWith(
-                            color: AppColors.primary,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.onSurfaceVariant,
+                            letterSpacing: 0.5,
                           ),
                         ),
                       ),
+                    ],
+                    if (medication.pillsRemaining != null) ...[
+                      const SizedBox(height: 4),
+                      _buildPillsIndicator(),
+                    ],
                   ],
                 ),
               ),
+              // Menu
               PopupMenuButton<String>(
                 icon: const Icon(
                   Icons.more_vert,
                   color: AppColors.onSurfaceVariant,
                 ),
-                onSelected: (value) => _handleMenuAction(context, med, value),
-                itemBuilder: (context) => [
+                onSelected: (value) {
+                  switch (value) {
+                    case 'edit':
+                      onEdit();
+                    case 'pause':
+                      onPause(true);
+                    case 'resume':
+                      onPause(false);
+                    case 'delete':
+                      onDelete();
+                  }
+                },
+                itemBuilder: (_) => [
                   const PopupMenuItem(value: 'edit', child: Text('Edit')),
                   PopupMenuItem(
-                    value: med.isPaused ? 'resume' : 'pause',
-                    child: Text(med.isPaused ? 'Resume' : 'Pause'),
+                    value: medication.isPaused ? 'resume' : 'pause',
+                    child:
+                        Text(medication.isPaused ? 'Resume' : 'Pause'),
                   ),
                   const PopupMenuItem(
                     value: 'delete',
@@ -240,45 +364,42 @@ class MedicationListView extends StatelessWidget {
     );
   }
 
-  void _handleMenuAction(BuildContext context, Medication med, String value) {
-    final cubit = context.read<MedicationListCubit>();
-    switch (value) {
-      case 'edit':
-        context.go('/add-medication/${med.id}');
-        break;
-      case 'pause':
-        cubit.pauseMedication(med.id, true);
-        break;
-      case 'resume':
-        cubit.pauseMedication(med.id, false);
-        break;
-      case 'delete':
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Delete Medication'),
-            content: Text(
-              'Are you sure you want to delete ${med.name}? This action cannot be undone.',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  cubit.deleteMedication(med.id);
-                },
-                child: const Text(
-                  'Delete',
-                  style: TextStyle(color: AppColors.error),
-                ),
-              ),
-            ],
+  Widget _buildPillsIndicator() {
+    final remaining = medication.pillsRemaining!;
+    final threshold = medication.refillThreshold ?? 0;
+    final isLow = threshold > 0 && remaining <= threshold;
+
+    return Row(
+      children: [
+        Icon(
+          isLow ? Icons.warning_amber_rounded : Icons.inventory_2_outlined,
+          size: 14,
+          color: isLow ? AppColors.error : AppColors.primary,
+        ),
+        const SizedBox(width: 4),
+        Text(
+          '$remaining pills remaining',
+          style: AppTextStyles.bodySmall.copyWith(
+            color: isLow ? AppColors.error : AppColors.primary,
+            fontWeight: isLow ? FontWeight.w600 : FontWeight.w400,
           ),
-        );
-        break;
+        ),
+      ],
+    );
+  }
+
+  String _formatFrequency(String type) {
+    switch (type) {
+      case 'daily':
+        return 'Every day';
+      case 'weekly':
+        return 'Weekly';
+      case 'as_needed':
+        return 'As needed';
+      case 'specific_days':
+        return 'Specific days';
+      default:
+        return type;
     }
   }
 }

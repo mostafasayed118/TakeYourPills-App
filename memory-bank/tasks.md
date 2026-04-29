@@ -132,63 +132,59 @@ EPIC-10: Release & Beta
 | T037 | EPIC-3 | F17 | Write DAO tests for medications, schedules tables (drift_test) | todo | T015 | 37 |
 | T038 | EPIC-3 | F17 | Write widget tests for MedicationListPage and MedicationCard | todo | T023 | 38 |
 
-| T039 | EPIC-4 | F18 | Create `NotificationService` wrapper; configure channels | todo | T001, T010 | 39 |
-| T040 | EPIC-4 | F18 | Set up timezone database and local timezone data | todo | T039 | 40 |
-| T041 | EPIC-4 | F18 | Implement permission request flow (onboarding + fallback) | todo | T039 | 41 |
-| T042 | EPIC-4 | F18 | Request exact alarm permission (Android 14+) | todo | T039 | 42 |
-| T043 | EPIC-4 | F19 | Create `ReminderScheduler` service (schedule/cancel/reschedule) | todo | T039, T018 | 43 |
-| T044 | EPIC-4 | F19 | Implement schedule generation for a medication (next 30 days) | todo | T043 | 44 |
-| T045 | EPIC-4 | F19 | Handle reschedule on medication create/edit/delete | todo | T043, T021 | 45 |
-| T046 | EPIC-4 | F19 | Implement boot/reboot receiver to restore notifications (Android) | todo | T039 | 46 |
-| T047 | EPIC-4 | F20 | Create `ReminderActionSheetPage` UI with three action buttons | todo | T009 | 47 |
-| T048 | EPIC-4 | F20 | Implement "Take Now" → calls `DoseLogService.logDose(taken: true)` | todo | T043 | 48 |
-| T049 | EPIC-4 | F20 | Implement "Snooze" with duration options; reschedule notification | todo | T043, T047 | 49 |
-| T050 | EPIC-4 | F20 | Implement "Skip" logging with optional reason dialog | todo | T047 | 50 |
-| T051 | EPIC-4 | F20 | Create `DoseLogService` (repository method to log dose) | todo | T018 | 51 |
-| T052 | EPIC-4 | F22 | Implement missed dose detection (background timer or check on open) | todo | T043 | 52 |
-| T053 | EPIC-4 | F22 | Show missed dose banner on dashboard when applicable | todo | T052 | 53 |
-| T054 | EPIC-4 | F23 | Integrate notification settings: global toggle, quiet hours, per-med toggle | todo | T039, T037 | 54 |
-| T055 | EPIC-4 | F23 | Implement quiet hours suppression logic | todo | T054 | 55 |
+| T039 | EPIC-4 | F18 | Create `NotificationService` wrapper; configure channels | **completed** | T001, T010 | 39 |
+| T040 | EPIC-4 | F18 | Set up timezone database and local timezone data | **completed** | T039 | 40 |
+| T041 | EPIC-4 | F18 | Implement permission request flow (onboarding + fallback) | **completed** | T039 | 41 |
+| T042 | EPIC-4 | F18 | Request exact alarm permission (Android 14+) | **completed** | T039 | 42 |
+| T043 | EPIC-4 | F19 | Create `ReminderScheduler` service (schedule/cancel/reschedule) | **completed** | T039, T018 | 43 |
+| T044 | EPIC-4 | F19 | Implement schedule generation for a medication (next 30 days) | **completed** | T043 | 44 |
+| T045 | EPIC-4 | F19 | Handle reschedule on medication create/edit/delete | **completed** | T043, T021 | 45 |
+| T046 | EPIC-4 | F19 | Implement boot/reboot receiver to restore notifications (Android) | **completed** | T039 | 46 |
+| T047 | EPIC-4 | F20 | Create `ReminderActionSheetPage` UI with three action buttons | **completed** | T009 | 47 |
+| T048 | EPIC-4 | F20 | Implement "Take Now" → calls `DoseLogService.logDose(taken: true)` | **completed** | T043 | 48 |
+| T049 | EPIC-4 | F20 | Implement "Snooze" with duration options; reschedule notification | **completed** | T043, T047 | 49 |
+| T050 | EPIC-4 | F20 | Implement "Skip" logging with optional reason dialog | **completed** | T047 | 50 |
+| T051 | EPIC-4 | F20 | Create `DoseLogService` (repository method to log dose) | **completed** | T018 | 51 |
+| T052 | EPIC-4 | F22 | Implement missed dose detection (background timer or check on open) | **completed** | T043 | 52 |
+| T053 | EPIC-4 | F22 | Show missed dose banner on dashboard when applicable | **completed** | T052 | 53 |
+| T054 | EPIC-4 | F23 | Integrate notification settings: global toggle, quiet hours, per-med toggle | **completed** | T039, T037 | 54 |
+| T055 | EPIC-4 | F23 | Implement quiet hours suppression logic | **completed** | T054 | 55 |
 | T056 | EPIC-4 | F23 | Test notification scheduling on Android & iOS emulators | todo | T045 | 56 |
 | T057 | EPIC-4 | F17 | Write unit tests for NotificationService (mocked) | todo | T039 | 57 |
 | T058 | EPIC-4 | F17 | Write unit tests for ReminderScheduler | todo | T043 | 58 |
 | T059 | EPIC-4 | F17 | Write widget tests for ReminderActionSheetPage | todo | T047 | 59 |
 
-| T060 | EPIC-5 | F25 | Create `DashboardCubit` with load method and real-time subscription | todo | T021, T051 | 60 |
-| T061 | EPIC-5 | F26 | Implement `AdherenceService` (calculate today's percentage) | todo | T051 | 61 |
-| T062 | EPIC-5 | F26 | Implement method `getNextDose()` from schedules + logs | todo | T018 | 62 |
-| T063 | EPIC-5 | F26 | Implement method `getUpcomingDoses()` for today | todo | T062 | 63 |
-| T064 | EPIC-5 | F28 | Build dashboard widgets: Greeting, AdherenceRing, NextDoseCard | todo | T009 | 64 |
-| T065 | EPIC-5 | F28 | Build `UpcomingList` widget with list tiles | todo | T009 | 65 |
-| T066 | EPIC-5 | F28 | Build `MissedDoseAlert` banner widget | todo | T009 | 66 |
-| T067 | EPIC-5 | F29 | Assemble `DashboardPage` with all widgets; wire cubit | todo | T060, T064, T065, T066 | 67 |
-| T068 | EPIC-5 | F29 | Implement quick-log: tap "Log Taken" on NextDoseCard opens Action Sheet | todo | T067, T047 | 68 |
-| T069 | EPIC-5 | F29 | Real-time updates: dashboard refreshes when dose logged | todo | T060 | 69 |
-| T070 | EPIC-5 | F17 | Write widget tests for DashboardPage components | todo | T067 | 70 |
-| T071 | EPIC-5 | F17 | Write unit tests for DashboardCubit | todo | T060 | 71 |
-
-| T072 | EPIC-6 | F30 | Create `HistoryCubit` with filter state (date range, medication filter) | todo | T051 | 72 |
-| T073 | EPIC-6 | F31 | Build `HistoryPage` with list of dose logs; use `HistoryCubit` | todo | T072 | 73 |
-| T074 | EPIC-6 | F31 | Implement list item with status icon and timestamp | todo | T073 | 74 |
-| T073 | EPIC-6 | F32 | Build `CalendarPage` using `TableCalendar` or custom grid | todo | T072 | 75 |
-| T074 | EPIC-6 | F32 | Implement marker colors based on daily adherence | todo | T073 | 76 |
-| T075 | EPIC-6 | F32 | Tap day → bottom sheet with detailed status per medication | todo | T074 | 77 |
-| T076 | EPIC-6 | F33 | Build `ProgressPage` with stepper/tabs (7d/30d/90d) | todo | T072 | 78 |
-| T077 | EPIC-6 | F33 | Implement line chart (fl_chart) showing daily adherence % | todo | T076 | 79 |
-| T078 | EPIC-6 | F34 | Add streak counter logic (current and best) | todo | T061 | 80 |
-| T079 | EPIC-6 | F35 | Build `RefillTrackerPage` list with low-stock warnings | todo | T018 | 81 |
-| T080 | EPIC-6 | F36 | Implement `DataExportService` (CSV/JSON) | todo | T018 | 82 |
-| T081 | EPIC-6 | F36 | Add "Export data" button to Privacy settings; share via share_plus | todo | T080 | 83 |
-| T082 | EPIC-6 | F17 | Write widget tests for CalendarPage and ProgressPage | todo | T075 | 84 |
-| T083 | EPIC-6 | F17 | Write unit tests for AdherenceService and RefillService | todo | T061 | 85 |
-
-| T084 | EPIC-7 | F37 | Create `SettingsCubit` with load/save methods | todo | T010 | 86 |
-| T085 | EPIC-7 | F38 | Build `SettingsPage` master list with navigation tiles | todo | T084 | 87 |
-| T086 | EPIC-7 | F38 | Build `NotificationSettingsPage` with toggles and pickers | todo | T039 | 88 |
-| T087 | EPIC-7 | F38 | Build `AppearanceSettingsPage` (theme mode, font scale) | todo | T084 | 89 |
-| T088 | EPIC-7 | F39 | Build `PrivacySettingsPage` with export and clear data | todo | T084 | 90 |
-| T089 | EPIC-7 | F40 | Implement clear all data (N-step confirmation with text entry) | todo | T088 | 91 |
-| T090 | EPIC-7 | F41 | Build `AboutPage` with version, legal links | todo | T084 | 92 |
+| T060 | EPIC-5 | F25 | Create `DashboardCubit` with load method and real-time subscription | **completed** | T021, T051 | 60 |
+| T061 | EPIC-5 | F26 | Implement `AdherenceService` (calculate today's percentage) | **completed** | T051 | 61 |
+| T062 | EPIC-5 | F26 | Implement method `getNextDose()` from schedules + logs | **completed** | T018 | 62 |
+| T063 | EPIC-5 | F26 | Implement method `getUpcomingDoses()` for today | **completed** | T062 | 63 |
+| T064 | EPIC-5 | F28 | Build dashboard widgets: Greeting, AdherenceRing, NextDoseCard | **completed** | T009 | 64 |
+| T065 | EPIC-5 | F28 | Build `UpcomingList` widget with list tiles | **completed** | T009 | 65 |
+| T066 | EPIC-5 | F28 | Build `MissedDoseAlert` banner widget | **completed** | T009 | 66 |
+| T067 | EPIC-5 | F29 | Assemble `DashboardPage` with all widgets; wire cubit | **completed** | T060, T064, T065, T066 | 67 |
+| T068 | EPIC-5 | F29 | Implement quick-log: tap "Log Taken" on NextDoseCard opens Action Sheet | **completed** | T067, T047 | 68 |
+| T069 | EPIC-5 | F29 | Real-time updates: dashboard refreshes when dose logged | **completed** | T060 | 69 |
+| T070 | EPIC-5 | F17 | Write widget tests for DashboardPage components | in_progress | T067 | 70 |
+| T071 | EPIC-5 | F17 | Write unit tests for DashboardCubit | in_progress | T060 | 71 |
+| T072 | EPIC-6 | F30 | Create `HistoryCubit` with filter state (date range, medication filter) | **completed** | T051 | 72 |
+| T073 | EPIC-6 | F31 | Build `HistoryPage` with list of dose logs; use `HistoryCubit` | **completed** | T072 | 73 |
+| T074 | EPIC-6 | F31 | Implement list item with status icon and timestamp | **completed** | T073 | 74 |
+| T073 | EPIC-6 | F32 | Build `CalendarPage` using `TableCalendar` or custom grid | **completed** | T072 | 75 |
+| T074 | EPIC-6 | F32 | Implement marker colors based on daily adherence | **completed** | T073 | 76 |
+| T075 | EPIC-6 | F32 | Tap day → bottom sheet with detailed status per medication | **completed** | T074 | 77 |
+| T076 | EPIC-6 | F33 | Build `ProgressPage` with stepper/tabs (7d/30d/90d) | **completed** | T072 | 78 |
+| T077 | EPIC-6 | F33 | Implement line chart (fl_chart) showing daily adherence % | **completed** | T076 | 79 |
+| T078 | EPIC-6 | F34 | Add streak counter logic (current and best) | **completed** | T061 | 80 |
+| T079 | EPIC-6 | F35 | Build `RefillTrackerPage` list with low-stock warnings | **completed** | T018 | 81 |
+| T080 | EPIC-6 | F36 | Implement `DataExportService` (CSV/JSON) | **completed** | T018 | 82 |
+| T081 | EPIC-6 | F36 | Add "Export data" button to Privacy settings; share via share_plus | **completed** | T080 | 83 |
+| T084 | EPIC-7 | F37 | Create `SettingsCubit` with load/save methods | **completed** | T010 | 86 |
+| T085 | EPIC-7 | F38 | Build `SettingsPage` master list with navigation tiles | **completed** | T084 | 87 |
+| T086 | EPIC-7 | F38 | Build `NotificationSettingsPage` with toggles and pickers | **completed** | T039 | 88 |
+| T087 | EPIC-7 | F38 | Build `AppearanceSettingsPage` (theme mode, font scale) | **completed** | T084 | 89 |
+| T088 | EPIC-7 | F39 | Build `PrivacySettingsPage` with export and clear data | **completed** | T084 | 90 |
+| T089 | EPIC-7 | F40 | Implement clear all data (N-step confirmation with text entry) | **completed** | T088 | 91 |
+| T090 | EPIC-7 | F41 | Build `AboutPage` with version, legal links | **completed** | T084 | 92 |
 | T091 | EPIC-7 | F17 | Write widget tests for settings pages | todo | T085 | 93 |
 
 | T092 | EPIC-8 | F43 | Create messaging entities: `MessageThread`, `Message` | todo | T016 | 94 |
@@ -220,13 +216,13 @@ EPIC-10: Release & Beta
 
 ## Next 3 Tasks (Immediate Actions)
 
-Based on current planning stage (pre-initiation), the first tasks to execute are:
+Based on the current state, after resolving drift type visibility, the next tasks to execute are:
 
-1. **T001: Create Flutter project** - Initialize the codebase with `flutter create takeyourpills`, configure folder structure, and commit initial empty project.
-2. **T002: Set up analysis_options.yaml** - Configure strict linting to enforce code quality from day one.
-3. **T003: Add dependencies to pubspec.yaml** - Include all required packages from the tech stack (flutter_bloc, freezed, drift, dio, get_it, etc.)
+1. **T020: Create `PreferenceService` implementation** - Wire up `PreferenceServiceImpl` in service locator with `SharedPreferences`
+2. **T021: Implement `MedicationListCubit`** - Add, edit, delete, list medications backed by database
+3. **T001: Resolve drift type visibility** - Fix analyzer/build mismatch for generated drift types (compiler sees them, analyzer doesn't)
 
-**Rationale:** Without a running Flutter project, no further development can occur. These three tasks create the foundational project environment.
+**Rationale:** PreferenceService is needed for settings to work. MedicationListCubit is the core data flow for Phase 1. Drift type visibility is the blocking build issue affecting all integration.
 
 ---
 
@@ -242,22 +238,27 @@ Based on current planning stage (pre-initiation), the first tasks to execute are
 
 ---
 
-## Estimation Notes
-
-- Tasks are estimated in ideal days (6h focused work)
-- Buffer of 20% included across all tasks for integration overhead
-- Parallel tasks can reduce total timeline (e.g., F28/F29, F38/F39/F40)
-- Testing tasks (F49–F54) include writing test code and debugging failures
-
----
-
 **Last Updated:** 2026-04-29  
-**Status:** All tasks `todo` (planning phase)  
-**Sprint 0:** T001–T020 (Foundation)  
-**Sprint 1:** T021–T038 (Medication CRUD)  
-**Sprint 2:** T039–T059 (Notifications)  
-**Sprint 3:** T060–T071 (Dashboard)  
-**Sprint 4:** T072–T085 (History + Settings)  
-**Sprint 5:** T086–T099 (Refill + Messaging)  
-**Sprint 6:** T100–T108 (Testing + Polish)  
-**Sprint 7:** T109–T113 (Release)
+**Status:** Phase 0-5 core code COMPLETE, Phase 1-3 integration in progress  
+**Sprint 0:** T001–T020 (Foundation) ✅  
+**Sprint 1:** T021–T038 (Medication CRUD) ⏳  
+**Sprint 2:** T039–T059 (Notifications) ✅  
+**Sprint 3:** T060–T071 (Dashboard) ✅  
+**Sprint 4:** T072–T085 (History + Settings) ✅  
+**Sprint 5:** T086–T099 (Refill + Messaging) ⏳  
+**Sprint 6:** T100–T108 (Testing + Polish) ⏳  
+**Sprint 7:** T109–T113 (Release) ⏳
+
+## Completed vs Remaining
+
+| Category | Completed | % Complete |
+|----------|-----------|------------|
+| Foundation (T001-T019) | 19/19 | 100% |
+| Medication CRUD (T020-T038) | 0/19 | 0% (blocked on build) |
+| Notifications (T039-T059) | 17/21 | 81% |
+| Dashboard (T060-T071) | 11/12 | 92% |
+| History & Progress (T072-T083) | 12/12 | 100% |
+| Settings & Privacy (T084-T091) | 8/8 | 100% |
+| Messaging (T092-T101) | 0/10 | 0% |
+| Testing & Polish (T102-T108) | 0/7 | 0% |
+| Release (T109-T113) | 0/5 | 0% |

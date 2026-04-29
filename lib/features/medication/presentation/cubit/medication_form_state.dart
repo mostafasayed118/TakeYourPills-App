@@ -1,15 +1,18 @@
-import 'package:equatable/equatable';
+import 'package:equatable/equatable.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
 
+/// Base class for all medication form states.
 abstract class MedicationFormState extends Equatable {
   const MedicationFormState();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
+/// Initial state before form is ready.
 class MedicationFormInitial extends MedicationFormState {}
 
+/// Active editing state containing all form field values.
 class MedicationFormEditing extends MedicationFormState {
   final String name;
   final String dosageAmount;
@@ -26,9 +29,17 @@ class MedicationFormEditing extends MedicationFormState {
   final bool isPaused;
   final int? pillsRemaining;
   final int? refillThreshold;
+
+  /// The original medication when editing (null when creating)
   final Medication? medication;
+
+  /// Current validation error to display, if any
   final String? validationError;
+
+  /// Whether a save operation is in progress
   final bool isSaving;
+
+  /// Whether the last operation was successful
   final bool isSuccess;
 
   const MedicationFormEditing({
@@ -40,7 +51,7 @@ class MedicationFormEditing extends MedicationFormState {
     this.frequencyType = 'daily',
     this.frequencyDays = '[]',
     this.frequencyInterval = 1,
-    this.scheduleTimes = '[]',
+    this.scheduleTimes = '',
     this.startDate,
     this.endDate,
     this.instructions,
@@ -98,28 +109,30 @@ class MedicationFormEditing extends MedicationFormState {
   }
 
   @override
-  List<Object> get props => [
-        name,
-        dosageAmount,
-        dosageUnit,
-        iconName,
-        colorHex,
-        frequencyType,
-        frequencyDays,
-        frequencyInterval,
-        scheduleTimes,
-        startDate ?? '',
-        endDate ?? '',
-        instructions ?? '',
-        isPaused,
-        pillsRemaining ?? 0,
-        refillThreshold ?? 0,
-        validationError ?? '',
-        isSaving,
-        isSuccess,
-      ];
+  List<Object?> get props => [
+    name,
+    dosageAmount,
+    dosageUnit,
+    iconName,
+    colorHex,
+    frequencyType,
+    frequencyDays,
+    frequencyInterval,
+    scheduleTimes,
+    startDate,
+    endDate,
+    instructions,
+    isPaused,
+    pillsRemaining,
+    refillThreshold,
+    medication,
+    validationError,
+    isSaving,
+    isSuccess,
+  ];
 }
 
+/// Form saved successfully.
 class MedicationFormSuccess extends MedicationFormState {
   final String message;
 
@@ -129,6 +142,7 @@ class MedicationFormSuccess extends MedicationFormState {
   List<Object> get props => [message];
 }
 
+/// Unrecoverable form error.
 class MedicationFormError extends MedicationFormState {
   final String message;
 

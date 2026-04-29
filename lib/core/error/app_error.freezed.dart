@@ -86,15 +86,15 @@ extension AppErrorPatterns on AppError {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( DatabaseError value)?  database,TResult Function( NetworkError value)?  network,TResult Function( ValidationError value)?  validation,TResult Function( NotificationError value)?  notification,TResult Function( PermissionError value)?  permission,TResult Function( UnexpectedError value)?  unexpected,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( DatabaseError value)?  database,TResult Function( NotificationError value)?  notification,TResult Function( PermissionError value)?  permission,TResult Function( ValidationError value)?  validation,TResult Function( NetworkError value)?  network,TResult Function( UnexpectedError value)?  unexpected,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case DatabaseError() when database != null:
-return database(_that);case NetworkError() when network != null:
-return network(_that);case ValidationError() when validation != null:
-return validation(_that);case NotificationError() when notification != null:
+return database(_that);case NotificationError() when notification != null:
 return notification(_that);case PermissionError() when permission != null:
-return permission(_that);case UnexpectedError() when unexpected != null:
+return permission(_that);case ValidationError() when validation != null:
+return validation(_that);case NetworkError() when network != null:
+return network(_that);case UnexpectedError() when unexpected != null:
 return unexpected(_that);case _:
   return orElse();
 
@@ -113,15 +113,15 @@ return unexpected(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( DatabaseError value)  database,required TResult Function( NetworkError value)  network,required TResult Function( ValidationError value)  validation,required TResult Function( NotificationError value)  notification,required TResult Function( PermissionError value)  permission,required TResult Function( UnexpectedError value)  unexpected,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( DatabaseError value)  database,required TResult Function( NotificationError value)  notification,required TResult Function( PermissionError value)  permission,required TResult Function( ValidationError value)  validation,required TResult Function( NetworkError value)  network,required TResult Function( UnexpectedError value)  unexpected,}){
 final _that = this;
 switch (_that) {
 case DatabaseError():
-return database(_that);case NetworkError():
-return network(_that);case ValidationError():
-return validation(_that);case NotificationError():
+return database(_that);case NotificationError():
 return notification(_that);case PermissionError():
-return permission(_that);case UnexpectedError():
+return permission(_that);case ValidationError():
+return validation(_that);case NetworkError():
+return network(_that);case UnexpectedError():
 return unexpected(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -139,15 +139,15 @@ return unexpected(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( DatabaseError value)?  database,TResult? Function( NetworkError value)?  network,TResult? Function( ValidationError value)?  validation,TResult? Function( NotificationError value)?  notification,TResult? Function( PermissionError value)?  permission,TResult? Function( UnexpectedError value)?  unexpected,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( DatabaseError value)?  database,TResult? Function( NotificationError value)?  notification,TResult? Function( PermissionError value)?  permission,TResult? Function( ValidationError value)?  validation,TResult? Function( NetworkError value)?  network,TResult? Function( UnexpectedError value)?  unexpected,}){
 final _that = this;
 switch (_that) {
 case DatabaseError() when database != null:
-return database(_that);case NetworkError() when network != null:
-return network(_that);case ValidationError() when validation != null:
-return validation(_that);case NotificationError() when notification != null:
+return database(_that);case NotificationError() when notification != null:
 return notification(_that);case PermissionError() when permission != null:
-return permission(_that);case UnexpectedError() when unexpected != null:
+return permission(_that);case ValidationError() when validation != null:
+return validation(_that);case NetworkError() when network != null:
+return network(_that);case UnexpectedError() when unexpected != null:
 return unexpected(_that);case _:
   return null;
 
@@ -165,15 +165,15 @@ return unexpected(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String message)?  database,TResult Function( String message)?  network,TResult Function( String message)?  validation,TResult Function( String message)?  notification,TResult Function( String message)?  permission,TResult Function( String message)?  unexpected,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String message,  String? code)?  database,TResult Function( String message,  String? code)?  notification,TResult Function( String message,  String? code)?  permission,TResult Function( String message,  String? details)?  validation,TResult Function( String message,  String? code)?  network,TResult Function( String message,  String? stackTrace)?  unexpected,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case DatabaseError() when database != null:
-return database(_that.message);case NetworkError() when network != null:
-return network(_that.message);case ValidationError() when validation != null:
-return validation(_that.message);case NotificationError() when notification != null:
-return notification(_that.message);case PermissionError() when permission != null:
-return permission(_that.message);case UnexpectedError() when unexpected != null:
-return unexpected(_that.message);case _:
+return database(_that.message,_that.code);case NotificationError() when notification != null:
+return notification(_that.message,_that.code);case PermissionError() when permission != null:
+return permission(_that.message,_that.code);case ValidationError() when validation != null:
+return validation(_that.message,_that.details);case NetworkError() when network != null:
+return network(_that.message,_that.code);case UnexpectedError() when unexpected != null:
+return unexpected(_that.message,_that.stackTrace);case _:
   return orElse();
 
 }
@@ -191,15 +191,15 @@ return unexpected(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String message)  database,required TResult Function( String message)  network,required TResult Function( String message)  validation,required TResult Function( String message)  notification,required TResult Function( String message)  permission,required TResult Function( String message)  unexpected,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String message,  String? code)  database,required TResult Function( String message,  String? code)  notification,required TResult Function( String message,  String? code)  permission,required TResult Function( String message,  String? details)  validation,required TResult Function( String message,  String? code)  network,required TResult Function( String message,  String? stackTrace)  unexpected,}) {final _that = this;
 switch (_that) {
 case DatabaseError():
-return database(_that.message);case NetworkError():
-return network(_that.message);case ValidationError():
-return validation(_that.message);case NotificationError():
-return notification(_that.message);case PermissionError():
-return permission(_that.message);case UnexpectedError():
-return unexpected(_that.message);case _:
+return database(_that.message,_that.code);case NotificationError():
+return notification(_that.message,_that.code);case PermissionError():
+return permission(_that.message,_that.code);case ValidationError():
+return validation(_that.message,_that.details);case NetworkError():
+return network(_that.message,_that.code);case UnexpectedError():
+return unexpected(_that.message,_that.stackTrace);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -216,15 +216,15 @@ return unexpected(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String message)?  database,TResult? Function( String message)?  network,TResult? Function( String message)?  validation,TResult? Function( String message)?  notification,TResult? Function( String message)?  permission,TResult? Function( String message)?  unexpected,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String message,  String? code)?  database,TResult? Function( String message,  String? code)?  notification,TResult? Function( String message,  String? code)?  permission,TResult? Function( String message,  String? details)?  validation,TResult? Function( String message,  String? code)?  network,TResult? Function( String message,  String? stackTrace)?  unexpected,}) {final _that = this;
 switch (_that) {
 case DatabaseError() when database != null:
-return database(_that.message);case NetworkError() when network != null:
-return network(_that.message);case ValidationError() when validation != null:
-return validation(_that.message);case NotificationError() when notification != null:
-return notification(_that.message);case PermissionError() when permission != null:
-return permission(_that.message);case UnexpectedError() when unexpected != null:
-return unexpected(_that.message);case _:
+return database(_that.message,_that.code);case NotificationError() when notification != null:
+return notification(_that.message,_that.code);case PermissionError() when permission != null:
+return permission(_that.message,_that.code);case ValidationError() when validation != null:
+return validation(_that.message,_that.details);case NetworkError() when network != null:
+return network(_that.message,_that.code);case UnexpectedError() when unexpected != null:
+return unexpected(_that.message,_that.stackTrace);case _:
   return null;
 
 }
@@ -235,11 +235,12 @@ return unexpected(_that.message);case _:
 /// @nodoc
 
 
-class DatabaseError implements AppError {
-  const DatabaseError(this.message);
+class DatabaseError extends AppError {
+  const DatabaseError({required this.message, this.code}): super._();
   
 
 @override final  String message;
+ final  String? code;
 
 /// Create a copy of AppError
 /// with the given fields replaced by the non-null parameter values.
@@ -251,16 +252,16 @@ $DatabaseErrorCopyWith<DatabaseError> get copyWith => _$DatabaseErrorCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DatabaseError&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DatabaseError&&(identical(other.message, message) || other.message == message)&&(identical(other.code, code) || other.code == code));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message);
+int get hashCode => Object.hash(runtimeType,message,code);
 
 @override
 String toString() {
-  return 'AppError.database(message: $message)';
+  return 'AppError.database(message: $message, code: $code)';
 }
 
 
@@ -271,7 +272,7 @@ abstract mixin class $DatabaseErrorCopyWith<$Res> implements $AppErrorCopyWith<$
   factory $DatabaseErrorCopyWith(DatabaseError value, $Res Function(DatabaseError) _then) = _$DatabaseErrorCopyWithImpl;
 @override @useResult
 $Res call({
- String message
+ String message, String? code
 });
 
 
@@ -288,10 +289,11 @@ class _$DatabaseErrorCopyWithImpl<$Res>
 
 /// Create a copy of AppError
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? message = null,Object? code = freezed,}) {
   return _then(DatabaseError(
-null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,
+message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String,code: freezed == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -301,143 +303,12 @@ as String,
 /// @nodoc
 
 
-class NetworkError implements AppError {
-  const NetworkError(this.message);
+class NotificationError extends AppError {
+  const NotificationError({required this.message, this.code}): super._();
   
 
 @override final  String message;
-
-/// Create a copy of AppError
-/// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$NetworkErrorCopyWith<NetworkError> get copyWith => _$NetworkErrorCopyWithImpl<NetworkError>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is NetworkError&&(identical(other.message, message) || other.message == message));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,message);
-
-@override
-String toString() {
-  return 'AppError.network(message: $message)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $NetworkErrorCopyWith<$Res> implements $AppErrorCopyWith<$Res> {
-  factory $NetworkErrorCopyWith(NetworkError value, $Res Function(NetworkError) _then) = _$NetworkErrorCopyWithImpl;
-@override @useResult
-$Res call({
- String message
-});
-
-
-
-
-}
-/// @nodoc
-class _$NetworkErrorCopyWithImpl<$Res>
-    implements $NetworkErrorCopyWith<$Res> {
-  _$NetworkErrorCopyWithImpl(this._self, this._then);
-
-  final NetworkError _self;
-  final $Res Function(NetworkError) _then;
-
-/// Create a copy of AppError
-/// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
-  return _then(NetworkError(
-null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,
-  ));
-}
-
-
-}
-
-/// @nodoc
-
-
-class ValidationError implements AppError {
-  const ValidationError(this.message);
-  
-
-@override final  String message;
-
-/// Create a copy of AppError
-/// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$ValidationErrorCopyWith<ValidationError> get copyWith => _$ValidationErrorCopyWithImpl<ValidationError>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ValidationError&&(identical(other.message, message) || other.message == message));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,message);
-
-@override
-String toString() {
-  return 'AppError.validation(message: $message)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $ValidationErrorCopyWith<$Res> implements $AppErrorCopyWith<$Res> {
-  factory $ValidationErrorCopyWith(ValidationError value, $Res Function(ValidationError) _then) = _$ValidationErrorCopyWithImpl;
-@override @useResult
-$Res call({
- String message
-});
-
-
-
-
-}
-/// @nodoc
-class _$ValidationErrorCopyWithImpl<$Res>
-    implements $ValidationErrorCopyWith<$Res> {
-  _$ValidationErrorCopyWithImpl(this._self, this._then);
-
-  final ValidationError _self;
-  final $Res Function(ValidationError) _then;
-
-/// Create a copy of AppError
-/// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
-  return _then(ValidationError(
-null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,
-  ));
-}
-
-
-}
-
-/// @nodoc
-
-
-class NotificationError implements AppError {
-  const NotificationError(this.message);
-  
-
-@override final  String message;
+ final  String? code;
 
 /// Create a copy of AppError
 /// with the given fields replaced by the non-null parameter values.
@@ -449,16 +320,16 @@ $NotificationErrorCopyWith<NotificationError> get copyWith => _$NotificationErro
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is NotificationError&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NotificationError&&(identical(other.message, message) || other.message == message)&&(identical(other.code, code) || other.code == code));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message);
+int get hashCode => Object.hash(runtimeType,message,code);
 
 @override
 String toString() {
-  return 'AppError.notification(message: $message)';
+  return 'AppError.notification(message: $message, code: $code)';
 }
 
 
@@ -469,7 +340,7 @@ abstract mixin class $NotificationErrorCopyWith<$Res> implements $AppErrorCopyWi
   factory $NotificationErrorCopyWith(NotificationError value, $Res Function(NotificationError) _then) = _$NotificationErrorCopyWithImpl;
 @override @useResult
 $Res call({
- String message
+ String message, String? code
 });
 
 
@@ -486,10 +357,11 @@ class _$NotificationErrorCopyWithImpl<$Res>
 
 /// Create a copy of AppError
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? message = null,Object? code = freezed,}) {
   return _then(NotificationError(
-null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,
+message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String,code: freezed == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -499,11 +371,12 @@ as String,
 /// @nodoc
 
 
-class PermissionError implements AppError {
-  const PermissionError(this.message);
+class PermissionError extends AppError {
+  const PermissionError({required this.message, this.code}): super._();
   
 
 @override final  String message;
+ final  String? code;
 
 /// Create a copy of AppError
 /// with the given fields replaced by the non-null parameter values.
@@ -515,16 +388,16 @@ $PermissionErrorCopyWith<PermissionError> get copyWith => _$PermissionErrorCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PermissionError&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PermissionError&&(identical(other.message, message) || other.message == message)&&(identical(other.code, code) || other.code == code));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message);
+int get hashCode => Object.hash(runtimeType,message,code);
 
 @override
 String toString() {
-  return 'AppError.permission(message: $message)';
+  return 'AppError.permission(message: $message, code: $code)';
 }
 
 
@@ -535,7 +408,7 @@ abstract mixin class $PermissionErrorCopyWith<$Res> implements $AppErrorCopyWith
   factory $PermissionErrorCopyWith(PermissionError value, $Res Function(PermissionError) _then) = _$PermissionErrorCopyWithImpl;
 @override @useResult
 $Res call({
- String message
+ String message, String? code
 });
 
 
@@ -552,10 +425,11 @@ class _$PermissionErrorCopyWithImpl<$Res>
 
 /// Create a copy of AppError
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? message = null,Object? code = freezed,}) {
   return _then(PermissionError(
-null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,
+message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String,code: freezed == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -565,11 +439,148 @@ as String,
 /// @nodoc
 
 
-class UnexpectedError implements AppError {
-  const UnexpectedError(this.message);
+class ValidationError extends AppError {
+  const ValidationError({required this.message, this.details}): super._();
   
 
 @override final  String message;
+ final  String? details;
+
+/// Create a copy of AppError
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ValidationErrorCopyWith<ValidationError> get copyWith => _$ValidationErrorCopyWithImpl<ValidationError>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ValidationError&&(identical(other.message, message) || other.message == message)&&(identical(other.details, details) || other.details == details));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,message,details);
+
+@override
+String toString() {
+  return 'AppError.validation(message: $message, details: $details)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ValidationErrorCopyWith<$Res> implements $AppErrorCopyWith<$Res> {
+  factory $ValidationErrorCopyWith(ValidationError value, $Res Function(ValidationError) _then) = _$ValidationErrorCopyWithImpl;
+@override @useResult
+$Res call({
+ String message, String? details
+});
+
+
+
+
+}
+/// @nodoc
+class _$ValidationErrorCopyWithImpl<$Res>
+    implements $ValidationErrorCopyWith<$Res> {
+  _$ValidationErrorCopyWithImpl(this._self, this._then);
+
+  final ValidationError _self;
+  final $Res Function(ValidationError) _then;
+
+/// Create a copy of AppError
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? message = null,Object? details = freezed,}) {
+  return _then(ValidationError(
+message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String,details: freezed == details ? _self.details : details // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class NetworkError extends AppError {
+  const NetworkError({required this.message, this.code}): super._();
+  
+
+@override final  String message;
+ final  String? code;
+
+/// Create a copy of AppError
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$NetworkErrorCopyWith<NetworkError> get copyWith => _$NetworkErrorCopyWithImpl<NetworkError>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NetworkError&&(identical(other.message, message) || other.message == message)&&(identical(other.code, code) || other.code == code));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,message,code);
+
+@override
+String toString() {
+  return 'AppError.network(message: $message, code: $code)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $NetworkErrorCopyWith<$Res> implements $AppErrorCopyWith<$Res> {
+  factory $NetworkErrorCopyWith(NetworkError value, $Res Function(NetworkError) _then) = _$NetworkErrorCopyWithImpl;
+@override @useResult
+$Res call({
+ String message, String? code
+});
+
+
+
+
+}
+/// @nodoc
+class _$NetworkErrorCopyWithImpl<$Res>
+    implements $NetworkErrorCopyWith<$Res> {
+  _$NetworkErrorCopyWithImpl(this._self, this._then);
+
+  final NetworkError _self;
+  final $Res Function(NetworkError) _then;
+
+/// Create a copy of AppError
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? message = null,Object? code = freezed,}) {
+  return _then(NetworkError(
+message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String,code: freezed == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class UnexpectedError extends AppError {
+  const UnexpectedError({required this.message, this.stackTrace}): super._();
+  
+
+@override final  String message;
+ final  String? stackTrace;
 
 /// Create a copy of AppError
 /// with the given fields replaced by the non-null parameter values.
@@ -581,16 +592,16 @@ $UnexpectedErrorCopyWith<UnexpectedError> get copyWith => _$UnexpectedErrorCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UnexpectedError&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UnexpectedError&&(identical(other.message, message) || other.message == message)&&(identical(other.stackTrace, stackTrace) || other.stackTrace == stackTrace));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message);
+int get hashCode => Object.hash(runtimeType,message,stackTrace);
 
 @override
 String toString() {
-  return 'AppError.unexpected(message: $message)';
+  return 'AppError.unexpected(message: $message, stackTrace: $stackTrace)';
 }
 
 
@@ -601,7 +612,7 @@ abstract mixin class $UnexpectedErrorCopyWith<$Res> implements $AppErrorCopyWith
   factory $UnexpectedErrorCopyWith(UnexpectedError value, $Res Function(UnexpectedError) _then) = _$UnexpectedErrorCopyWithImpl;
 @override @useResult
 $Res call({
- String message
+ String message, String? stackTrace
 });
 
 
@@ -618,10 +629,11 @@ class _$UnexpectedErrorCopyWithImpl<$Res>
 
 /// Create a copy of AppError
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? message = null,Object? stackTrace = freezed,}) {
   return _then(UnexpectedError(
-null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,
+message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String,stackTrace: freezed == stackTrace ? _self.stackTrace : stackTrace // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

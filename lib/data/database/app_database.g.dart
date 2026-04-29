@@ -4,7 +4,7 @@ part of 'app_database.dart';
 
 // ignore_for_file: type=lint
 class $MedicationsTable extends Medications
-    with TableInfo<$MedicationsTable, Medication> {
+    with TableInfo<$MedicationsTable, MedicationData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -244,7 +244,7 @@ class $MedicationsTable extends Medications
   static const String $name = 'medications';
   @override
   VerificationContext validateIntegrity(
-    Insertable<Medication> instance, {
+    Insertable<MedicationData> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -402,9 +402,9 @@ class $MedicationsTable extends Medications
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Medication map(Map<String, dynamic> data, {String? tablePrefix}) {
+  MedicationData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Medication(
+    return MedicationData(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -486,7 +486,7 @@ class $MedicationsTable extends Medications
   }
 }
 
-class Medication extends DataClass implements Insertable<Medication> {
+class MedicationData extends DataClass implements Insertable<MedicationData> {
   final int id;
   final String name;
   final String dosageAmount;
@@ -505,7 +505,7 @@ class Medication extends DataClass implements Insertable<Medication> {
   final int? refillThreshold;
   final DateTime createdAt;
   final DateTime updatedAt;
-  const Medication({
+  const MedicationData({
     required this.id,
     required this.name,
     required this.dosageAmount,
@@ -596,12 +596,12 @@ class Medication extends DataClass implements Insertable<Medication> {
     );
   }
 
-  factory Medication.fromJson(
+  factory MedicationData.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return Medication(
+    return MedicationData(
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       dosageAmount: serializer.fromJson<String>(json['dosageAmount']),
@@ -647,7 +647,7 @@ class Medication extends DataClass implements Insertable<Medication> {
     };
   }
 
-  Medication copyWith({
+  MedicationData copyWith({
     int? id,
     String? name,
     String? dosageAmount,
@@ -666,7 +666,7 @@ class Medication extends DataClass implements Insertable<Medication> {
     Value<int?> refillThreshold = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
-  }) => Medication(
+  }) => MedicationData(
     id: id ?? this.id,
     name: name ?? this.name,
     dosageAmount: dosageAmount ?? this.dosageAmount,
@@ -692,8 +692,8 @@ class Medication extends DataClass implements Insertable<Medication> {
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
   );
-  Medication copyWithCompanion(MedicationsCompanion data) {
-    return Medication(
+  MedicationData copyWithCompanion(MedicationsCompanion data) {
+    return MedicationData(
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
       dosageAmount: data.dosageAmount.present
@@ -735,7 +735,7 @@ class Medication extends DataClass implements Insertable<Medication> {
 
   @override
   String toString() {
-    return (StringBuffer('Medication(')
+    return (StringBuffer('MedicationData(')
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('dosageAmount: $dosageAmount, ')
@@ -782,7 +782,7 @@ class Medication extends DataClass implements Insertable<Medication> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is Medication &&
+      (other is MedicationData &&
           other.id == this.id &&
           other.name == this.name &&
           other.dosageAmount == this.dosageAmount &&
@@ -803,7 +803,7 @@ class Medication extends DataClass implements Insertable<Medication> {
           other.updatedAt == this.updatedAt);
 }
 
-class MedicationsCompanion extends UpdateCompanion<Medication> {
+class MedicationsCompanion extends UpdateCompanion<MedicationData> {
   final Value<int> id;
   final Value<String> name;
   final Value<String> dosageAmount;
@@ -870,7 +870,7 @@ class MedicationsCompanion extends UpdateCompanion<Medication> {
        scheduleTimes = Value(scheduleTimes),
        createdAt = Value(createdAt),
        updatedAt = Value(updatedAt);
-  static Insertable<Medication> custom({
+  static Insertable<MedicationData> custom({
     Expression<int>? id,
     Expression<String>? name,
     Expression<String>? dosageAmount,
@@ -1041,7 +1041,7 @@ class MedicationsCompanion extends UpdateCompanion<Medication> {
 }
 
 class $SchedulesTable extends Schedules
-    with TableInfo<$SchedulesTable, Schedule> {
+    with TableInfo<$SchedulesTable, ScheduleData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -1069,7 +1069,9 @@ class $SchedulesTable extends Schedules
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: true,
-    $customConstraints: 'NOT NULL REFERENCES medications(id) ON DELETE CASCADE',
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES medications (id) ON DELETE CASCADE',
+    ),
   );
   static const VerificationMeta _hourMeta = const VerificationMeta('hour');
   @override
@@ -1132,7 +1134,7 @@ class $SchedulesTable extends Schedules
   static const String $name = 'schedules';
   @override
   VerificationContext validateIntegrity(
-    Insertable<Schedule> instance, {
+    Insertable<ScheduleData> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -1191,9 +1193,9 @@ class $SchedulesTable extends Schedules
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Schedule map(Map<String, dynamic> data, {String? tablePrefix}) {
+  ScheduleData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Schedule(
+    return ScheduleData(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -1227,14 +1229,14 @@ class $SchedulesTable extends Schedules
   }
 }
 
-class Schedule extends DataClass implements Insertable<Schedule> {
+class ScheduleData extends DataClass implements Insertable<ScheduleData> {
   final int id;
   final int medicationId;
   final int hour;
   final int minute;
   final int weekdaysBitfield;
   final bool isAsNeeded;
-  const Schedule({
+  const ScheduleData({
     required this.id,
     required this.medicationId,
     required this.hour,
@@ -1265,12 +1267,12 @@ class Schedule extends DataClass implements Insertable<Schedule> {
     );
   }
 
-  factory Schedule.fromJson(
+  factory ScheduleData.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return Schedule(
+    return ScheduleData(
       id: serializer.fromJson<int>(json['id']),
       medicationId: serializer.fromJson<int>(json['medicationId']),
       hour: serializer.fromJson<int>(json['hour']),
@@ -1292,14 +1294,14 @@ class Schedule extends DataClass implements Insertable<Schedule> {
     };
   }
 
-  Schedule copyWith({
+  ScheduleData copyWith({
     int? id,
     int? medicationId,
     int? hour,
     int? minute,
     int? weekdaysBitfield,
     bool? isAsNeeded,
-  }) => Schedule(
+  }) => ScheduleData(
     id: id ?? this.id,
     medicationId: medicationId ?? this.medicationId,
     hour: hour ?? this.hour,
@@ -1307,8 +1309,8 @@ class Schedule extends DataClass implements Insertable<Schedule> {
     weekdaysBitfield: weekdaysBitfield ?? this.weekdaysBitfield,
     isAsNeeded: isAsNeeded ?? this.isAsNeeded,
   );
-  Schedule copyWithCompanion(SchedulesCompanion data) {
-    return Schedule(
+  ScheduleData copyWithCompanion(SchedulesCompanion data) {
+    return ScheduleData(
       id: data.id.present ? data.id.value : this.id,
       medicationId: data.medicationId.present
           ? data.medicationId.value
@@ -1326,7 +1328,7 @@ class Schedule extends DataClass implements Insertable<Schedule> {
 
   @override
   String toString() {
-    return (StringBuffer('Schedule(')
+    return (StringBuffer('ScheduleData(')
           ..write('id: $id, ')
           ..write('medicationId: $medicationId, ')
           ..write('hour: $hour, ')
@@ -1343,7 +1345,7 @@ class Schedule extends DataClass implements Insertable<Schedule> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is Schedule &&
+      (other is ScheduleData &&
           other.id == this.id &&
           other.medicationId == this.medicationId &&
           other.hour == this.hour &&
@@ -1352,7 +1354,7 @@ class Schedule extends DataClass implements Insertable<Schedule> {
           other.isAsNeeded == this.isAsNeeded);
 }
 
-class SchedulesCompanion extends UpdateCompanion<Schedule> {
+class SchedulesCompanion extends UpdateCompanion<ScheduleData> {
   final Value<int> id;
   final Value<int> medicationId;
   final Value<int> hour;
@@ -1377,7 +1379,7 @@ class SchedulesCompanion extends UpdateCompanion<Schedule> {
   }) : medicationId = Value(medicationId),
        hour = Value(hour),
        minute = Value(minute);
-  static Insertable<Schedule> custom({
+  static Insertable<ScheduleData> custom({
     Expression<int>? id,
     Expression<int>? medicationId,
     Expression<int>? hour,
@@ -1451,7 +1453,8 @@ class SchedulesCompanion extends UpdateCompanion<Schedule> {
   }
 }
 
-class $DoseLogsTable extends DoseLogs with TableInfo<$DoseLogsTable, DoseLog> {
+class $DoseLogsTable extends DoseLogs
+    with TableInfo<$DoseLogsTable, DoseLogData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -1479,7 +1482,9 @@ class $DoseLogsTable extends DoseLogs with TableInfo<$DoseLogsTable, DoseLog> {
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: true,
-    $customConstraints: 'NOT NULL REFERENCES medications(id)',
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES medications (id)',
+    ),
   );
   static const VerificationMeta _scheduleIdMeta = const VerificationMeta(
     'scheduleId',
@@ -1491,7 +1496,9 @@ class $DoseLogsTable extends DoseLogs with TableInfo<$DoseLogsTable, DoseLog> {
     true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    $customConstraints: 'REFERENCES schedules(id)',
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES schedules (id)',
+    ),
   );
   static const VerificationMeta _scheduledTimeMeta = const VerificationMeta(
     'scheduledTime',
@@ -1587,7 +1594,7 @@ class $DoseLogsTable extends DoseLogs with TableInfo<$DoseLogsTable, DoseLog> {
   static const String $name = 'dose_logs';
   @override
   VerificationContext validateIntegrity(
-    Insertable<DoseLog> instance, {
+    Insertable<DoseLogData> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -1674,9 +1681,9 @@ class $DoseLogsTable extends DoseLogs with TableInfo<$DoseLogsTable, DoseLog> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  DoseLog map(Map<String, dynamic> data, {String? tablePrefix}) {
+  DoseLogData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return DoseLog(
+    return DoseLogData(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -1726,7 +1733,7 @@ class $DoseLogsTable extends DoseLogs with TableInfo<$DoseLogsTable, DoseLog> {
   }
 }
 
-class DoseLog extends DataClass implements Insertable<DoseLog> {
+class DoseLogData extends DataClass implements Insertable<DoseLogData> {
   final int id;
   final int medicationId;
   final int? scheduleId;
@@ -1737,7 +1744,7 @@ class DoseLog extends DataClass implements Insertable<DoseLog> {
   final String? notes;
   final DateTime createdAt;
   final DateTime updatedAt;
-  const DoseLog({
+  const DoseLogData({
     required this.id,
     required this.medicationId,
     this.scheduleId,
@@ -1792,12 +1799,12 @@ class DoseLog extends DataClass implements Insertable<DoseLog> {
     );
   }
 
-  factory DoseLog.fromJson(
+  factory DoseLogData.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return DoseLog(
+    return DoseLogData(
       id: serializer.fromJson<int>(json['id']),
       medicationId: serializer.fromJson<int>(json['medicationId']),
       scheduleId: serializer.fromJson<int?>(json['scheduleId']),
@@ -1827,7 +1834,7 @@ class DoseLog extends DataClass implements Insertable<DoseLog> {
     };
   }
 
-  DoseLog copyWith({
+  DoseLogData copyWith({
     int? id,
     int? medicationId,
     Value<int?> scheduleId = const Value.absent(),
@@ -1838,7 +1845,7 @@ class DoseLog extends DataClass implements Insertable<DoseLog> {
     Value<String?> notes = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
-  }) => DoseLog(
+  }) => DoseLogData(
     id: id ?? this.id,
     medicationId: medicationId ?? this.medicationId,
     scheduleId: scheduleId.present ? scheduleId.value : this.scheduleId,
@@ -1850,8 +1857,8 @@ class DoseLog extends DataClass implements Insertable<DoseLog> {
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
   );
-  DoseLog copyWithCompanion(DoseLogsCompanion data) {
-    return DoseLog(
+  DoseLogData copyWithCompanion(DoseLogsCompanion data) {
+    return DoseLogData(
       id: data.id.present ? data.id.value : this.id,
       medicationId: data.medicationId.present
           ? data.medicationId.value
@@ -1877,7 +1884,7 @@ class DoseLog extends DataClass implements Insertable<DoseLog> {
 
   @override
   String toString() {
-    return (StringBuffer('DoseLog(')
+    return (StringBuffer('DoseLogData(')
           ..write('id: $id, ')
           ..write('medicationId: $medicationId, ')
           ..write('scheduleId: $scheduleId, ')
@@ -1908,7 +1915,7 @@ class DoseLog extends DataClass implements Insertable<DoseLog> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is DoseLog &&
+      (other is DoseLogData &&
           other.id == this.id &&
           other.medicationId == this.medicationId &&
           other.scheduleId == this.scheduleId &&
@@ -1921,7 +1928,7 @@ class DoseLog extends DataClass implements Insertable<DoseLog> {
           other.updatedAt == this.updatedAt);
 }
 
-class DoseLogsCompanion extends UpdateCompanion<DoseLog> {
+class DoseLogsCompanion extends UpdateCompanion<DoseLogData> {
   final Value<int> id;
   final Value<int> medicationId;
   final Value<int?> scheduleId;
@@ -1960,7 +1967,7 @@ class DoseLogsCompanion extends UpdateCompanion<DoseLog> {
        status = Value(status),
        createdAt = Value(createdAt),
        updatedAt = Value(updatedAt);
-  static Insertable<DoseLog> custom({
+  static Insertable<DoseLogData> custom({
     Expression<int>? id,
     Expression<int>? medicationId,
     Expression<int>? scheduleId,
@@ -2095,8 +2102,9 @@ class $RefillTrackingTable extends RefillTracking
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: true,
-    $customConstraints:
-        'NOT NULL UNIQUE REFERENCES medications(id) ON DELETE CASCADE',
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES medications (id) ON DELETE CASCADE',
+    ),
   );
   static const VerificationMeta _currentQuantityMeta = const VerificationMeta(
     'currentQuantity',
@@ -2578,10 +2586,10 @@ typedef $$MedicationsTableUpdateCompanionBuilder =
     });
 
 final class $$MedicationsTableReferences
-    extends BaseReferences<_$AppDatabase, $MedicationsTable, Medication> {
+    extends BaseReferences<_$AppDatabase, $MedicationsTable, MedicationData> {
   $$MedicationsTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static MultiTypedResultKey<$SchedulesTable, List<Schedule>>
+  static MultiTypedResultKey<$SchedulesTable, List<ScheduleData>>
   _schedulesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.schedules,
     aliasName: $_aliasNameGenerator(
@@ -2602,9 +2610,8 @@ final class $$MedicationsTableReferences
     );
   }
 
-  static MultiTypedResultKey<$DoseLogsTable, List<DoseLog>> _doseLogsRefsTable(
-    _$AppDatabase db,
-  ) => MultiTypedResultKey.fromTable(
+  static MultiTypedResultKey<$DoseLogsTable, List<DoseLogData>>
+  _doseLogsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.doseLogs,
     aliasName: $_aliasNameGenerator(
       db.medications.id,
@@ -3083,14 +3090,14 @@ class $$MedicationsTableTableManager
         RootTableManager<
           _$AppDatabase,
           $MedicationsTable,
-          Medication,
+          MedicationData,
           $$MedicationsTableFilterComposer,
           $$MedicationsTableOrderingComposer,
           $$MedicationsTableAnnotationComposer,
           $$MedicationsTableCreateCompanionBuilder,
           $$MedicationsTableUpdateCompanionBuilder,
-          (Medication, $$MedicationsTableReferences),
-          Medication,
+          (MedicationData, $$MedicationsTableReferences),
+          MedicationData,
           PrefetchHooks Function({
             bool schedulesRefs,
             bool doseLogsRefs,
@@ -3214,9 +3221,9 @@ class $$MedicationsTableTableManager
                     return [
                       if (schedulesRefs)
                         await $_getPrefetchedData<
-                          Medication,
+                          MedicationData,
                           $MedicationsTable,
-                          Schedule
+                          ScheduleData
                         >(
                           currentTable: table,
                           referencedTable: $$MedicationsTableReferences
@@ -3235,9 +3242,9 @@ class $$MedicationsTableTableManager
                         ),
                       if (doseLogsRefs)
                         await $_getPrefetchedData<
-                          Medication,
+                          MedicationData,
                           $MedicationsTable,
-                          DoseLog
+                          DoseLogData
                         >(
                           currentTable: table,
                           referencedTable: $$MedicationsTableReferences
@@ -3256,7 +3263,7 @@ class $$MedicationsTableTableManager
                         ),
                       if (refillTrackingRefs)
                         await $_getPrefetchedData<
-                          Medication,
+                          MedicationData,
                           $MedicationsTable,
                           RefillTrackingData
                         >(
@@ -3287,14 +3294,14 @@ typedef $$MedicationsTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
       $MedicationsTable,
-      Medication,
+      MedicationData,
       $$MedicationsTableFilterComposer,
       $$MedicationsTableOrderingComposer,
       $$MedicationsTableAnnotationComposer,
       $$MedicationsTableCreateCompanionBuilder,
       $$MedicationsTableUpdateCompanionBuilder,
-      (Medication, $$MedicationsTableReferences),
-      Medication,
+      (MedicationData, $$MedicationsTableReferences),
+      MedicationData,
       PrefetchHooks Function({
         bool schedulesRefs,
         bool doseLogsRefs,
@@ -3321,7 +3328,7 @@ typedef $$SchedulesTableUpdateCompanionBuilder =
     });
 
 final class $$SchedulesTableReferences
-    extends BaseReferences<_$AppDatabase, $SchedulesTable, Schedule> {
+    extends BaseReferences<_$AppDatabase, $SchedulesTable, ScheduleData> {
   $$SchedulesTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
   static $MedicationsTable _medicationIdTable(_$AppDatabase db) =>
@@ -3343,9 +3350,8 @@ final class $$SchedulesTableReferences
     );
   }
 
-  static MultiTypedResultKey<$DoseLogsTable, List<DoseLog>> _doseLogsRefsTable(
-    _$AppDatabase db,
-  ) => MultiTypedResultKey.fromTable(
+  static MultiTypedResultKey<$DoseLogsTable, List<DoseLogData>>
+  _doseLogsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.doseLogs,
     aliasName: $_aliasNameGenerator(db.schedules.id, db.doseLogs.scheduleId),
   );
@@ -3586,14 +3592,14 @@ class $$SchedulesTableTableManager
         RootTableManager<
           _$AppDatabase,
           $SchedulesTable,
-          Schedule,
+          ScheduleData,
           $$SchedulesTableFilterComposer,
           $$SchedulesTableOrderingComposer,
           $$SchedulesTableAnnotationComposer,
           $$SchedulesTableCreateCompanionBuilder,
           $$SchedulesTableUpdateCompanionBuilder,
-          (Schedule, $$SchedulesTableReferences),
-          Schedule,
+          (ScheduleData, $$SchedulesTableReferences),
+          ScheduleData,
           PrefetchHooks Function({bool medicationId, bool doseLogsRefs})
         > {
   $$SchedulesTableTableManager(_$AppDatabase db, $SchedulesTable table)
@@ -3688,9 +3694,9 @@ class $$SchedulesTableTableManager
                     return [
                       if (doseLogsRefs)
                         await $_getPrefetchedData<
-                          Schedule,
+                          ScheduleData,
                           $SchedulesTable,
-                          DoseLog
+                          DoseLogData
                         >(
                           currentTable: table,
                           referencedTable: $$SchedulesTableReferences
@@ -3719,14 +3725,14 @@ typedef $$SchedulesTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
       $SchedulesTable,
-      Schedule,
+      ScheduleData,
       $$SchedulesTableFilterComposer,
       $$SchedulesTableOrderingComposer,
       $$SchedulesTableAnnotationComposer,
       $$SchedulesTableCreateCompanionBuilder,
       $$SchedulesTableUpdateCompanionBuilder,
-      (Schedule, $$SchedulesTableReferences),
-      Schedule,
+      (ScheduleData, $$SchedulesTableReferences),
+      ScheduleData,
       PrefetchHooks Function({bool medicationId, bool doseLogsRefs})
     >;
 typedef $$DoseLogsTableCreateCompanionBuilder =
@@ -3757,7 +3763,7 @@ typedef $$DoseLogsTableUpdateCompanionBuilder =
     });
 
 final class $$DoseLogsTableReferences
-    extends BaseReferences<_$AppDatabase, $DoseLogsTable, DoseLog> {
+    extends BaseReferences<_$AppDatabase, $DoseLogsTable, DoseLogData> {
   $$DoseLogsTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
   static $MedicationsTable _medicationIdTable(_$AppDatabase db) =>
@@ -4082,14 +4088,14 @@ class $$DoseLogsTableTableManager
         RootTableManager<
           _$AppDatabase,
           $DoseLogsTable,
-          DoseLog,
+          DoseLogData,
           $$DoseLogsTableFilterComposer,
           $$DoseLogsTableOrderingComposer,
           $$DoseLogsTableAnnotationComposer,
           $$DoseLogsTableCreateCompanionBuilder,
           $$DoseLogsTableUpdateCompanionBuilder,
-          (DoseLog, $$DoseLogsTableReferences),
-          DoseLog,
+          (DoseLogData, $$DoseLogsTableReferences),
+          DoseLogData,
           PrefetchHooks Function({bool medicationId, bool scheduleId})
         > {
   $$DoseLogsTableTableManager(_$AppDatabase db, $DoseLogsTable table)
@@ -4221,14 +4227,14 @@ typedef $$DoseLogsTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
       $DoseLogsTable,
-      DoseLog,
+      DoseLogData,
       $$DoseLogsTableFilterComposer,
       $$DoseLogsTableOrderingComposer,
       $$DoseLogsTableAnnotationComposer,
       $$DoseLogsTableCreateCompanionBuilder,
       $$DoseLogsTableUpdateCompanionBuilder,
-      (DoseLog, $$DoseLogsTableReferences),
-      DoseLog,
+      (DoseLogData, $$DoseLogsTableReferences),
+      DoseLogData,
       PrefetchHooks Function({bool medicationId, bool scheduleId})
     >;
 typedef $$RefillTrackingTableCreateCompanionBuilder =

@@ -1,6 +1,6 @@
-import 'package:equatable/equatable.dart';
-import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
+part of 'medication_list_cubit.dart';
 
+/// Base class for all medication list states.
 abstract class MedicationListState extends Equatable {
   const MedicationListState();
 
@@ -8,10 +8,13 @@ abstract class MedicationListState extends Equatable {
   List<Object> get props => [];
 }
 
+/// Initial state before any data is loaded.
 class MedicationListInitial extends MedicationListState {}
 
+/// Loading state while fetching medications.
 class MedicationListLoading extends MedicationListState {}
 
+/// Successfully loaded medications.
 class MedicationListLoaded extends MedicationListState {
   final List<Medication> medications;
 
@@ -21,8 +24,10 @@ class MedicationListLoaded extends MedicationListState {
   List<Object> get props => [medications];
 }
 
+/// No medications exist.
 class MedicationListEmpty extends MedicationListState {}
 
+/// Error state with a human-readable message.
 class MedicationListError extends MedicationListState {
   final String message;
 

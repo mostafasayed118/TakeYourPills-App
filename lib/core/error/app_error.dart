@@ -3,11 +3,39 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'app_error.freezed.dart';
 
 @freezed
-class AppError with _$AppError {
-  const factory AppError.database(String message) = DatabaseError;
-  const factory AppError.network(String message) = NetworkError;
-  const factory AppError.validation(String message) = ValidationError;
-  const factory AppError.notification(String message) = NotificationError;
-  const factory AppError.permission(String message) = PermissionError;
-  const factory AppError.unexpected(String message) = UnexpectedError;
+abstract class AppError with _$AppError {
+  const factory AppError.database({required String message, String? code}) =
+      DatabaseError;
+
+  const factory AppError.notification({required String message, String? code}) =
+      NotificationError;
+
+  const factory AppError.permission({required String message, String? code}) =
+      PermissionError;
+
+  const factory AppError.validation({
+    required String message,
+    String? details,
+  }) = ValidationError;
+
+  const factory AppError.network({required String message, String? code}) =
+      NetworkError;
+
+  const factory AppError.unexpected({
+    required String message,
+    String? stackTrace,
+  }) = UnexpectedError;
+
+  const AppError._();
+
+  String get displayMessage {
+    return when(
+      database: (message, code) => 'Database error: $message',
+      notification: (message, code) => 'Notification error: $message',
+      permission: (message, code) => 'Permission denied: $message',
+      validation: (message, details) => message,
+      network: (message, code) => 'Network error: $message',
+      unexpected: (message, stackTrace) => 'An unexpected error occurred',
+    );
+  }
 }

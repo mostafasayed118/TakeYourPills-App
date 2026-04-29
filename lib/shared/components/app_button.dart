@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:takeyourpills_healthcare_app/shared/theme/app_colors.dart';
 import 'package:takeyourpills_healthcare_app/shared/theme/app_text_styles.dart';
 
+/// Primary action button following the Calm & Clinical design system.
 class AppButton extends StatelessWidget {
   final String text;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final bool isPrimary;
   final bool isLoading;
   final Widget? icon;
@@ -21,16 +22,24 @@ class AppButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final style = ElevatedButton.styleFrom(
-      backgroundColor: isPrimary ? AppColors.primary : Colors.transparent,
-      foregroundColor: isPrimary ? AppColors.onPrimary : AppColors.primary,
-      disabledBackgroundColor: isPrimary ? AppColors.primary.withOpacity(0.5) : AppColors.surfaceContainerLow,
-      disabledForegroundColor: isPrimary ? AppColors.onPrimary.withOpacity(0.5) : AppColors.onSurfaceVariant,
-      elevation: isPrimary ? 0 : 0,
+      backgroundColor:
+          isPrimary ? AppColors.primary : Colors.transparent,
+      foregroundColor:
+          isPrimary ? AppColors.onPrimary : AppColors.primary,
+      disabledBackgroundColor: isPrimary
+          ? AppColors.primary.withValues(alpha: 0.5)
+          : AppColors.surfaceContainerLow,
+      disabledForegroundColor: isPrimary
+          ? AppColors.onPrimary.withValues(alpha: 0.5)
+          : AppColors.onSurfaceVariant,
+      elevation: 0,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       minimumSize: const Size(double.infinity, 56),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: isPrimary ? BorderSide.none : BorderSide(color: AppColors.primary),
+        side: isPrimary
+            ? BorderSide.none
+            : const BorderSide(color: AppColors.primary),
       ),
     );
 
@@ -45,12 +54,14 @@ class AppButton extends StatelessWidget {
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
-                    color: isPrimary ? AppColors.onPrimary : AppColors.primary,
+                    color: isPrimary
+                        ? AppColors.onPrimary
+                        : AppColors.primary,
                     strokeWidth: 2,
                   ),
                 ),
                 const SizedBox(width: 12),
-                Text(isPrimary ? 'Loading...' : 'Loading...', style: AppTextStyles.titleSmall),
+                Text('Saving...', style: AppTextStyles.titleSmall),
               ],
             ),
           )
