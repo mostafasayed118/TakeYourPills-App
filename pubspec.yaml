@@ -1,0 +1,61 @@
+name: takeyourpills_healthcare_app
+description: "TakeYourPills - Medicine tracker with reminders, adherence history, and refills"
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  bloc: ^9.2.0
+  go_router: ^17.2.2
+  drift: ^2.21.0
+  sqlite3_flutter_libs: ^0.6.0+eol
+  dio: ^5.5.0+1
+  equatable: ^2.0.5
+  freezed: ^3.2.5
+  json_serializable: ^6.9.0
+  get_it: ^9.2.1
+  flutter_local_notifications: ^21.0.0
+  timezone: ^0.11.0
+  flutter_secure_storage: ^10.0.0
+  shared_preferences: ^2.3.3
+  mocktail: ^1.0.5
+  bloc_test: ^10.0.0
+  firebase_crashlytics: ^5.2.0
+  google_fonts: ^8.1.0
+  intl: ^0.20.2
+  path_provider: ^2.1.4
+  path: ^1.9.0
+  share_plus: ^12.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  build_runner: ^2.4.11
+  drift_dev: ^2.21.0
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.11.0
+  json_serializable: ^6.9.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/icons/
+    - assets/images/
+  fonts:
+    - family: Manrope
+      fonts:
+        - asset: assets/fonts/Manrope-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Manrope-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Manrope-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Manrope-Bold.ttf
+          weight: 700

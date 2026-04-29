@@ -1,0 +1,88 @@
+import 'dart:io';
+import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
+import 'package:takeyourpills_healthcare_app/data/database/app_database.dart';
+import 'package:takeyourpills_healthcare_app/data/database/tables/medications.dart';
+import 'package:takeyourpills_healthcare_app/data/database/tables/schedules.dart';
+import 'package:takeyourpills_healthcare_app/data/database/tables/dose_logs.dart';
+import 'package:takeyourpills_healthcare_app/data/database/tables/refill_tracking.dart';
+
+/// Database service that manages the Drift database instance.
+/// This is a singleton service that provides access to the database and DAOs.
+class DatabaseService {
+  static final DatabaseService _instance = DatabaseService._internal();
+
+  factory DatabaseService() {
+    return _instance;
+  }
+
+  DatabaseService._internal();
+
+  late final AppDatabase _db;
+
+  /// Initialize the database service. Must be called once at app startup.
+  Future<void> init() async {
+    _db = AppDatabase(_openConnection());
+  }
+
+  /// Get the AppDatabase instance.
+  AppDatabase get db => _db;
+
+  /// Get the medications table DAO.
+  Medications get medications => _db.medications;
+
+  MedicationsCompanion get medicationsCompanion => MedicationsCompanion;
+
+  /// Get the schedules table DAO.
+  Schedules get schedules => _db.schedules;
+
+  SchedulesCompanion get schedulesCompanion => SchedulesCompanion;
+
+  /// Get the dose_logs table DAO.
+  DoseLogs get doseLogs => _db.doseLogs;
+
+  DoseLogsCompanion get doseLogsCompanion => DoseLogsCompanion;
+
+  /// Get the refill_tracking table DAO.
+  RefillTracking get refillTracking => _db.refillTracking;
+
+  RefillTrackingCompanion get refillTrackingCompanion =>
+      RefillTrackingCompanion;
+
+  /// Convenient methods for common operations
+
+  Future<List<MedicationData>> getAllMedications() {
+    return _db.getAllMedications();
+  }
+
+  Future<MedicationData?> getMedicationById(int id) {
+    return _db.getMedicationById(id);
+  }
+
+  Future<int> createMedication(MedicationData medication) {
+    return _db.createMedication(medication);
+  }
+
+  Future<int> updateMedication(MedicationData medication) {
+    return _db.updateMedication(medication);
+  }
+
+  Future<int> deleteMedication(int id) {
+    return _db.deleteMedication(id);
+  }
+
+  /// Close the database connection.
+  Future<void> close() async {
+    await _db.close();
+  }
+
+  LazyDatabase _openConnection() {
+    return LazyDatabase(() async {
+      final dbFolder = await getApplicationDocumentsDirectory();
+      final file = File(p.join(dbFolder.path, 'takeyourpills.db'));
+      return NativeDatabase(file);
+    });
+  }
+}

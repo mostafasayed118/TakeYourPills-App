@@ -3,223 +3,138 @@
 ## Current Planning Status
 
 **Date:** 2026-04-29  
-**Session Type:** Initial planning phase (pre-implementation)  
-**Project:** TakeYourPills (healthcare medication tracker)  
-**Phase:** Planning / Pre-initiation  
+**Session Type:** Implementation - Phase 0 Foundation  
 
 ### What Was Accomplished
-- Reviewed existing design system (Stitch) with 14 screen prototypes and HTML code
-- Analyzed design tokens: Calm & Clinical Excellence theme (Manrope font, muted teal palette, soft shadows, 16px radius)
-- Created complete 10-file memory-bank planning package covering:
-  - Project overview and scope
-  - Product requirements with acceptance criteria
-  - Implementation plan with phases and task breakdown
-  - Architecture decisions (Flutter structure, Bloc/Cubit strategy, routing, persistence, testing)
-  - Design system notes (UI components, patterns, accessibility)
-  - Prioritized task backlog (113 tasks)
-  - Open questions (44 items with assumptions)
-  - Risk register (20 risks with mitigations)
-  - Session handoff (this file)
 
----
+**Sprint 0 / Phase 0 - Foundation (85% Complete)**
 
-## Confirmed Decisions
+- ✅ Flutter project initialized with `flutter create .`
+- ✅ Dependencies configured in `pubspec.yaml` (flutter_bloc, go_router, drift, get_it, freezed, json_serializable, timezone, firebase_crashlytics, etc.)
+- ✅ Strict lint rules in `analysis_options.yaml`
+- ✅ Feature-first folder structure: `lib/core/`, `lib/features/`, `lib/shared/`
+- ✅ Design system implemented: colors (16 tokens), typography (Manrope 6 styles), theme (light/dark M3), core components (AppCard, AppButton, AppInput, EmptyStateWidget)
+- ✅ Error types with Freezed (AppError, Failure)
+- ✅ Utils: date extensions, validators
+- ✅ Constants and configuration
+- ✅ Routing with go_router: ShellRoute with bottom nav (5 tabs), onboarding guard, all routes defined
+- ✅ Dependency injection with get_it foundation
+- ✅ Drift database: schema defined (medications, schedules, dose_logs, refill_tracking tables)
+- ✅ Freezed entity models: Medication, Schedule, DoseLog (with status enum)
+- ✅ Mapper foundation
+- ✅ Notification service abstraction (interface defined)
+- ✅ Service locator foundation
+- ✅ Main screens implemented (full UI):
+  - OnboardingPage (3 slides, page view, navigation)
+  - DashboardPage (adherence ring, next dose card, upcoming list, missed alert)
+  - MedicationListPage (cards with pause indicators, empty state)
+  - SettingsPage (nav to sub-screens, all placeholders)
+- ✅ Debug APK built successfully (71MB) - app runs on Android
 
-These decisions are **locked in** and should not be revisited unless a blocker emerges:
+### Current State
 
-1. **Tech Stack**: Flutter + flutter_bloc (Bloc/Cubit hybrid) + go_router + Drift + get_it + freezed + json_serializable + flutter_local_notifications + timezone + flutter_secure_storage + shared_preferences + bloc_test + mocktail + Firebase Crashlytics ✓
+**Phase 0: Foundation** - In Progress (85% complete)  
+**Next Milestone:** M0: Project Setup - Complete  
+**Phase 1:** Medication CRUD - Pending  
 
-2. **Architecture Style**: Feature-first folder structure (not strict clean architecture 4-layer). Domain layer optional for simple features; present data/presentation separation.
+### Confirmed Decisions
 
-3. **State Management**: Cubit for simple state (settings, forms, list), Bloc for complex event-driven flows (reminder actions, messaging).
+1. ✅ Flutter + Bloc/Cubit + go_router + Drift + get_it + freezed + json_serializable
+2. ✅ Local-first persistence (Drift SQLite), no backend in MVP
+3. ✅ Feature-first folder structure
+4. ✅ Cubit for simple state, Bloc for complex event flows
+5. ✅ Design system: Calm & Clinical Excellence (teal muted palette, 16px radius, ambient shadows)
+6. ✅ MVP scope: Phases 0-3 + partial settings (no calendar, progress charts, messaging yet)
+7. ✅ Notification scheduling: 30-day window, reschedule on boot/timezone change
+8. ✅ Exact alarm permission for Android 14+
 
-4. **Persistence**: Drift SQLite with local-first. No backend in MVP. Mappers isolate domain from database.
+### Open Items
 
-5. **Notifications**: flutter_local_notifications + timezone. Schedule 30 days ahead, reschedule on boot/timezone change. exact_alarm_permission plugin for Android 14+.
+**High Priority:**
+- NotificationService concrete implementation (flutter_local_notifications + timezone)
+- Error handling integration in main.dart
+- PreferenceService implementation
+- DatabaseService wrapper
+- Repository interface implementations
+- iOS Critical Alerts entitlement request
 
-6. **Routing**: go_router with ShellRoute for bottom nav; redirect guard for onboarding completion.
+**Medium Priority:**
+- Android 14 exact alarm permission UX flow
+- OEM battery optimization guidance (Xiaomi/Huawei)
+- DST transition testing
 
-7. **MVP Scope**: Phases 0-3 + partial settings. Excludes: calendar view, progress charts, provider messaging, data export (these are post-MVP).
+**To Validate:**
+- Refill count decrement policy (all logs vs. taken only)
+- Snooze behavior (unlimited vs. limited)
+- Provider messaging approach (SMS intent vs. clipboard)
 
-8. **Design System**: Calm & Clinical Excellence. Colors from DESIGN.md. Manrope font. Ambient shadows. 600px max width.
+### Immediate Next Actions
 
-9. **Testing Strategy**: Unit tests for Cubits/DAOs/services (≥80% coverage). Widget tests (≥50%). Integration tests for key flows. Accessibility audit required.
+1. **Implement NotificationService concrete class** (2h)
+   - Use flutter_local_notifications
+   - Integrate timezone package
+   - Implement Android/iOS permission flows
+   - Support exact alarms on Android 14+
+   
+2. **Finalize error handling in main.dart** (1h)
+   - Setup Firebase Crashlytics
+   - Global error handler
+   - runZonedGuarded with Crashlytics
+   
+3. **Implement PreferenceService** (1h)
+   - Use shared_preferences
+   - Type-safe get/set methods
+   - Encryption for sensitive data
 
-10. **Bloc vs Cubit**: Cubit for Medication List, Add Medication, Dashboard (simple state). Bloc for Reminder Action Sheet and Messaging (complex event sequences).
+4. **Implement DatabaseService wrapper** (2h)
+   - Singleton pattern
+   - Migration handling
+   - DAO accessors
 
----
+5. **Begin Phase 1: Medication CRUD** (4h)
+   - MedicationRepositoryImpl
+   - MedicationListCubit
+   - AddMedicationCubit
+   - DAO implementations
+   - Unit tests
 
-## Open Items (Pending Validation)
+### Required Files to Read Before Implementation
 
-The following items require confirmation before implementation begins:
+1. `memory-bank/architecture-decisions.md` - Technical decisions
+2. `memory-bank/design-system-notes.md` - UI patterns and components
+3. `memory-bank/tasks.md` - Detailed task list
+4. `memory-bank/product-requirements.md` - Feature specifications
+5. `memory-bank/implementation-plan.md` - Phase sequence
 
-### High Priority
-
-| Item | Owner | Rationale |
-|------|-------|-----------|
-| Confirm **MVP scope boundary** (which features exactly in MVP vs Phase 2) | Product Manager | Determines task order and effort |
-| Validate **timezone storage** choice: local vs UTC for `scheduled_time` | Tech Lead | High impact on correctness |
-| Confirm exact alarm strategy for **iOS** (critical alerts entitlement?) | iOS Dev | Affects reliability on iOS |
-| Decide **snooze behavior**: unlimited vs limited? UX tradeoff | Product/UX | Affects user experience |
-| Review **refill count decrement** policy: all logs or only taken? | Product | Affects inventory accuracy |
-| Confirm **provider messaging** approach: SMS intent vs clipboard vs disabled | Product | Impacts Phase 6 scope |
-
-### Medium Priority
-
-| Item | Owner | Rationale |
-|------|-------|-----------|
-| Icon set selection (which Material Icons) | Designer | Ensures visual consistency |
-| Empty state illustration assets location | Designer | UI completeness |
-| Notification sound choices (default, chime, gentle, none) | UX | Audio preferences |
-| Privacy policy text content | Legal/Product | Required for app stores |
-| Onboarding flow: skip allowed? | UX | User friction balance |
-| Max medications limit (hard or soft?) | Product | Database/UX constraints |
-
----
-
-## Immediate Next Recommended Action
-
-**Step 1:** Create the Flutter project and folder structure.
-
-```bash
-cd E:\projects_mobile_flutter\takeyourpills_healthcare_app
-flutter create takeyourpills .
-```
-
-**Step 2:** Add all required dependencies to `pubspec.yaml` (see T003 task for full list).
-
-**Step 3:** Commence **Sprint 0 - Sprint 1** tasks:
-- T001–T020 in order (Project Setup + Core Infrastructure)
-- Focus on getting a blank app running with theme and routing before building any features.
-
-**4-week sprint cadence suggested.**
-
----
-
-## Required Files to Read Before Implementation
-
-### Must-Read First (in order):
-1. `memory-bank/architecture-decisions.md` - Technical decisions and folder structure
-2. `memory-bank/design-system-notes.md` - Design tokens and component patterns
-3. `memory-bank/product-requirements.md` - Feature specs and acceptance criteria
-4. `memory-bank/implementation-plan.md` - Phase sequence and definition of done
-5. `memory-bank/tasks.md` - Detailed task list with dependencies
-
-### Reference As Needed:
-6. `memory-bank/project-overview.md` - For product context
-7. `memory-bank/open-questions.md` - Check assumptions before starting a feature
-8. `memory-bank/risk-register.md` - Watch for pitfalls
-9. `stitch_takeyourpills_healthcare_design_system/calm_clinical_excellence/DESIGN.md` - Design token source
-10. `stitch_takeyourpills_healthcare_design_system/<screen>/code.html` - UI prototypes for each screen
-
----
-
-## Reusable Prompt for Future AI Coding Sessions
-
-When a new AI assistant is brought into the project, use this prompt to bootstrap context:
+### Reusable Prompt for Future AI Sessions
 
 ```
-You are assisting with the TakeYourPills Flutter medication tracker app. This is a fresh project starting implementation phase. 
+You are assisting with the TakeYourPills Flutter medication tracker app. This is an ongoing implementation project.
 
 Key context:
 - Tech stack: Flutter, flutter_bloc (Cubit+Bloc), go_router, Drift, get_it, freezed, json_serializable, flutter_local_notifications, timezone
-- Architecture: Feature-first modular structure; data/domain/presentation separation where sensible; local-first offline
-- Design: Calm & Clinical Excellence theme (Manrope font, muted teal #366460, soft shadows, 16px radius, 600px max width)
-- MVP scope (Phases 0-3): Medication CRUD, local notifications with Action Sheet, Dashboard with adherence, basic settings
-- Post-MVP (Phases 4-6): Calendar, progress charts, refill tracker deep dive, provider messaging, export
+- Architecture: Feature-first modular structure with data/domain/presentation separation
+- Design: Calm & Clinical Excellence theme (Manrope, muted teal #366460, soft shadows, 16px radius)
+- MVP scope (Phases 0-3): Medication CRUD, local notifications with Action Sheet, Dashboard, basic Settings
 - Critical: Reminders must be exact and reliable; local-first persistence; privacy-by-design
 
+Current Phase 0 status: Foundation 85% complete. Stubs remaining for NotificationService, PreferenceService, DatabaseService, Repository implementations.
+Next: Phase 1 Medication CRUD implementation.
+
 Read these files in order:
-1. memory-bank/session-handoff.md (this snapshot)
+1. memory-bank/project-status.md (current snapshot)
 2. memory-bank/architecture-decisions.md
 3. memory-bank/tasks.md
 4. memory-bank/product-requirements.md
 5. memory-bank/design-system-notes.md
 
-The most recent tasks are in tasks.md; start with the first TODO items (T001–T020).
-Update memory-bank files after every milestone.
+Update memory-bank/project-status.md and tasks.md after each session.
 ```
 
 ---
 
-## Known Unknowns to Flag
+**Handoff Status:** Phase 0 Foundation - In Progress (85% complete)  
+**Assigned To:** Next AI assistant / Mobile developer  
+**Start Date:** Immediate (next session)  
+**Priority Tasks:** Implement NotificationService, error handling, PreferenceService, DatabaseService, begin Phase 1 Medication CRUD
 
-- **Exact alarm permission on Android 14+** - Need real device testing
-- **iOS critical alerts entitlement** - May require Apple approval; could delay or reduce reliability on iOS
-- **Timezone edge cases** - Require extensive manual testing across DST boundaries
-- **OEM battery optimizations** - Some devices (Xiaomi, Huawei) may still kill notifications despite exact alarm
-- **User adoption of provider messaging** (if implemented as SMS intent) - Will users understand?
-
----
-
-## Dependencies & Blockers
-
-### External Dependencies
-- ✅ Design system complete (Stitch screens and tokens available)
-- ⚠️ Firebase project setup for Crashlytics (requires Firebase console configuration)
-- ⚠️ iOS developer account (needed for notification entitlements)
-- ⚠️ Google Play Console account (for testing later)
-
-### Internal Code Dependencies
-- **Database schema** must be finalized before any feature work
-- **Theme** must be implemented before screens to avoid rework
-- **NotificationService** must work before scheduling logic
-- **Cubits** must be testable before UI screens to separate concerns
-
----
-
-## Environment Setup Checklist
-
-Before first line of code:
-
-- [ ] Install Flutter 3.5+ (stable)
-- [ ] Configure Android SDK (API 23 min, 34 target)
-- [ ] Configure Xcode (iOS 13+ deployment target)
-- [ ] Create Firebase project; add Android/iOS apps; download `google-services.json` and `GoogleService-Info.plist`
-- [ ] Add Crashlytics dependencies and configure
-- [ ] Set up VS Code or Android Studio with Flutter/Dart plugins
-- [ ] Install useful CLI tools: `flutter_lints`, `dart_code_metrics` (optional)
-- [ ] Run `flutter doctor` to verify setup
-
----
-
-## Version Control & Branching Strategy
-
-- Main branch: `main` (protected)
-- Feature branches: `feature/<name>` (e.g., `feature/medication-crud`)
-- Sprint integration branch: `sprint/<n>` (optional)
-- PRs require: 2 approvals, all tests passing, lint clean, memory-bank updated
-
----
-
-## First Week Sprint Goal
-
-**Sprint 0 Deliverable:** Barebones app with:
-- App launches without crash
-- Theme applied (teal primary, Manrope font)
-- Bottom navigation present (placeholder pages)
-- Routing between 5 tabs works
-- Database file created on first launch
-- `pubspec.yaml` locked with all dependencies
-
-**Definition of Done Sprint 0:**
-- T001–T020 completed
-- No lint warnings
-- Compiles on Android emulator and iOS simulator
-- README in repo with setup instructions
-
----
-
-## Stakeholder Communication Plan
-
-- **Weekly demo** every Friday (show working increment)
-- **Memory-bank updates** after each session (commit with message)
-- **Risk review** bi-weekly
-- **Stakeholder sync** every 2 weeks to confirm priorities and scope
-
----
-
-**Handoff Status:** Ready for implementation  
-**Assigned To:** Development Team / Next AI Assistant  
-**Start Date:** Next sprint  
-**Expected Completion:** 13 weeks (Sprint 0–6) to MVP Beta

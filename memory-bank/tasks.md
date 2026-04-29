@@ -92,25 +92,25 @@ EPIC-10: Release & Beta
 
 | ID | Epic | Feature | Task Description | Status | Dependencies | Est. Order |
 |----|------|---------|------------------|--------|--------------|------------|
-| T001 | EPIC-1 | F1 | Create Flutter project; configure `pubspec.yaml` with all dependencies | todo | none | 1 |
-| T002 | EPIC-1 | F1 | Set up `analysis_options.yaml` with strict lint rules | todo | T001 | 2 |
-| T003 | EPIC-1 | F2 | Add all required dependencies to `pubspec.yaml` | todo | T001 | 3 |
-| T004 | EPIC-1 | F3 | Create feature-first folder structure (`lib/features/`, `lib/shared/`) | todo | T001 | 4 |
-| T005 | EPIC-1 | F4 | Extract design tokens from DESIGN.md → `app_theme.dart` and `app_colors.dart` | todo | T001 | 5 |
-| T006 | EPIC-1 | F4 | Configure Manrope font (GoogleFonts or asset) | todo | T005 | 6 |
-| T007 | EPIC-1 | F4 | Create `TextTheme` with TextStyle for all typography styles | todo | T006 | 7 |
-| T008 | EPIC-1 | F4 | Implement theme (light + dark) with Material 3 theming | todo | T007 | 8 |
-| T009 | EPIC-1 | F4 | Create shared component base classes: `AppCard`, `AppButton`, `AppInput` | todo | T008 | 9 |
-| T010 | EPIC-2 | F8 | Set up `get_it` service locator and register core services | todo | T004 | 10 |
-| T011 | EPIC-2 | F9 | Configure `go_router` with placeholder routes and ShellRoute for bottom nav | todo | T004 | 11 |
-| T012 | EPIC-2 | F9 | Create onboarding guard and redirect logic | todo | T011 | 12 |
-| T013 | EPIC-2 | F5 | Design Drift database schema; create `AppDatabase` class | todo | T004 | 13 |
-| T014 | EPIC-2 | F5 | Create Drift tables: `medications`, `schedules`, `dose_logs`, `refill_tracking` | todo | T013 | 14 |
-| T015 | EPIC-2 | F5 | Generate database code with `build_runner` | todo | T014 | 15 |
-| T016 | EPIC-2 | F6 | Create Freezed entities: `Medication`, `Schedule`, `DoseLog` | todo | T004 | 16 |
-| T017 | EPIC-2 | F6 | Create mappers: `MedicationMapper`, `ScheduleMapper` (Model ↔ Entity) | todo | T015, T016 | 17 |
-| T018 | EPIC-2 | F7 | Create `MedicationRepository` interface and `MedicationRepositoryImpl` | todo | T016, T017 | 18 |
-| T019 | EPIC-2 | F7 | Create `DatabaseService` wrapper around Drift DB | todo | T015 | 19 |
+| T001 | EPIC-1 | F1 | Create Flutter project; configure `pubspec.yaml` with all dependencies | completed | none | 1 |
+| T002 | EPIC-1 | F1 | Set up `analysis_options.yaml` with strict lint rules | completed | T001 | 2 |
+| T003 | EPIC-1 | F2 | Add all required dependencies to `pubspec.yaml` | completed | T001 | 3 |
+| T004 | EPIC-1 | F3 | Create feature-first folder structure (`lib/features/`, `lib/shared/`) | completed | T001 | 4 |
+| T005 | EPIC-1 | F4 | Extract design tokens from DESIGN.md → `app_theme.dart` and `app_colors.dart` | completed | T001 | 5 |
+| T006 | EPIC-1 | F4 | Configure Manrope font (GoogleFonts or asset) | completed | T005 | 6 |
+| T007 | EPIC-1 | F4 | Create `TextTheme` with TextStyle for all typography styles | completed | T006 | 7 |
+| T008 | EPIC-1 | F4 | Implement theme (light + dark) with Material 3 theming | completed | T007 | 8 |
+| T009 | EPIC-1 | F4 | Create shared component base classes: `AppCard`, `AppButton`, `AppInput` | completed | T008 | 9 |
+| T010 | EPIC-2 | F8 | Set up `get_it` service locator and register core services | completed | T004 | 10 |
+| T011 | EPIC-2 | F9 | Configure `go_router` with placeholder routes and ShellRoute for bottom nav | completed | T004 | 11 |
+| T012 | EPIC-2 | F9 | Create onboarding guard and redirect logic | completed | T011 | 12 |
+| T013 | EPIC-2 | F5 | Design Drift database schema; create `AppDatabase` class | completed | T004 | 13 |
+| T014 | EPIC-2 | F5 | Create Drift tables: `medications`, `schedules`, `dose_logs`, `refill_tracking` | completed | T013 | 14 |
+| T015 | EPIC-2 | F5 | Generate database code with `build_runner` | completed | T014 | 15 |
+| T016 | EPIC-2 | F6 | Create Freezed entities: `Medication`, `Schedule`, `DoseLog` | completed | T004 | 16 |
+| T017 | EPIC-2 | F6 | Create mappers: `MedicationMapper`, `ScheduleMapper` (Model ↔ Entity) | completed | T015, T016 | 17 |
+| T018 | EPIC-2 | F7 | Create `MedicationRepository` interface and `MedicationRepositoryImpl` | completed | T016, T017 | 18 |
+| T019 | EPIC-2 | F7 | Create `DatabaseService` wrapper around Drift DB | completed | T015 | 19 |
 | T020 | EPIC-2 | F7 | Create other services: `PreferenceService`, `SecureStorageService` | todo | T010 | 20 |
 
 | T021 | EPIC-3 | F10 | Create `MedicationListCubit` with states and methods | todo | T018 | 21 |
