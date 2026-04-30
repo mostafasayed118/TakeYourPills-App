@@ -1,5 +1,4 @@
-import 'package:equatable/equatable.dart';
-import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
+part of 'medication_form_cubit.dart';
 
 /// Base class for all medication form states.
 abstract class MedicationFormState extends Equatable {

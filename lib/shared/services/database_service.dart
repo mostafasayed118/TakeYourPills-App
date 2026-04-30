@@ -1,5 +1,9 @@
 import 'package:drift/drift.dart';
 import 'package:takeyourpills_healthcare_app/data/database/app_database.dart';
+import 'package:takeyourpills_healthcare_app/data/database/tables/medications.dart';
+import 'package:takeyourpills_healthcare_app/data/database/tables/schedules.dart';
+import 'package:takeyourpills_healthcare_app/data/database/tables/dose_logs.dart';
+import 'package:takeyourpills_healthcare_app/data/database/tables/refill_tracking.dart';
 
 /// Database service that manages the Drift database instance.
 /// This is a singleton service that provides access to the database and DAOs.
@@ -25,23 +29,14 @@ class DatabaseService {
   /// Get the medications table DAO.
   Medications get medications => _db.medications;
 
-  MedicationsCompanion get medicationsCompanion => MedicationsCompanion;
-
   /// Get the schedules table DAO.
   Schedules get schedules => _db.schedules;
-
-  SchedulesCompanion get schedulesCompanion => SchedulesCompanion;
 
   /// Get the dose_logs table DAO.
   DoseLogs get doseLogs => _db.doseLogs;
 
-  DoseLogsCompanion get doseLogsCompanion => DoseLogsCompanion;
-
   /// Get the refill_tracking table DAO.
   RefillTracking get refillTracking => _db.refillTracking;
-
-  RefillTrackingCompanion get refillTrackingCompanion =>
-      RefillTrackingCompanion;
 
   /// Convenient methods for common operations
 

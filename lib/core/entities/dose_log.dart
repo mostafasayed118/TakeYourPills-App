@@ -27,16 +27,13 @@ abstract class DoseLog with _$DoseLog {
   const factory DoseLog({
     required int id,
     required int medicationId,
-    int? scheduleId,
-    required String scheduledTime,
+    required String scheduledTime, required DateTime createdAt, required DateTime updatedAt, int? scheduleId,
     DateTime? actualTime,
     @JsonKey(unknownEnumValue: DoseLogStatus.pending)
     @Default(DoseLogStatus.pending)
     DoseLogStatus status,
     @Default(0) int snoozeCount,
     String? notes,
-    required DateTime createdAt,
-    required DateTime updatedAt,
   }) = _DoseLog;
 
   factory DoseLog.fromJson(Map<String, dynamic> json) =>

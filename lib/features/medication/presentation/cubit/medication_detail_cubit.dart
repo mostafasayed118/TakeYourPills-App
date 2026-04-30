@@ -1,7 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:get_it/get_it.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
 import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository_impl.dart';
+import 'package:takeyourpills_healthcare_app/shared/services/reminder_scheduler_service.dart';
 
 part 'medication_detail_state.dart';
 
@@ -11,13 +13,20 @@ part 'medication_detail_state.dart';
 /// Standalone — does not depend on MedicationListCubit.
 class MedicationDetailCubit extends Cubit<MedicationDetailState> {
   final MedicationRepository _repository;
+  final ReminderSchedulerService _scheduler;
   final int medicationId;
 
   MedicationDetailCubit({
     required MedicationRepository repository,
+    ReminderSchedulerService? scheduler,
     required this.medicationId,
-  })  : _repository = repository,
-        super(MedicationDetailLoading()) {
+  }) : _repository = repository,
+       _scheduler =
+           scheduler ??
+           (GetIt.instance.isRegistered<ReminderSchedulerService>()
+               ? GetIt.instance<ReminderSchedulerService>()
+               : NoOpReminderSchedulerService()),
+       super(MedicationDetailLoading()) {
     loadMedication();
   }
 
@@ -38,15 +47,10 @@ class MedicationDetailCubit extends Cubit<MedicationDetailState> {
   Future<void> deleteMedication() async {
     try {
       await _repository.deleteMedication(medicationId);
-
-      // TODO(Phase3): Cancel all scheduled reminders for this medication
-      // ReminderSchedulerService.cancelAllForMedication(medicationId);
-
+      await _scheduler.cancelAllForMedication(medicationId);
       emit(MedicationDetailDeleted());
     } catch (e) {
-      emit(MedicationDetailError(
-        message: 'Failed to delete: ${e.toString()}',
-      ));
+      emit(MedicationDetailError(message: 'Failed to delete: ${e.toString()}'));
     }
   }
 
@@ -62,7 +66,11 @@ class MedicationDetailCubit extends Cubit<MedicationDetailState> {
       );
       await _repository.updateMedication(updated);
 
-      // TODO(Phase3): Reschedule or cancel reminders based on pause state
+      if (updated.isPaused) {
+        await _scheduler.cancelAllForMedication(medicationId);
+      } else {
+        await _scheduler.rescheduleForMedication(updated);
+      }
 
       emit(MedicationDetailLoaded(medication: updated));
     } catch (e) {

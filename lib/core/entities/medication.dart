@@ -11,7 +11,7 @@ abstract class Medication with _$Medication {
     required String dosageAmount,
     required String dosageUnit,
     required String iconName,
-    @Default('') String colorHex,
+    required DateTime createdAt, required DateTime updatedAt, @Default('') String colorHex,
     @Default('daily')
     String frequencyType, // daily, weekly, as_needed, specific_days
     @Default('') String frequencyDays, // JSON-encoded list for specific_days
@@ -23,8 +23,6 @@ abstract class Medication with _$Medication {
     @Default(false) bool isPaused,
     int? pillsRemaining,
     int? refillThreshold,
-    required DateTime createdAt,
-    required DateTime updatedAt,
   }) = _Medication;
 
   factory Medication.fromJson(Map<String, dynamic> json) =>

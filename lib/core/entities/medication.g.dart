@@ -12,6 +12,8 @@ _Medication _$MedicationFromJson(Map<String, dynamic> json) => _Medication(
   dosageAmount: json['dosageAmount'] as String,
   dosageUnit: json['dosageUnit'] as String,
   iconName: json['iconName'] as String,
+  createdAt: DateTime.parse(json['createdAt'] as String),
+  updatedAt: DateTime.parse(json['updatedAt'] as String),
   colorHex: json['colorHex'] as String? ?? '',
   frequencyType: json['frequencyType'] as String? ?? 'daily',
   frequencyDays: json['frequencyDays'] as String? ?? '',
@@ -23,8 +25,6 @@ _Medication _$MedicationFromJson(Map<String, dynamic> json) => _Medication(
   isPaused: json['isPaused'] as bool? ?? false,
   pillsRemaining: (json['pillsRemaining'] as num?)?.toInt(),
   refillThreshold: (json['refillThreshold'] as num?)?.toInt(),
-  createdAt: DateTime.parse(json['createdAt'] as String),
-  updatedAt: DateTime.parse(json['updatedAt'] as String),
 );
 
 Map<String, dynamic> _$MedicationToJson(_Medication instance) =>
@@ -34,6 +34,8 @@ Map<String, dynamic> _$MedicationToJson(_Medication instance) =>
       'dosageAmount': instance.dosageAmount,
       'dosageUnit': instance.dosageUnit,
       'iconName': instance.iconName,
+      'createdAt': instance.createdAt.toIso8601String(),
+      'updatedAt': instance.updatedAt.toIso8601String(),
       'colorHex': instance.colorHex,
       'frequencyType': instance.frequencyType,
       'frequencyDays': instance.frequencyDays,
@@ -45,6 +47,4 @@ Map<String, dynamic> _$MedicationToJson(_Medication instance) =>
       'isPaused': instance.isPaused,
       'pillsRemaining': instance.pillsRemaining,
       'refillThreshold': instance.refillThreshold,
-      'createdAt': instance.createdAt.toIso8601String(),
-      'updatedAt': instance.updatedAt.toIso8601String(),
     };

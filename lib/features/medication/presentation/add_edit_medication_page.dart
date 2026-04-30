@@ -28,8 +28,9 @@ class AddEditMedicationPage extends StatelessWidget {
       create: (context) => MedicationFormCubit(
         repository: context.read<MedicationRepository>(),
         isEditing: isEditing,
-        existingMedId:
-            medicationId != null ? int.tryParse(medicationId!) : null,
+        existingMedId: medicationId != null
+            ? int.tryParse(medicationId!)
+            : null,
       ),
       child: _AddEditMedicationView(isEditing: isEditing),
     );
@@ -117,8 +118,9 @@ class _AddEditMedicationView extends StatelessWidget {
                   label: 'Amount',
                   hint: '10',
                   value: state.dosageAmount,
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
                   onChanged: cubit.updateDosageAmount,
                 ),
               ),
@@ -192,8 +194,7 @@ class _AddEditMedicationView extends StatelessWidget {
                   hint: '30',
                   value: state.pillsRemaining?.toString() ?? '',
                   keyboardType: const TextInputType.numberWithOptions(),
-                  onChanged: (v) =>
-                      cubit.updatePillsRemaining(int.tryParse(v)),
+                  onChanged: (v) => cubit.updatePillsRemaining(int.tryParse(v)),
                 ),
               ),
               const SizedBox(width: 12),
@@ -285,12 +286,19 @@ class _DosageUnitDropdown extends StatelessWidget {
   final String value;
   final void Function(String) onChanged;
 
-  const _DosageUnitDropdown({
-    required this.value,
-    required this.onChanged,
-  });
+  const _DosageUnitDropdown({required this.value, required this.onChanged});
 
-  static const _units = ['mg', 'ml', 'g', 'mcg', 'IU', 'tablet', 'capsule', 'drop', 'patch'];
+  static const _units = [
+    'mg',
+    'ml',
+    'g',
+    'mcg',
+    'IU',
+    'tablet',
+    'capsule',
+    'drop',
+    'patch',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -335,10 +343,7 @@ class _FrequencyDropdown extends StatelessWidget {
   final String value;
   final void Function(String) onChanged;
 
-  const _FrequencyDropdown({
-    required this.value,
-    required this.onChanged,
-  });
+  const _FrequencyDropdown({required this.value, required this.onChanged});
 
   static const _frequencies = {
     'daily': 'Every day',
@@ -373,10 +378,9 @@ class _FrequencyDropdown extends StatelessWidget {
                   : _frequencies.keys.first,
               isExpanded: true,
               items: _frequencies.entries
-                  .map((e) => DropdownMenuItem(
-                        value: e.key,
-                        child: Text(e.value),
-                      ))
+                  .map(
+                    (e) => DropdownMenuItem(value: e.key, child: Text(e.value)),
+                  )
                   .toList(),
               onChanged: (v) {
                 if (v != null) onChanged(v);

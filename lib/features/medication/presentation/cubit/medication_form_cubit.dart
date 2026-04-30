@@ -2,10 +2,13 @@ import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:get_it/get_it.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
 import 'package:takeyourpills_healthcare_app/core/utils/validators.dart';
 import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository_impl.dart';
-import 'medication_form_state.dart';
+import 'package:takeyourpills_healthcare_app/shared/services/reminder_scheduler_service.dart';
+
+part 'medication_form_state.dart';
 
 /// Cubit managing the Add/Edit Medication form state.
 ///
@@ -13,14 +16,21 @@ import 'medication_form_state.dart';
 /// the medication repository. Shared between create and edit flows.
 class MedicationFormCubit extends Cubit<MedicationFormState> {
   final MedicationRepository _repository;
+  final ReminderSchedulerService _scheduler;
   final bool isEditing;
   final int? existingMedId;
 
   MedicationFormCubit({
     required MedicationRepository repository,
+    ReminderSchedulerService? scheduler,
     this.isEditing = false,
     this.existingMedId,
   }) : _repository = repository,
+       _scheduler =
+           scheduler ??
+           (GetIt.instance.isRegistered<ReminderSchedulerService>()
+               ? GetIt.instance<ReminderSchedulerService>()
+               : NoOpReminderSchedulerService()),
        super(MedicationFormInitial()) {
     if (isEditing && existingMedId != null) {
       _loadExistingData(existingMedId!);
@@ -279,6 +289,7 @@ class MedicationFormCubit extends Cubit<MedicationFormState> {
 
       if (isEditing && current.medication != null) {
         await _repository.updateMedication(medication);
+        await _scheduler.rescheduleForMedication(medication);
         emit(
           const MedicationFormSuccess(
             message: 'Medication updated successfully',
@@ -286,6 +297,7 @@ class MedicationFormCubit extends Cubit<MedicationFormState> {
         );
       } else {
         await _repository.createMedication(medication);
+        await _scheduler.scheduleForMedication(medication);
         emit(
           const MedicationFormSuccess(
             message: 'Medication created successfully',

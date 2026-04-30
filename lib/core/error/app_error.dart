@@ -28,8 +28,7 @@ abstract class AppError with _$AppError {
 
   const AppError._();
 
-  String get displayMessage {
-    return when(
+  String get displayMessage => when(
       database: (message, code) => 'Database error: $message',
       notification: (message, code) => 'Notification error: $message',
       permission: (message, code) => 'Permission denied: $message',
@@ -37,5 +36,4 @@ abstract class AppError with _$AppError {
       network: (message, code) => 'Network error: $message',
       unexpected: (message, stackTrace) => 'An unexpected error occurred',
     );
-  }
 }

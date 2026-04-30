@@ -1483,7 +1483,7 @@ class $DoseLogsTable extends DoseLogs
     type: DriftSqlType.int,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES medications (id)',
+      'REFERENCES medications (id) ON DELETE CASCADE',
     ),
   );
   static const VerificationMeta _scheduleIdMeta = const VerificationMeta(
@@ -1497,7 +1497,7 @@ class $DoseLogsTable extends DoseLogs
     type: DriftSqlType.int,
     requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES schedules (id)',
+      'REFERENCES schedules (id) ON DELETE CASCADE',
     ),
   );
   static const VerificationMeta _scheduledTimeMeta = const VerificationMeta(
@@ -2531,6 +2531,20 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('schedules', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'medications',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('dose_logs', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'schedules',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('dose_logs', kind: UpdateKind.delete)],
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(

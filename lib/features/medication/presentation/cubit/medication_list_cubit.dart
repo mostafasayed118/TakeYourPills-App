@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:get_it/get_it.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
 import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository_impl.dart';
+import 'package:takeyourpills_healthcare_app/shared/services/reminder_scheduler_service.dart';
 
 part 'medication_list_state.dart';
 
@@ -13,9 +15,18 @@ part 'medication_list_state.dart';
 /// operations for pause/resume and delete.
 class MedicationListCubit extends Cubit<MedicationListState> {
   final MedicationRepository _repository;
+  final ReminderSchedulerService _scheduler;
   StreamSubscription<List<Medication>>? _watchSubscription;
 
-  MedicationListCubit(this._repository) : super(MedicationListInitial());
+  MedicationListCubit(
+    MedicationRepository repository, {
+    ReminderSchedulerService? scheduler,
+  })  : _repository = repository,
+       _scheduler = scheduler ??
+           (GetIt.instance.isRegistered<ReminderSchedulerService>()
+               ? GetIt.instance<ReminderSchedulerService>()
+               : NoOpReminderSchedulerService()),
+       super(MedicationListInitial());
 
   /// Load all medications from the repository.
   Future<void> loadMedications() async {
@@ -60,8 +71,7 @@ class MedicationListCubit extends Cubit<MedicationListState> {
       final currentState = state;
       await _repository.deleteMedication(id);
 
-      // TODO(Phase3): Cancel scheduled reminders for this medication
-      // ReminderSchedulerService.cancelAllForMedication(id);
+      await _scheduler.cancelAllForMedication(id);
 
       if (currentState is MedicationListLoaded) {
         final updated =
@@ -91,12 +101,11 @@ class MedicationListCubit extends Cubit<MedicationListState> {
         );
         await _repository.updateMedication(updated);
 
-        // TODO(Phase3): Reschedule or cancel reminders based on pause state
-        // if (isPaused) {
-        //   ReminderSchedulerService.cancelAllForMedication(id);
-        // } else {
-        //   ReminderSchedulerService.scheduleForMedication(updated);
-        // }
+        if (isPaused) {
+          await _scheduler.cancelAllForMedication(id);
+        } else {
+          await _scheduler.rescheduleForMedication(updated);
+        }
 
         final newList =
             currentState.medications.map((m) => m.id == id ? updated : m).toList();

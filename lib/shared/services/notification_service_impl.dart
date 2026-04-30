@@ -1,11 +1,17 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:go_router/go_router.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import 'package:takeyourpills_healthcare_app/core/error/app_error.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
+import 'package:takeyourpills_healthcare_app/core/entities/dose_log.dart';
+import 'package:takeyourpills_healthcare_app/core/error/app_error.dart';
+import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository_impl.dart';
+import 'package:get_it/get_it.dart';
+import 'package:takeyourpills_healthcare_app/shared/routing/app_router.dart';
 import 'package:takeyourpills_healthcare_app/shared/services/notification_service.dart';
 
 /// Concrete implementation of NotificationService
@@ -47,7 +53,7 @@ class NotificationServiceImpl implements NotificationService {
 
     _notificationsPlugin = FlutterLocalNotificationsPlugin();
     await _notificationsPlugin.initialize(
-      initSettings,
+      settings: initSettings,
       onDidReceiveNotificationResponse: onNotificationTapped,
       onDidReceiveBackgroundNotificationResponse: onNotificationTapped,
     );
@@ -60,8 +66,9 @@ class NotificationServiceImpl implements NotificationService {
 
   Future<void> _initializeTimezone() async {
     tz.initializeTimeZones();
-    final String currentTimezone = await FlutterTimezone.getLocalTimezone();
-    _location = tz.getLocation(currentTimezone);
+    final TimezoneInfo currentTimezone =
+        await FlutterTimezone.getLocalTimezone();
+    _location = tz.getLocation(currentTimezone.identifier);
   }
 
   Future<void> _setupNotificationChannels() async {
@@ -70,19 +77,9 @@ class NotificationServiceImpl implements NotificationService {
       'Medication Reminders',
       description: 'Reminders for scheduled medication doses',
       importance: Importance.high,
-      priority: Priority.high,
       enableVibration: true,
       playSound: true,
       sound: const RawResourceAndroidNotificationSound('notification'),
-    );
-
-    const AndroidNotificationChannel refillChannel = AndroidNotificationChannel(
-      _channelRefillAlerts,
-      'Refill Alerts',
-      description: 'Alerts for low medication stock',
-      importance: Importance.defaultImportance,
-      priority: Priority.defaultPriority,
-      enableVibration: true,
     );
 
     await _notificationsPlugin
@@ -91,6 +88,13 @@ class NotificationServiceImpl implements NotificationService {
         >()
         ?.createNotificationChannel(channel);
 
+    const AndroidNotificationChannel refillChannel = AndroidNotificationChannel(
+      _channelRefillAlerts,
+      'Refill Alerts',
+      description: 'Alerts for low medication stock',
+      importance: Importance.defaultImportance,
+      enableVibration: true,
+    );
     await _notificationsPlugin
         .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin
@@ -168,16 +172,14 @@ class NotificationServiceImpl implements NotificationService {
     final tz.TZDateTime zonedTime = _tzScheduledTime(scheduledTime);
 
     await _notificationsPlugin.zonedSchedule(
-      id,
-      title,
-      body,
-      zonedTime,
-      _notificationDetails(),
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
+      id: id,
+      scheduledDate: zonedTime,
+      notificationDetails: _notificationDetails(),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       matchDateTimeComponents: DateTimeComponents.time,
       payload: payload ?? '$medicationId,$doseId,$scheduledTime',
+      title: title,
+      body: body,
     );
   }
 
@@ -201,7 +203,6 @@ class NotificationServiceImpl implements NotificationService {
           'Medication Reminders',
           channelDescription: 'Reminders for scheduled medication doses',
           importance: Importance.high,
-          priority: Priority.high,
           enableVibration: true,
           playSound: true,
           sound: RawResourceAndroidNotificationSound('notification'),
@@ -221,7 +222,7 @@ class NotificationServiceImpl implements NotificationService {
 
   @override
   Future<void> cancelNotification(int id) async {
-    await _notificationsPlugin.cancel(id);
+    await _notificationsPlugin.cancel(id: id);
   }
 
   @override
@@ -236,7 +237,42 @@ class NotificationServiceImpl implements NotificationService {
 
   @override
   Future<void> onNotificationTapped(NotificationResponse response) async {
-    // Handle is delegated to UI layer
+    final payload = response.payload;
+    if (payload == null || payload.isEmpty) return;
+
+    try {
+      // Parse payload: medicationId,doseId,timestamp
+      final parts = payload.split(',');
+      if (parts.length < 3) return;
+
+      final medicationId = int.tryParse(parts[0]);
+      final doseId = int.tryParse(parts[1]);
+      final scheduledTime = DateTime.tryParse(parts[2]);
+
+      if (medicationId == null || doseId == null || scheduledTime == null) {
+        return;
+      }
+
+      // Create dose log
+      final doseLog = DoseLog(
+        id: doseId,
+        medicationId: medicationId,
+        scheduledTime: scheduledTime.toIso8601String(),
+        status: DoseLogStatus.taken,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
+
+      final repository = GetIt.instance<MedicationRepository>();
+      await repository.createDoseLog(doseLog);
+
+      // Navigate to medication detail
+      if (AppRouter.navigatorKey.currentContext != null) {
+        AppRouter.navigatorKey.currentContext!.go('/medication/$medicationId');
+      }
+    } catch (e) {
+      // Silently fail - notification tap is best-effort
+    }
   }
 
   @override

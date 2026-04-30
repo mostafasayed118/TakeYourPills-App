@@ -9,8 +9,10 @@ part of 'dose_log.dart';
 _DoseLog _$DoseLogFromJson(Map<String, dynamic> json) => _DoseLog(
   id: (json['id'] as num).toInt(),
   medicationId: (json['medicationId'] as num).toInt(),
-  scheduleId: (json['scheduleId'] as num?)?.toInt(),
   scheduledTime: json['scheduledTime'] as String,
+  createdAt: DateTime.parse(json['createdAt'] as String),
+  updatedAt: DateTime.parse(json['updatedAt'] as String),
+  scheduleId: (json['scheduleId'] as num?)?.toInt(),
   actualTime: json['actualTime'] == null
       ? null
       : DateTime.parse(json['actualTime'] as String),
@@ -23,21 +25,19 @@ _DoseLog _$DoseLogFromJson(Map<String, dynamic> json) => _DoseLog(
       DoseLogStatus.pending,
   snoozeCount: (json['snoozeCount'] as num?)?.toInt() ?? 0,
   notes: json['notes'] as String?,
-  createdAt: DateTime.parse(json['createdAt'] as String),
-  updatedAt: DateTime.parse(json['updatedAt'] as String),
 );
 
 Map<String, dynamic> _$DoseLogToJson(_DoseLog instance) => <String, dynamic>{
   'id': instance.id,
   'medicationId': instance.medicationId,
-  'scheduleId': instance.scheduleId,
   'scheduledTime': instance.scheduledTime,
+  'createdAt': instance.createdAt.toIso8601String(),
+  'updatedAt': instance.updatedAt.toIso8601String(),
+  'scheduleId': instance.scheduleId,
   'actualTime': instance.actualTime?.toIso8601String(),
   'status': _$DoseLogStatusEnumMap[instance.status]!,
   'snoozeCount': instance.snoozeCount,
   'notes': instance.notes,
-  'createdAt': instance.createdAt.toIso8601String(),
-  'updatedAt': instance.updatedAt.toIso8601String(),
 };
 
 const _$DoseLogStatusEnumMap = {
