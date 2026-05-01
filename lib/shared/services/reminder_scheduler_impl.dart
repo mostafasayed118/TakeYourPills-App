@@ -41,7 +41,7 @@ class ReminderSchedulerImpl implements ReminderSchedulerService {
         scheduledTime: scheduledTime,
         title: 'Time for ${medication.name}',
         body: '${medication.dosageAmount} ${medication.dosageUnit}',
-        payload: '$medication.id,$doseId,${scheduledTime.toIso8601String()}',
+        payload: '${medication.id},$doseId,${scheduledTime.toIso8601String()}',
       );
       notificationId++;
     }
@@ -55,7 +55,18 @@ class ReminderSchedulerImpl implements ReminderSchedulerService {
 
   @override
   Future<void> cancelAllForMedication(int medicationId) async {
-    await _notificationService.cancelAllNotifications();
+    final pending = await _notificationService.getPendingNotifications();
+    for (final notification in pending) {
+      if (notification.payload != null) {
+        final parts = notification.payload!.split(',');
+        if (parts.isNotEmpty) {
+          final medId = int.tryParse(parts[0]);
+          if (medId == medicationId) {
+            await _notificationService.cancelNotification(notification.id);
+          }
+        }
+      }
+    }
   }
 
   @override
@@ -112,23 +123,29 @@ class ReminderSchedulerImpl implements ReminderSchedulerService {
   }) {
     final List<DateTime> occurrences = [];
     final now = DateTime.now();
+    final limitDate = DateTime(
+      now.year,
+      now.month,
+      now.day + daysAhead,
+      now.hour,
+      now.minute,
+    );
 
     for (final schedule in schedules) {
       final int hour = schedule.hour;
       final int minute = schedule.minute;
 
       for (int dayOffset = 0; dayOffset <= daysAhead; dayOffset++) {
-        final DateTime candidateDate = now.add(Duration(days: dayOffset));
         final DateTime candidate = DateTime(
-          candidateDate.year,
-          candidateDate.month,
-          candidateDate.day,
+          now.year,
+          now.month,
+          now.day + dayOffset,
           hour,
           minute,
         );
 
         if (candidate.isBefore(now)) continue;
-        if (!candidate.isBefore(now.add(Duration(days: daysAhead)))) break;
+        if (!candidate.isBefore(limitDate)) break;
 
         final bool shouldInclude = _shouldIncludeForFrequency(
           frequencyType,

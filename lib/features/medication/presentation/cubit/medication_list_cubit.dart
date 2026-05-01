@@ -69,9 +69,8 @@ class MedicationListCubit extends Cubit<MedicationListState> {
   Future<void> deleteMedication(int id) async {
     try {
       final currentState = state;
-      await _repository.deleteMedication(id);
-
       await _scheduler.cancelAllForMedication(id);
+      await _repository.deleteMedication(id);
 
       if (currentState is MedicationListLoaded) {
         final updated =

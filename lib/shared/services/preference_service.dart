@@ -5,6 +5,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Used for persisting user settings like notification preferences,
 /// theme mode, quiet hours, etc.
 abstract class PreferenceService {
+  /// Initialize the service. Must be called once at app startup.
+  Future<void> init();
+
   /// Get a string value for the given [key].
   /// Returns [defaultValue] if the key doesn't exist.
   Future<String?> getString(String key, {String? defaultValue});
@@ -31,6 +34,12 @@ abstract class PreferenceService {
 
   /// Remove all stored preferences.
   Future<void> clear();
+
+  /// Get onboarding completion status.
+  Future<bool> getOnboardingComplete();
+
+  /// Set onboarding completion status.
+  Future<void> setOnboardingComplete(bool value);
 }
 
 /// Implementation of [PreferenceService] using SharedPreferences.

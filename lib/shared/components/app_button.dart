@@ -22,10 +22,8 @@ class AppButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final style = ElevatedButton.styleFrom(
-      backgroundColor:
-          isPrimary ? AppColors.primary : Colors.transparent,
-      foregroundColor:
-          isPrimary ? AppColors.onPrimary : AppColors.primary,
+      backgroundColor: isPrimary ? AppColors.primary : Colors.transparent,
+      foregroundColor: isPrimary ? AppColors.onPrimary : AppColors.primary,
       disabledBackgroundColor: isPrimary
           ? AppColors.primary.withValues(alpha: 0.5)
           : AppColors.surfaceContainerLow,
@@ -34,7 +32,7 @@ class AppButton extends StatelessWidget {
           : AppColors.onSurfaceVariant,
       elevation: 0,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      minimumSize: const Size(double.infinity, 56),
+      minimumSize: const Size(0, 56),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: isPrimary
@@ -49,14 +47,13 @@ class AppButton extends StatelessWidget {
             style: style,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 SizedBox(
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
-                    color: isPrimary
-                        ? AppColors.onPrimary
-                        : AppColors.primary,
+                    color: isPrimary ? AppColors.onPrimary : AppColors.primary,
                     strokeWidth: 2,
                   ),
                 ),
@@ -70,6 +67,7 @@ class AppButton extends StatelessWidget {
             style: style,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 if (icon != null) ...[icon!, const SizedBox(width: 8)],
                 Text(text, style: AppTextStyles.titleSmall),

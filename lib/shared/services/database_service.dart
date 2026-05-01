@@ -1,4 +1,3 @@
-import 'package:drift/drift.dart';
 import 'package:takeyourpills_healthcare_app/data/database/app_database.dart';
 import 'package:takeyourpills_healthcare_app/data/database/tables/medications.dart';
 import 'package:takeyourpills_healthcare_app/data/database/tables/schedules.dart';

@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:provider/provider.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
 import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository_impl.dart';
+import 'package:takeyourpills_healthcare_app/features/medication/presentation/cubit/medication_list_cubit.dart';
 import 'package:takeyourpills_healthcare_app/features/medication/presentation/medication_list_page.dart';
+
+class FakeMedication extends Fake implements Medication {}
 
 class MockMedicationRepository extends Mock implements MedicationRepository {}
 
 void main() {
   late MockMedicationRepository mockRepository;
+
+  setUpAll(() {
+    registerFallbackValue(FakeMedication());
+  });
 
   setUp(() {
     mockRepository = MockMedicationRepository();
@@ -23,7 +32,15 @@ void main() {
       ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(
-        MaterialApp(home: Material(child: MedicationListPage())),
+        MaterialApp(
+          home: Provider<MedicationRepository>.value(
+            value: mockRepository,
+            child: BlocProvider(
+              create: (context) => MedicationListCubit(mockRepository),
+              child: const MedicationListPage(),
+            ),
+          ),
+        ),
       );
 
       await tester.pumpAndSettle();
@@ -73,7 +90,15 @@ void main() {
       ).thenAnswer((_) async => meds);
 
       await tester.pumpWidget(
-        MaterialApp(home: Material(child: MedicationListPage())),
+        MaterialApp(
+          home: Provider<MedicationRepository>.value(
+            value: mockRepository,
+            child: BlocProvider(
+              create: (context) => MedicationListCubit(mockRepository),
+              child: const MedicationListPage(),
+            ),
+          ),
+        ),
       );
 
       await tester.pumpAndSettle();
@@ -92,13 +117,21 @@ void main() {
       ).thenThrow(Exception('DB error'));
 
       await tester.pumpWidget(
-        MaterialApp(home: Material(child: MedicationListPage())),
+        MaterialApp(
+          home: Provider<MedicationRepository>.value(
+            value: mockRepository,
+            child: BlocProvider(
+              create: (context) => MedicationListCubit(mockRepository),
+              child: const MedicationListPage(),
+            ),
+          ),
+        ),
       );
 
       await tester.pumpAndSettle();
 
       expect(find.text('Something went wrong'), findsOneWidget);
-      expect(find.text('DB error'), findsOneWidget);
+      expect(find.textContaining('DB error'), findsOneWidget);
     });
   });
 }

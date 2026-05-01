@@ -56,13 +56,10 @@ class EmptyStateWidget extends StatelessWidget {
             if (onAction != null && actionLabel != null)
               Padding(
                 padding: const EdgeInsets.only(top: 24),
-                child: SizedBox(
-                  width: 220,
-                  child: AppButton(
-                    text: actionLabel!,
-                    onPressed: onAction,
-                    isPrimary: true,
-                  ),
+                child: AppButton(
+                  text: actionLabel!,
+                  onPressed: onAction,
+                  isPrimary: true,
                 ),
               ),
           ],

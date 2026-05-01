@@ -15,6 +15,7 @@ class MedicationDetailCubit extends Cubit<MedicationDetailState> {
   final MedicationRepository _repository;
   final ReminderSchedulerService _scheduler;
   final int medicationId;
+  bool _isTogglingPause = false;
 
   MedicationDetailCubit({
     required MedicationRepository repository,
@@ -46,8 +47,8 @@ class MedicationDetailCubit extends Cubit<MedicationDetailState> {
 
   Future<void> deleteMedication() async {
     try {
-      await _repository.deleteMedication(medicationId);
       await _scheduler.cancelAllForMedication(medicationId);
+      await _repository.deleteMedication(medicationId);
       emit(MedicationDetailDeleted());
     } catch (e) {
       emit(MedicationDetailError(message: 'Failed to delete: ${e.toString()}'));
@@ -55,9 +56,12 @@ class MedicationDetailCubit extends Cubit<MedicationDetailState> {
   }
 
   Future<void> togglePause() async {
+    if (_isTogglingPause) return;
+    
     final currentState = state;
     if (currentState is! MedicationDetailLoaded) return;
 
+    _isTogglingPause = true;
     try {
       final med = currentState.medication;
       final updated = med.copyWith(
@@ -75,6 +79,8 @@ class MedicationDetailCubit extends Cubit<MedicationDetailState> {
       emit(MedicationDetailLoaded(medication: updated));
     } catch (e) {
       emit(MedicationDetailError(message: e.toString()));
+    } finally {
+      _isTogglingPause = false;
     }
   }
 }

@@ -1,2 +1,0 @@
-// Platform facade - delegates to platform-specific implementation
-export 'app_database.dart';

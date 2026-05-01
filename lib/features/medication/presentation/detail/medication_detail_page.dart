@@ -1,19 +1,17 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
+import 'package:takeyourpills_healthcare_app/core/utils/schedule_parser.dart';
 import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository_impl.dart';
 import 'package:takeyourpills_healthcare_app/features/medication/presentation/cubit/medication_detail_cubit.dart';
+import 'package:takeyourpills_healthcare_app/features/medication/presentation/detail/widgets/detail_card.dart';
+import 'package:takeyourpills_healthcare_app/features/medication/presentation/detail/widgets/info_row.dart';
+import 'package:takeyourpills_healthcare_app/features/medication/presentation/detail/widgets/stat_chip.dart';
+import 'package:takeyourpills_healthcare_app/shared/components/app_button.dart';
 import 'package:takeyourpills_healthcare_app/shared/theme/app_colors.dart';
 import 'package:takeyourpills_healthcare_app/shared/theme/app_text_styles.dart';
-import 'package:takeyourpills_healthcare_app/shared/components/app_button.dart';
 
-/// Medication detail screen displaying full information.
-///
-/// Uses its own [MedicationDetailCubit] to load medication by ID,
-/// independent of the list screen's state.
 class MedicationDetailPage extends StatelessWidget {
   final int medicationId;
 
@@ -52,13 +50,9 @@ class _MedicationDetailView extends StatelessWidget {
       child: BlocBuilder<MedicationDetailCubit, MedicationDetailState>(
         builder: (context, state) {
           if (state is MedicationDetailLoading) {
-            return Scaffold(
-              appBar: AppBar(
-                title: const Text('Medication Details'),
-                backgroundColor: AppColors.surface,
-                scrolledUnderElevation: 0,
-              ),
-              body: const Center(child: CircularProgressIndicator()),
+            return _buildScaffold(
+              context,
+              const Center(child: CircularProgressIndicator()),
             );
           }
           if (state is MedicationDetailError) {
@@ -73,14 +67,21 @@ class _MedicationDetailView extends StatelessWidget {
     );
   }
 
-  Widget _buildErrorScreen(BuildContext context, String message) {
+  Scaffold _buildScaffold(BuildContext context, Widget body) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Medication Details'),
         backgroundColor: AppColors.surface,
         scrolledUnderElevation: 0,
       ),
-      body: Center(
+      body: body,
+    );
+  }
+
+  Widget _buildErrorScreen(BuildContext context, String message) {
+    return _buildScaffold(
+      context,
+      Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 40),
           child: Column(
@@ -88,8 +89,11 @@ class _MedicationDetailView extends StatelessWidget {
             children: [
               const Icon(Icons.error_outline, size: 60, color: AppColors.error),
               const SizedBox(height: 16),
-              Text(message, style: AppTextStyles.bodyMedium,
-                  textAlign: TextAlign.center),
+              Text(
+                message,
+                style: AppTextStyles.bodyMedium,
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 24),
               SizedBox(
                 width: 160,
@@ -135,16 +139,11 @@ class _MedicationDetailView extends StatelessWidget {
             itemBuilder: (_) => [
               PopupMenuItem(
                 value: 'toggle_pause',
-                child: Text(
-                  medication.isPaused ? 'Resume' : 'Pause',
-                ),
+                child: Text(medication.isPaused ? 'Resume' : 'Pause'),
               ),
               const PopupMenuItem(
                 value: 'delete',
-                child: Text(
-                  'Delete',
-                  style: TextStyle(color: AppColors.error),
-                ),
+                child: Text('Delete', style: TextStyle(color: AppColors.error)),
               ),
             ],
           ),
@@ -202,8 +201,6 @@ class _MedicationDetailView extends StatelessWidget {
       ),
     );
   }
-
-  // ── UI Building Blocks ─────────────────────────────────────
 
   Widget _buildHeader(Medication medication) {
     final isPaused = medication.isPaused;
@@ -268,36 +265,32 @@ class _MedicationDetailView extends StatelessWidget {
   }
 
   Widget _buildInfoCard(Medication medication) {
-    return _DetailCard(
+    return DetailCard(
       title: 'Basic Info',
       children: [
-        _InfoRow(
+        InfoRow(
           label: 'Frequency',
           value: _formatFrequency(medication.frequencyType),
         ),
         if (medication.startDate != null)
-          _InfoRow(label: 'Start Date', value: medication.startDate!),
+          InfoRow(label: 'Start Date', value: medication.startDate!),
         if (medication.endDate != null)
-          _InfoRow(label: 'End Date', value: medication.endDate!)
+          InfoRow(label: 'End Date', value: medication.endDate!)
         else
-          const _InfoRow(label: 'Duration', value: 'Ongoing'),
+          const InfoRow(label: 'Duration', value: 'Ongoing'),
       ],
     );
   }
 
   Widget _buildScheduleCard(Medication medication) {
-    // Parse schedule times from JSON
-    List<String> times = [];
-    try {
-      final decoded = jsonDecode(medication.scheduleTimes);
-      if (decoded is List) {
-        times = decoded.cast<String>();
-      }
-    } catch (_) {
-      times = [medication.scheduleTimes];
-    }
+    final times = parseScheduleTimes(medication.scheduleTimes)
+        .map(
+          (t) =>
+              '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}',
+        )
+        .toList();
 
-    return _DetailCard(
+    return DetailCard(
       title: 'Schedule Times',
       children: [
         if (times.isEmpty)
@@ -338,10 +331,10 @@ class _MedicationDetailView extends StatelessWidget {
   }
 
   Widget _buildInstructionsCard(Medication medication) {
-    final hasInstructions = medication.instructions != null &&
-        medication.instructions!.isNotEmpty;
+    final hasInstructions =
+        medication.instructions != null && medication.instructions!.isNotEmpty;
 
-    return _DetailCard(
+    return DetailCard(
       title: 'Instructions',
       children: [
         Text(
@@ -364,13 +357,13 @@ class _MedicationDetailView extends StatelessWidget {
     final threshold = medication.refillThreshold ?? 0;
     final isLow = threshold > 0 && remaining <= threshold;
 
-    return _DetailCard(
+    return DetailCard(
       title: 'Inventory',
       children: [
         Row(
           children: [
             Expanded(
-              child: _StatChip(
+              child: StatChip(
                 label: 'Remaining',
                 value: '$remaining',
                 unit: 'pills',
@@ -379,7 +372,7 @@ class _MedicationDetailView extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: _StatChip(
+              child: StatChip(
                 label: 'Refill At',
                 value: threshold > 0 ? '$threshold' : '—',
                 unit: 'pills',
@@ -433,122 +426,5 @@ class _MedicationDetailView extends StatelessWidget {
       default:
         return type;
     }
-  }
-}
-
-// ── Reusable detail sub-widgets ────────────────────────────────
-
-class _DetailCard extends StatelessWidget {
-  final String title;
-  final List<Widget> children;
-
-  const _DetailCard({required this.title, required this.children});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A000000),
-            blurRadius: 20,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title, style: AppTextStyles.titleSmall),
-          const SizedBox(height: 16),
-          ...children,
-        ],
-      ),
-    );
-  }
-}
-
-class _InfoRow extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const _InfoRow({required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 120,
-            child: Text(
-              label,
-              style: AppTextStyles.bodySmall.copyWith(
-                color: AppColors.onSurfaceVariant,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Text(value, style: AppTextStyles.bodyMedium),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatChip extends StatelessWidget {
-  final String label;
-  final String value;
-  final String unit;
-  final bool isWarning;
-
-  const _StatChip({
-    required this.label,
-    required this.value,
-    required this.unit,
-    required this.isWarning,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isWarning
-            ? AppColors.errorContainer.withValues(alpha: 0.5)
-            : AppColors.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        children: [
-          Text(
-            label,
-            style: AppTextStyles.bodySmall.copyWith(
-              color: AppColors.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: AppTextStyles.headlineMedium.copyWith(
-              color: isWarning ? AppColors.error : AppColors.onSurface,
-            ),
-          ),
-          Text(
-            unit,
-            style: AppTextStyles.bodySmall.copyWith(
-              color: AppColors.onSurfaceVariant,
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

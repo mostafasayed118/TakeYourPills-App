@@ -2,15 +2,14 @@ include: package:flutter_lints/flutter.yaml
 
 linter:
   rules:
+    # Dart best practices
     - always_declare_return_types
     - always_put_control_body_on_new_line
     - always_put_required_named_parameters_first
-    - always_require_non_null_named_parameters
     - annotate_overrides
     - avoid_annotating_with_dynamic
     - avoid_bool_literals_in_conditional_expressions
     - avoid_catches_without_on_clauses
-    - avoid_catching_errors
     - avoid_classes_with_only_static_members
     - avoid_double_and_int_checks
     - avoid_empty_else
@@ -22,7 +21,6 @@ linter:
     - avoid_implementing_value_types
     - avoid_init_to_null
     - avoid_js_rounded_ints
-    - avoid_late_keyword
     - avoid_multiple_declarations_per_line
     - avoid_null_checks_in_equality_operators
     - avoid_positional_boolean_parameters
@@ -32,7 +30,6 @@ linter:
     - avoid_relative_lib_imports
     - avoid_renaming_method_parameters
     - avoid_return_types_on_setters
-    - avoid_returning_null_for_future
     - avoid_returning_null_for_void
     - avoid_returning_this
     - avoid_setters_without_getters
@@ -51,13 +48,8 @@ linter:
     - cascade_invocations
     - close_sinks
     - collection_methods_unrelated_type
-    - combinators_ordering
-    - comment_references
-    - conditional_uri_does_not_exist
-    - constant_identifier_names
     - control_flow_in_finally
     - curly_braces_in_flow_control_structures
-    - dangling_library_doc_comments
     - depend_on_referenced_packages
     - deprecated_consistency
     - deprecated_member_use_from_same_package
@@ -70,21 +62,15 @@ linter:
     - eol_at_end_of_file
     - exhaustive_cases
     - file_names
-    - flutter_style_todos
     - hash_and_equals
-    - implementation_imports
     - implicit_call_tearoffs
     - implicit_reopen
     - invalid_case_patterns
-    - iterable_contains_unrelated_type
-    - join_return_with_assignment
-    - leading_newlines_in_multiline_strings
     - library_annotations
     - library_names
     - library_prefixes
     - library_private_types_in_public_api
     - lines_longer_than_80_chars
-    - list_remove_unrelated_type
     - matching_super_parameters
     - no_default_cases
     - no_duplicate_case_values
@@ -94,14 +80,11 @@ linter:
     - no_self_assignments
     - no_wildcard_variable_uses
     - non_constant_identifier_names
-    - noop_primitive_operations
     - null_check_on_nullable_type_parameter
     - null_closures
     - omit_local_variable_types
     - one_member_abstracts
-    - only_throw_error
     - overridden_fields
-    - package_api_docs
     - package_names
     - package_prefixed_library_names
     - parameter_assignments
@@ -116,12 +99,9 @@ linter:
     - prefer_const_literals_to_create_immutables
     - prefer_constructors_over_static_methods
     - prefer_contains
-    - prefer_equal_for_default_values
     - prefer_expression_function_bodies
     - prefer_final_fields
-    - prefer_final_in_for_each
     - prefer_final_locals
-    - prefer_for_elements_to_map_fromIterable
     - prefer_foreach
     - prefer_function_declarations_over_variables
     - prefer_generic_function_type_aliases
@@ -136,7 +116,6 @@ linter:
     - prefer_iterable_whereType
     - prefer_mixin
     - prefer_null_aware_operators
-    - prefer_null_aware_operators_for_conditionals
     - prefer_relative_imports
     - prefer_single_quotes
     - prefer_spread_collections
@@ -144,7 +123,6 @@ linter:
     - prefer_void_to_null
     - provide_deprecation_message
     - public_member_api_docs
-    - recursive_getters
     - require_trailing_commas
     - secure_pubspec_urls
     - sized_box_for_whitespace
@@ -184,11 +162,9 @@ linter:
     - unnecessary_string_interpolations
     - unnecessary_this
     - unrelated_type_equality_checks
-    - unsafe_html
     - use_build_context_synchronously
     - use_colored_box
     - use_decorated_box
-    - use_environment
     - use_full_hex_values_for_flutter_colors
     - use_function_type_syntax_for_parameters
     - use_if_null_to_convert_nulls_to_bools
@@ -200,8 +176,6 @@ linter:
     - use_rethrow_when_possible
     - use_setters_to_change_properties
     - use_string_buffers
-    - use_super_parameters
-    - use_test_throwers
     - use_to_and_as_if_applicable
     - valid_regexps
     - void_checks

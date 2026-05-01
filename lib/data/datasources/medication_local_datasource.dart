@@ -39,6 +39,8 @@ class MedicationLocalDatasource {
   }
 
   Future<int> deleteMedication(int id) async {
+    await _db.deleteSchedulesForMedication(id);
+    await _db.deleteDoseLogsForMedication(id);
     return _db.deleteMedication(id);
   }
 
@@ -116,8 +118,7 @@ class MedicationLocalDatasource {
     DateTime? lastRefillDate,
     String? notes,
   }) async {
-    final existing =
-        await _db.getRefillTrackingForMedication(medicationId);
+    final existing = await _db.getRefillTrackingForMedication(medicationId);
     final companion = RefillTrackingCompanion(
       medicationId: Value(medicationId),
       currentQuantity: Value(currentQuantity),
@@ -133,8 +134,7 @@ class MedicationLocalDatasource {
   }
 
   Future<int> updateCurrentQuantity(int medicationId, int newQuantity) async {
-    final existing =
-        await _db.getRefillTrackingForMedication(medicationId);
+    final existing = await _db.getRefillTrackingForMedication(medicationId);
     if (existing != null) {
       final companion = RefillTrackingCompanion(
         medicationId: Value(medicationId),
@@ -151,8 +151,7 @@ class MedicationLocalDatasource {
   Future<({int quantity, int threshold})?> getRefillInfo(
     int medicationId,
   ) async {
-    final tracking =
-        await _db.getRefillTrackingForMedication(medicationId);
+    final tracking = await _db.getRefillTrackingForMedication(medicationId);
     if (tracking == null) return null;
     return (
       quantity: tracking.currentQuantity,

@@ -12,7 +12,7 @@ class DoseLogMapper {
       scheduleId: model.scheduleId,
       scheduledTime: model.scheduledTime,
       actualTime: model.actualTime,
-      status: domain.DoseLogStatus.values[model.status],
+      status: _safeParseStatus(model.status),
       snoozeCount: model.snoozeCount,
       notes: model.notes,
       createdAt: model.createdAt,
@@ -52,4 +52,11 @@ class DoseLogMapper {
     );
 
   static List<domain.DoseLog> toEntityList(List<DoseLogData> models) => models.map(toEntity).toList();
+
+  static domain.DoseLogStatus _safeParseStatus(int index) {
+    if (index >= 0 && index < domain.DoseLogStatus.values.length) {
+      return domain.DoseLogStatus.values[index];
+    }
+    return domain.DoseLogStatus.pending; // Safe fallback
+  }
 }

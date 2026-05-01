@@ -4,11 +4,14 @@ import 'package:mocktail/mocktail.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
 import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository_impl.dart';
 import 'package:takeyourpills_healthcare_app/features/medication/presentation/cubit/medication_list_cubit.dart';
+import 'package:takeyourpills_healthcare_app/shared/services/reminder_scheduler_service.dart';
 
 class MockMedicationRepository extends Mock implements MedicationRepository {}
+class MockReminderScheduler extends Mock implements ReminderSchedulerService {}
 
 void main() {
   late MockMedicationRepository mockRepository;
+  late MockReminderScheduler mockScheduler;
   late MedicationListCubit cubit;
 
   final testMedications = [
@@ -44,9 +47,30 @@ void main() {
     ),
   ];
 
+  setUpAll(() {
+    registerFallbackValue(
+      Medication(
+        id: 0,
+        name: '',
+        dosageAmount: '',
+        dosageUnit: '',
+        iconName: '',
+        colorHex: '',
+        frequencyType: 'daily',
+        frequencyDays: '[]',
+        frequencyInterval: 1,
+        scheduleTimes: '[]',
+        isPaused: false,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      ),
+    );
+  });
+
   setUp(() {
     mockRepository = MockMedicationRepository();
-    cubit = MedicationListCubit(mockRepository);
+    mockScheduler = MockReminderScheduler();
+    cubit = MedicationListCubit(mockRepository, scheduler: mockScheduler);
   });
 
   tearDown(() {
@@ -61,8 +85,9 @@ void main() {
     blocTest<MedicationListCubit, MedicationListState>(
       'emits [Loading, Loaded] when loadMedications succeeds with data',
       build: () {
-        when(() => mockRepository.getAllMedications())
-            .thenAnswer((_) async => testMedications);
+        when(
+          () => mockRepository.getAllMedications(),
+        ).thenAnswer((_) async => testMedications);
         return cubit;
       },
       act: (cubit) => cubit.loadMedications(),
@@ -79,38 +104,39 @@ void main() {
     blocTest<MedicationListCubit, MedicationListState>(
       'emits [Loading, Empty] when loadMedications returns empty list',
       build: () {
-        when(() => mockRepository.getAllMedications())
-            .thenAnswer((_) async => []);
+        when(
+          () => mockRepository.getAllMedications(),
+        ).thenAnswer((_) async => []);
         return cubit;
       },
       act: (cubit) => cubit.loadMedications(),
-      expect: () => [
-        isA<MedicationListLoading>(),
-        isA<MedicationListEmpty>(),
-      ],
+      expect: () => [isA<MedicationListLoading>(), isA<MedicationListEmpty>()],
     );
 
     blocTest<MedicationListCubit, MedicationListState>(
       'emits [Loading, Error] when loadMedications throws',
       build: () {
-        when(() => mockRepository.getAllMedications())
-            .thenThrow(Exception('DB error'));
+        when(
+          () => mockRepository.getAllMedications(),
+        ).thenThrow(Exception('DB error'));
         return cubit;
       },
       act: (cubit) => cubit.loadMedications(),
-      expect: () => [
-        isA<MedicationListLoading>(),
-        isA<MedicationListError>(),
-      ],
+      expect: () => [isA<MedicationListLoading>(), isA<MedicationListError>()],
     );
 
     blocTest<MedicationListCubit, MedicationListState>(
       'deleteMedication removes item and emits updated list',
       build: () {
-        when(() => mockRepository.getAllMedications())
-            .thenAnswer((_) async => testMedications);
-        when(() => mockRepository.deleteMedication(1))
-            .thenAnswer((_) async => 1);
+        when(
+          () => mockRepository.getAllMedications(),
+        ).thenAnswer((_) async => testMedications);
+        when(
+          () => mockRepository.deleteMedication(1),
+        ).thenAnswer((_) async => 1);
+        when(
+          () => mockScheduler.cancelAllForMedication(1),
+        ).thenAnswer((_) async {});
         return cubit;
       },
       seed: () => MedicationListLoaded(medications: testMedications),
@@ -123,31 +149,38 @@ void main() {
         ),
       ],
       verify: (_) {
-        verify(() => mockRepository.deleteMedication(1)).called(1);
+        verifyInOrder([
+          () => mockScheduler.cancelAllForMedication(1),
+          () => mockRepository.deleteMedication(1),
+        ]);
       },
     );
 
     blocTest<MedicationListCubit, MedicationListState>(
       'deleteMedication emits Empty when last medication deleted',
       build: () {
-        when(() => mockRepository.deleteMedication(1))
-            .thenAnswer((_) async => 1);
+        when(
+          () => mockRepository.deleteMedication(1),
+        ).thenAnswer((_) async => 1);
+        when(
+          () => mockScheduler.cancelAllForMedication(1),
+        ).thenAnswer((_) async {});
         return cubit;
       },
-      seed: () => MedicationListLoaded(
-        medications: [testMedications.first],
-      ),
+      seed: () => MedicationListLoaded(medications: [testMedications.first]),
       act: (cubit) => cubit.deleteMedication(1),
-      expect: () => [
-        isA<MedicationListEmpty>(),
-      ],
+      expect: () => [isA<MedicationListEmpty>()],
     );
 
     blocTest<MedicationListCubit, MedicationListState>(
       'pauseMedication updates isPaused state',
       build: () {
-        when(() => mockRepository.updateMedication(any()))
-            .thenAnswer((_) async => 1);
+        when(
+          () => mockRepository.updateMedication(any()),
+        ).thenAnswer((_) async => 1);
+        when(
+          () => mockScheduler.cancelAllForMedication(1),
+        ).thenAnswer((_) async {});
         return cubit;
       },
       seed: () => MedicationListLoaded(medications: testMedications),

@@ -28,13 +28,11 @@ void setupServiceLocator() {
     () => MedicationRepositoryImpl(getIt<MedicationLocalDatasource>()),
   );
   getIt.registerLazySingleton<MedicationRepository>(
-    getIt,
+    () => getIt<MedicationRepositoryImpl>(),
   );
 
   // Services
-  getIt.registerLazySingleton<NotificationService>(
-    NotificationServiceImpl.new,
-  );
+  getIt.registerLazySingleton<NotificationService>(NotificationServiceImpl.new);
   getIt.registerLazySingleton<ReminderSchedulerService>(
     () => ReminderSchedulerImpl(
       notificationService: getIt<NotificationService>(),

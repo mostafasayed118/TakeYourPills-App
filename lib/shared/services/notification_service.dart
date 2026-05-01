@@ -2,7 +2,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 /// Service for handling local notifications.
-/// This is a foundation class; full implementation will be added in Sprint 2.
 abstract class NotificationService {
   /// Initialize the notification service.
   /// Must be called once at app startup after binding initialization.
@@ -38,6 +37,9 @@ abstract class NotificationService {
 
   /// Cancel all pending notifications.
   Future<void> cancelAllNotifications();
+
+  /// Get all pending notification requests.
+  Future<List<PendingNotificationRequest>> getPendingNotifications();
 
   /// Reschedule all notifications (e.g., after timezone change or device reboot).
   Future<void> rescheduleAll();

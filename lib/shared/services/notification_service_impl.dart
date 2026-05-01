@@ -6,13 +6,35 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:go_router/go_router.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/dose_log.dart';
 import 'package:takeyourpills_healthcare_app/core/error/app_error.dart';
 import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository_impl.dart';
 import 'package:get_it/get_it.dart';
 import 'package:takeyourpills_healthcare_app/shared/routing/app_router.dart';
 import 'package:takeyourpills_healthcare_app/shared/services/notification_service.dart';
+
+@pragma('vm:entry-point')
+Future<void> onBackgroundNotificationTapped(
+  NotificationResponse response,
+) async {
+  // Background handler - simplified for isolate entry
+  if (response.payload == null || response.payload!.isEmpty) return;
+
+  try {
+    final parts = response.payload!.split(',');
+    if (parts.length < 3) return;
+
+    final medicationId = int.tryParse(parts[0]);
+    if (medicationId == null) return;
+
+    // Navigate using global key if available
+    if (AppRouter.navigatorKey.currentContext != null) {
+      AppRouter.navigatorKey.currentContext!.go('/medication/$medicationId');
+    }
+  } catch (e) {
+    // Silently fail in background
+  }
+}
 
 /// Concrete implementation of NotificationService
 /// using flutter_local_notifications and timezone.
@@ -55,7 +77,8 @@ class NotificationServiceImpl implements NotificationService {
     await _notificationsPlugin.initialize(
       settings: initSettings,
       onDidReceiveNotificationResponse: onNotificationTapped,
-      onDidReceiveBackgroundNotificationResponse: onNotificationTapped,
+      onDidReceiveBackgroundNotificationResponse:
+          onBackgroundNotificationTapped,
     );
 
     // Setup notification channels
@@ -66,9 +89,8 @@ class NotificationServiceImpl implements NotificationService {
 
   Future<void> _initializeTimezone() async {
     tz.initializeTimeZones();
-    final TimezoneInfo currentTimezone =
-        await FlutterTimezone.getLocalTimezone();
-    _location = tz.getLocation(currentTimezone.identifier);
+    final timezoneInfo = await FlutterTimezone.getLocalTimezone();
+    _location = tz.getLocation(timezoneInfo.identifier);
   }
 
   Future<void> _setupNotificationChannels() async {
@@ -231,6 +253,11 @@ class NotificationServiceImpl implements NotificationService {
   }
 
   @override
+  Future<List<PendingNotificationRequest>> getPendingNotifications() async {
+    return _notificationsPlugin.pendingNotificationRequests();
+  }
+
+  @override
   Future<void> rescheduleAll() async {
     await cancelAllNotifications();
   }
@@ -253,9 +280,9 @@ class NotificationServiceImpl implements NotificationService {
         return;
       }
 
-      // Create dose log
+      // Create dose log - use id: 0 to let database auto-assign
       final doseLog = DoseLog(
-        id: doseId,
+        id: 0,
         medicationId: medicationId,
         scheduledTime: scheduledTime.toIso8601String(),
         status: DoseLogStatus.taken,
