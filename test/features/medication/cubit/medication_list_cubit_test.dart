@@ -2,11 +2,13 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
+import 'package:takeyourpills_healthcare_app/core/error/result.dart';
 import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository_impl.dart';
 import 'package:takeyourpills_healthcare_app/features/medication/presentation/cubit/medication_list_cubit.dart';
 import 'package:takeyourpills_healthcare_app/shared/services/reminder_scheduler_service.dart';
 
 class MockMedicationRepository extends Mock implements MedicationRepository {}
+
 class MockReminderScheduler extends Mock implements ReminderSchedulerService {}
 
 void main() {
@@ -21,14 +23,10 @@ void main() {
       dosageAmount: '100',
       dosageUnit: 'mg',
       iconName: 'pill',
-      colorHex: '',
-      frequencyType: 'daily',
       frequencyDays: '[]',
-      frequencyInterval: 1,
       scheduleTimes: '["08:00"]',
-      isPaused: false,
-      createdAt: DateTime(2026, 1, 1),
-      updatedAt: DateTime(2026, 1, 1),
+      createdAt: DateTime(2026),
+      updatedAt: DateTime(2026),
     ),
     Medication(
       id: 2,
@@ -36,12 +34,8 @@ void main() {
       dosageAmount: '10',
       dosageUnit: 'mg',
       iconName: 'pill',
-      colorHex: '',
-      frequencyType: 'daily',
       frequencyDays: '[]',
-      frequencyInterval: 1,
       scheduleTimes: '["09:00","21:00"]',
-      isPaused: false,
       createdAt: DateTime(2026, 1, 2),
       updatedAt: DateTime(2026, 1, 2),
     ),
@@ -55,12 +49,7 @@ void main() {
         dosageAmount: '',
         dosageUnit: '',
         iconName: '',
-        colorHex: '',
-        frequencyType: 'daily',
         frequencyDays: '[]',
-        frequencyInterval: 1,
-        scheduleTimes: '[]',
-        isPaused: false,
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       ),
@@ -87,7 +76,7 @@ void main() {
       build: () {
         when(
           () => mockRepository.getAllMedications(),
-        ).thenAnswer((_) async => testMedications);
+        ).thenAnswer((_) async => Success(testMedications));
         return cubit;
       },
       act: (cubit) => cubit.loadMedications(),
@@ -106,7 +95,7 @@ void main() {
       build: () {
         when(
           () => mockRepository.getAllMedications(),
-        ).thenAnswer((_) async => []);
+        ).thenAnswer((_) async => const Success<List<Medication>>([]));
         return cubit;
       },
       act: (cubit) => cubit.loadMedications(),
@@ -118,7 +107,7 @@ void main() {
       build: () {
         when(
           () => mockRepository.getAllMedications(),
-        ).thenThrow(Exception('DB error'));
+        ).thenAnswer((_) async => const ResultFailure<List<Medication>>('DB error'));
         return cubit;
       },
       act: (cubit) => cubit.loadMedications(),
@@ -130,10 +119,10 @@ void main() {
       build: () {
         when(
           () => mockRepository.getAllMedications(),
-        ).thenAnswer((_) async => testMedications);
+        ).thenAnswer((_) async => Success(testMedications));
         when(
           () => mockRepository.deleteMedication(1),
-        ).thenAnswer((_) async => 1);
+        ).thenAnswer((_) async => const Success(1));
         when(
           () => mockScheduler.cancelAllForMedication(1),
         ).thenAnswer((_) async {});
@@ -161,7 +150,7 @@ void main() {
       build: () {
         when(
           () => mockRepository.deleteMedication(1),
-        ).thenAnswer((_) async => 1);
+        ).thenAnswer((_) async => const Success(1));
         when(
           () => mockScheduler.cancelAllForMedication(1),
         ).thenAnswer((_) async {});
@@ -177,7 +166,7 @@ void main() {
       build: () {
         when(
           () => mockRepository.updateMedication(any()),
-        ).thenAnswer((_) async => 1);
+        ).thenAnswer((_) async => const Success(1));
         when(
           () => mockScheduler.cancelAllForMedication(1),
         ).thenAnswer((_) async {});

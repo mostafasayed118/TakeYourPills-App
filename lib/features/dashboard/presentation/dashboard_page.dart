@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:takeyourpills_healthcare_app/features/dashboard/presentation/widgets/adherence_ring.dart';
-import 'package:takeyourpills_healthcare_app/features/dashboard/presentation/widgets/upcoming_item.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_colors.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_text_styles.dart';
+
+import '../../../shared/theme/app_colors.dart';
+import '../../../shared/theme/app_text_styles.dart';
+import 'widgets/adherence_ring.dart';
+import 'widgets/upcoming_item.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) => Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.surface,
         scrolledUnderElevation: 0,
@@ -37,10 +37,8 @@ class DashboardPage extends StatelessWidget {
         ),
       ),
     );
-  }
 
-  Widget _buildGreeting() {
-    return Column(
+  Widget _buildGreeting() => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Good Morning, Alex', style: AppTextStyles.headlineMedium),
@@ -52,10 +50,8 @@ class DashboardPage extends StatelessWidget {
         ),
       ],
     );
-  }
 
-  Widget _buildAdherenceCard() {
-    return Container(
+  Widget _buildAdherenceCard() => Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: AppColors.surface,
@@ -140,10 +136,8 @@ class DashboardPage extends StatelessWidget {
         ],
       ),
     );
-  }
 
-  Widget _buildNextDoseCard() {
-    return Container(
+  Widget _buildNextDoseCard() => Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: AppColors.primary,
@@ -162,13 +156,13 @@ class DashboardPage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: AppColors.primaryFixed.withOpacity(0.5),
+              color: AppColors.primaryContainer.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
               '10:00 AM • WITH FOOD',
               style: AppTextStyles.labelLarge.copyWith(
-                color: AppColors.primaryFixed,
+                color: AppColors.onPrimaryContainer,
               ),
             ),
           ),
@@ -198,7 +192,7 @@ class DashboardPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColors.onPrimary.withOpacity(0.1),
+                  color: AppColors.onPrimary.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(Icons.medication, color: AppColors.onPrimary),
@@ -227,10 +221,8 @@ class DashboardPage extends StatelessWidget {
         ],
       ),
     );
-  }
 
-  Widget _buildUpcomingList() {
-    return Column(
+  Widget _buildUpcomingList() => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Upcoming Today', style: AppTextStyles.titleSmall),
@@ -252,14 +244,14 @@ class DashboardPage extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             child: Column(
               children: [
-                UpcomingItem(
+                const UpcomingItem(
                   name: 'Vitamin D3',
                   dosage: '2000 IU • 1 Capsule',
                   time: '1:00 PM',
                   icon: Icons.water_drop,
                 ),
                 Container(height: 1, color: AppColors.surfaceContainerHighest),
-                UpcomingItem(
+                const UpcomingItem(
                   name: 'Atorvastatin',
                   dosage: '20mg • 1 Tablet',
                   time: '8:00 PM',
@@ -271,5 +263,4 @@ class DashboardPage extends StatelessWidget {
         ),
       ],
     );
-  }
 }

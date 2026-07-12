@@ -13,6 +13,28 @@ class MedicationFormInitial extends MedicationFormState {}
 
 /// Active editing state containing all form field values.
 class MedicationFormEditing extends MedicationFormState {
+
+  const MedicationFormEditing({
+    this.name = '',
+    this.dosageAmount = '',
+    this.dosageUnit = 'mg',
+    this.iconName = 'pill',
+    this.colorHex = '',
+    this.frequencyType = 'daily',
+    this.frequencyDays = '[]',
+    this.frequencyInterval = 1,
+    this.scheduleTimes = '',
+    this.startDate,
+    this.endDate,
+    this.instructions,
+    this.isPaused = false,
+    this.pillsRemaining,
+    this.refillThreshold,
+    this.medication,
+    this.validationError,
+    this.isSaving = false,
+    this.isSuccess = false,
+  });
   final String name;
   final String dosageAmount;
   final String dosageUnit;
@@ -41,28 +63,6 @@ class MedicationFormEditing extends MedicationFormState {
   /// Whether the last operation was successful
   final bool isSuccess;
 
-  const MedicationFormEditing({
-    this.name = '',
-    this.dosageAmount = '',
-    this.dosageUnit = 'mg',
-    this.iconName = 'pill',
-    this.colorHex = '',
-    this.frequencyType = 'daily',
-    this.frequencyDays = '[]',
-    this.frequencyInterval = 1,
-    this.scheduleTimes = '',
-    this.startDate,
-    this.endDate,
-    this.instructions,
-    this.isPaused = false,
-    this.pillsRemaining,
-    this.refillThreshold,
-    this.medication,
-    this.validationError,
-    this.isSaving = false,
-    this.isSuccess = false,
-  });
-
   MedicationFormEditing copyWith({
     String? name,
     String? dosageAmount,
@@ -83,8 +83,7 @@ class MedicationFormEditing extends MedicationFormState {
     String? validationError,
     bool? isSaving,
     bool? isSuccess,
-  }) {
-    return MedicationFormEditing(
+  }) => MedicationFormEditing(
       name: name ?? this.name,
       dosageAmount: dosageAmount ?? this.dosageAmount,
       dosageUnit: dosageUnit ?? this.dosageUnit,
@@ -105,7 +104,6 @@ class MedicationFormEditing extends MedicationFormState {
       isSaving: isSaving ?? this.isSaving,
       isSuccess: isSuccess ?? this.isSuccess,
     );
-  }
 
   @override
   List<Object?> get props => [
@@ -133,9 +131,9 @@ class MedicationFormEditing extends MedicationFormState {
 
 /// Form saved successfully.
 class MedicationFormSuccess extends MedicationFormState {
-  final String message;
 
   const MedicationFormSuccess({required this.message});
+  final String message;
 
   @override
   List<Object> get props => [message];
@@ -143,9 +141,9 @@ class MedicationFormSuccess extends MedicationFormState {
 
 /// Unrecoverable form error.
 class MedicationFormError extends MedicationFormState {
-  final String message;
 
   const MedicationFormError({required this.message});
+  final String message;
 
   @override
   List<Object> get props => [message];

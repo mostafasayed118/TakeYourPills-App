@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:takeyourpills_healthcare_app/features/dashboard/presentation/dashboard_page.dart';
-import 'package:takeyourpills_healthcare_app/features/medication/presentation/add_edit_medication_page.dart';
-import 'package:takeyourpills_healthcare_app/features/medication/presentation/detail/medication_detail_page.dart';
-import 'package:takeyourpills_healthcare_app/features/medication/presentation/medication_list_page.dart';
-import 'package:takeyourpills_healthcare_app/features/settings/presentation/settings_page.dart';
-import 'package:takeyourpills_healthcare_app/shared/routing/routes.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_colors.dart';
-import 'package:takeyourpills_healthcare_app/features/onboarding/presentation/onboarding_page.dart';
-import 'package:takeyourpills_healthcare_app/core/di/service_locator.dart';
-import 'package:takeyourpills_healthcare_app/shared/services/preference_service.dart';
+
+import '../../core/di/service_locator.dart';
+import '../../features/dashboard/presentation/dashboard_page.dart';
+import '../../features/medication/presentation/add_edit_medication_page.dart';
+import '../../features/medication/presentation/detail/medication_detail_page.dart';
+import '../../features/medication/presentation/medication_list_page.dart';
+import '../../features/onboarding/presentation/onboarding_page.dart';
+import '../../features/settings/presentation/about_page.dart';
+import '../../features/settings/presentation/appearance_settings_page.dart';
+import '../../features/settings/presentation/data_management_page.dart';
+import '../../features/settings/presentation/notification_settings_page.dart';
+import '../../features/settings/presentation/privacy_settings_page.dart';
+import '../../features/settings/presentation/settings_page.dart';
+import '../services/preference_service.dart';
+import '../theme/app_colors.dart';
+import 'routes.dart';
 
 class AppRouter {
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
 
-  static GoRouter get router {
-    return GoRouter(
+  static GoRouter get router => GoRouter(
       navigatorKey: navigatorKey,
       initialLocation: AppRoutes.root,
       redirect: (context, state) async {
@@ -33,7 +38,7 @@ class AppRouter {
         return null;
       },
       routes: [
-        GoRoute(path: AppRoutes.root, redirect: (_, __) => AppRoutes.dashboard),
+        GoRoute(path: AppRoutes.root, redirect: (_, _) => AppRoutes.dashboard),
         GoRoute(
           path: AppRoutes.onboarding,
           name: 'onboarding',
@@ -135,6 +140,48 @@ class AppRouter {
                   _fadeTransition(c: c, s: s, child: const SettingsPage()),
             ),
             GoRoute(
+              path: AppRoutes.settingsNotifications,
+              name: 'settingsNotifications',
+              pageBuilder: (c, s) => _fadeTransition(
+                c: c,
+                s: s,
+                child: const NotificationSettingsPage(),
+              ),
+            ),
+            GoRoute(
+              path: AppRoutes.settingsAppearance,
+              name: 'settingsAppearance',
+              pageBuilder: (c, s) => _fadeTransition(
+                c: c,
+                s: s,
+                child: const AppearanceSettingsPage(),
+              ),
+            ),
+            GoRoute(
+              path: AppRoutes.settingsPrivacy,
+              name: 'settingsPrivacy',
+              pageBuilder: (c, s) => _fadeTransition(
+                c: c,
+                s: s,
+                child: const PrivacySettingsPage(),
+              ),
+            ),
+            GoRoute(
+              path: AppRoutes.settingsAbout,
+              name: 'settingsAbout',
+              pageBuilder: (c, s) =>
+                  _fadeTransition(c: c, s: s, child: const AboutPage()),
+            ),
+            GoRoute(
+              path: AppRoutes.settingsData,
+              name: 'settingsData',
+              pageBuilder: (c, s) => _fadeTransition(
+                c: c,
+                s: s,
+                child: const DataManagementPage(),
+              ),
+            ),
+            GoRoute(
               path: AppRoutes.messaging,
               name: 'messaging',
               pageBuilder: (c, s) => _fadeTransition(
@@ -151,25 +198,22 @@ class AppRouter {
       errorBuilder: (c, s) =>
           Scaffold(body: Center(child: Text('Page not found: ${s.error}'))),
     );
-  }
 
   static CustomTransitionPage _fadeTransition({
     required BuildContext c,
     required GoRouterState s,
     required Widget child,
-  }) {
-    return CustomTransitionPage(
+  }) => CustomTransitionPage(
       key: s.pageKey,
       child: child,
       transitionsBuilder: (c, a, sa, ch) =>
           FadeTransition(opacity: a, child: ch),
     );
-  }
 }
 
 class _MainScaffold extends StatelessWidget {
-  final Widget child;
   const _MainScaffold({required this.child});
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -183,9 +227,10 @@ class _MainScaffold extends StatelessWidget {
       AppRoutes.progress,
       AppRoutes.settings,
     ];
+    // Sub-settings screens hide the bottom bar (back goes to Settings).
     final selectedIndex = tabRoutes.indexWhere((r) => currentPath == r);
-    final effectiveIndex = selectedIndex == -1 ? 0 : selectedIndex;
     final isTabRoute = selectedIndex != -1;
+    final effectiveIndex = isTabRoute ? selectedIndex : 0;
 
     return Scaffold(
       body: child,
@@ -198,7 +243,9 @@ class _MainScaffold extends StatelessWidget {
               backgroundColor: AppColors.surface,
               elevation: 8,
               onTap: (i) {
-                if (i != effectiveIndex) context.go(tabRoutes[i]);
+                if (i != effectiveIndex) {
+                  context.go(tabRoutes[i]);
+                }
               },
               items: const [
                 BottomNavigationBarItem(

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
 import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository_impl.dart';
-import 'package:takeyourpills_healthcare_app/features/medication/presentation/cubit/medication_list_cubit.dart';
 import 'package:takeyourpills_healthcare_app/features/medication/presentation/cubit/medication_form_cubit.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:takeyourpills_healthcare_app/features/medication/presentation/cubit/medication_list_cubit.dart';
 
 class FakeMedication extends Fake implements Medication {}
 
@@ -22,28 +22,26 @@ void main() {
     mockRepository = MockMedicationRepository();
   });
 
-  Widget _wrapWithProviders({
+  Widget wrapWithProviders({
     required Widget child,
     required MedicationRepository repository,
-  }) {
-    return MultiBlocProvider(
+  }) => MultiBlocProvider(
       providers: [
         BlocProvider(create: (c) => MedicationListCubit(repository)),
         BlocProvider(
           create: (c) =>
-              MedicationFormCubit(repository: repository, isEditing: false),
+              MedicationFormCubit(repository: repository),
         ),
       ],
       child: MaterialApp(home: child),
     );
-  }
 
   group('Medication Integration Tests', () {
     testWidgets('FORM: Provider setup works correctly', (
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(
-        _wrapWithProviders(
+        wrapWithProviders(
           repository: mockRepository,
           child: const Material(child: Text('Test')),
         ),

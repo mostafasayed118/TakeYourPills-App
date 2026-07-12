@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_colors.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_text_styles.dart';
+import '../../../../shared/theme/app_colors.dart';
+import '../../../../shared/theme/app_text_styles.dart';
 
 class DosageUnitDropdown extends StatelessWidget {
-  final String value;
-  final void Function(String) onChanged;
 
   const DosageUnitDropdown({
-    super.key,
-    required this.value,
-    required this.onChanged,
+    required this.value, required this.onChanged, super.key,
   });
+  final String value;
+  final void Function(String) onChanged;
 
   static const _units = [
     'mg',
@@ -25,8 +23,7 @@ class DosageUnitDropdown extends StatelessWidget {
   ];
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
+  Widget build(BuildContext context) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -60,5 +57,4 @@ class DosageUnitDropdown extends StatelessWidget {
         ),
       ],
     );
-  }
 }

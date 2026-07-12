@@ -17,6 +17,7 @@ class AppRoutes {
   static const String settingsPrivacy = '/settings/privacy';
   static const String settingsAppearance = '/settings/appearance';
   static const String settingsAbout = '/settings/about';
+  static const String settingsData = '/settings/data';
 
   // Messaging sub-routes
   static const String conversation = '/messaging/:threadId';

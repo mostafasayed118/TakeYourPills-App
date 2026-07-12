@@ -15,7 +15,7 @@ extension DateTimeX on DateTime {
 
   /// Check if date is today
   bool get isToday {
-    var now = DateTime.now();
+    final now = DateTime.now();
     return isSameDay(now);
   }
 }

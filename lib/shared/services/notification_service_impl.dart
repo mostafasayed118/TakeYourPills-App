@@ -3,15 +3,16 @@ import 'dart:io';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import 'package:takeyourpills_healthcare_app/core/entities/dose_log.dart';
-import 'package:takeyourpills_healthcare_app/core/error/app_error.dart';
-import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository_impl.dart';
-import 'package:get_it/get_it.dart';
-import 'package:takeyourpills_healthcare_app/shared/routing/app_router.dart';
-import 'package:takeyourpills_healthcare_app/shared/services/notification_service.dart';
+
+import '../../core/entities/dose_log.dart';
+import '../../core/error/app_error.dart';
+import '../../data/repositories/medication_repository_impl.dart';
+import '../routing/app_router.dart';
+import 'notification_service.dart';
 
 @pragma('vm:entry-point')
 Future<void> onBackgroundNotificationTapped(
@@ -39,10 +40,10 @@ Future<void> onBackgroundNotificationTapped(
 /// Concrete implementation of NotificationService
 /// using flutter_local_notifications and timezone.
 class NotificationServiceImpl implements NotificationService {
-  static final NotificationServiceImpl _instance =
-      NotificationServiceImpl._internal();
   factory NotificationServiceImpl() => _instance;
   NotificationServiceImpl._internal();
+  static final NotificationServiceImpl _instance =
+      NotificationServiceImpl._internal();
 
   late final FlutterLocalNotificationsPlugin _notificationsPlugin;
   tz.Location? _location;
@@ -60,15 +61,11 @@ class NotificationServiceImpl implements NotificationService {
     await _initializeTimezone();
 
     // Initialize notifications plugin
-    const AndroidInitializationSettings androidSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-    const DarwinInitializationSettings iosSettings =
-        DarwinInitializationSettings(
-          requestAlertPermission: true,
-          requestBadgePermission: true,
-          requestSoundPermission: true,
-        );
-    const InitializationSettings initSettings = InitializationSettings(
+    const androidSettings = AndroidInitializationSettings(
+      '@mipmap/ic_launcher',
+    );
+    const iosSettings = DarwinInitializationSettings();
+    const initSettings = InitializationSettings(
       android: androidSettings,
       iOS: iosSettings,
     );
@@ -94,14 +91,11 @@ class NotificationServiceImpl implements NotificationService {
   }
 
   Future<void> _setupNotificationChannels() async {
-    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    const channel = AndroidNotificationChannel(
       _channelMedicationReminders,
       'Medication Reminders',
       description: 'Reminders for scheduled medication doses',
       importance: Importance.high,
-      enableVibration: true,
-      playSound: true,
-      sound: const RawResourceAndroidNotificationSound('notification'),
     );
 
     await _notificationsPlugin
@@ -110,12 +104,10 @@ class NotificationServiceImpl implements NotificationService {
         >()
         ?.createNotificationChannel(channel);
 
-    const AndroidNotificationChannel refillChannel = AndroidNotificationChannel(
+    const refillChannel = AndroidNotificationChannel(
       _channelRefillAlerts,
       'Refill Alerts',
       description: 'Alerts for low medication stock',
-      importance: Importance.defaultImportance,
-      enableVibration: true,
     );
     await _notificationsPlugin
         .resolvePlatformSpecificImplementation<
@@ -124,47 +116,85 @@ class NotificationServiceImpl implements NotificationService {
         ?.createNotificationChannel(refillChannel);
   }
 
+  AndroidFlutterLocalNotificationsPlugin? get _androidPlugin =>
+      _notificationsPlugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
+
   @override
   Future<bool> requestPermission() async {
     if (Platform.isAndroid) {
-      final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
-          _notificationsPlugin
-              .resolvePlatformSpecificImplementation<
-                AndroidFlutterLocalNotificationsPlugin
-              >();
-      final bool? granted = await androidImplementation
-          ?.areNotificationsEnabled();
-      return granted ?? false;
-    } else if (Platform.isIOS) {
-      final bool? granted = await _notificationsPlugin
+      final android = _androidPlugin;
+      if (android == null) {
+        return false;
+      }
+
+      // Android 13+ POST_NOTIFICATIONS prompt
+      final notificationsGranted =
+          await android.requestNotificationsPermission() ??
+          await android.areNotificationsEnabled() ??
+          false;
+
+      // Exact alarms for reliable dose times (SCHEDULE_EXACT_ALARM)
+      await requestExactAlarmPermission();
+
+      return notificationsGranted;
+    }
+
+    if (Platform.isIOS || Platform.isMacOS) {
+      final granted = await _notificationsPlugin
           .resolvePlatformSpecificImplementation<
             IOSFlutterLocalNotificationsPlugin
           >()
           ?.requestPermissions(alert: true, badge: true, sound: true);
       return granted ?? false;
     }
+
     return false;
+  }
+
+  @override
+  Future<bool> requestExactAlarmPermission() async {
+    if (!Platform.isAndroid) {
+      return true;
+    }
+
+    final android = _androidPlugin;
+    if (android == null) {
+      return false;
+    }
+
+    final canSchedule = await android.canScheduleExactNotifications() ?? false;
+    if (canSchedule) {
+      return true;
+    }
+
+    // Opens system exact-alarm settings for this app (Android 12+/14+)
+    return await android.requestExactAlarmsPermission() ?? false;
+  }
+
+  @override
+  Future<bool> canScheduleExactAlarms() async {
+    if (!Platform.isAndroid) {
+      return true;
+    }
+    return await _androidPlugin?.canScheduleExactNotifications() ?? false;
   }
 
   @override
   Future<bool> isPermissionGranted() async {
     if (Platform.isAndroid) {
-      final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
-          _notificationsPlugin
-              .resolvePlatformSpecificImplementation<
-                AndroidFlutterLocalNotificationsPlugin
-              >();
-      final bool? granted = await androidImplementation
-          ?.areNotificationsEnabled();
-      return granted ?? false;
-    } else if (Platform.isIOS) {
-      final bool? granted = await _notificationsPlugin
-          .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin
-          >()
-          ?.requestPermissions(alert: true, badge: true, sound: false);
-      return granted ?? false;
+      return await _androidPlugin?.areNotificationsEnabled() ?? false;
     }
+
+    if (Platform.isIOS || Platform.isMacOS) {
+      // iOS has no separate "check only" without requesting; treat as granted
+      // when init requested permissions and app is running. Prefer storing
+      // user choice in preferences for a stricter check later.
+      return true;
+    }
+
     return false;
   }
 
@@ -179,25 +209,31 @@ class NotificationServiceImpl implements NotificationService {
     String? payload,
   }) async {
     if (!_initialized) {
-      throw AppError.notification(
+      throw const AppError.notification(
         message: 'Notification service not initialized',
       );
     }
 
     if (scheduledTime.isBefore(DateTime.now())) {
-      throw AppError.notification(
+      throw const AppError.notification(
         message: 'Cannot schedule notification in the past',
       );
     }
 
     // Schedule with timezone-aware time using zonedSchedule
-    final tz.TZDateTime zonedTime = _tzScheduledTime(scheduledTime);
+    final zonedTime = _tzScheduledTime(scheduledTime);
+
+    // Prefer exact alarms for dose reliability; fall back if not granted.
+    final exactOk = await canScheduleExactAlarms();
+    final scheduleMode = exactOk
+        ? AndroidScheduleMode.exactAllowWhileIdle
+        : AndroidScheduleMode.inexactAllowWhileIdle;
 
     await _notificationsPlugin.zonedSchedule(
       id: id,
       scheduledDate: zonedTime,
       notificationDetails: _notificationDetails(),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: scheduleMode,
       matchDateTimeComponents: DateTimeComponents.time,
       payload: payload ?? '$medicationId,$doseId,$scheduledTime',
       title: title,
@@ -219,19 +255,17 @@ class NotificationServiceImpl implements NotificationService {
   }
 
   NotificationDetails _notificationDetails() {
-    const AndroidNotificationDetails androidDetails =
-        AndroidNotificationDetails(
-          _channelMedicationReminders,
-          'Medication Reminders',
-          channelDescription: 'Reminders for scheduled medication doses',
-          importance: Importance.high,
-          enableVibration: true,
-          playSound: true,
-          sound: RawResourceAndroidNotificationSound('notification'),
-          visibility: NotificationVisibility.public,
-        );
+    const androidDetails = AndroidNotificationDetails(
+      _channelMedicationReminders,
+      'Medication Reminders',
+      channelDescription: 'Reminders for scheduled medication doses',
+      importance: Importance.high,
+      priority: Priority.high,
+      category: AndroidNotificationCategory.reminder,
+      visibility: NotificationVisibility.public,
+    );
 
-    const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
+    const iosDetails = DarwinNotificationDetails(
       presentAlert: true,
       presentBadge: true,
       presentSound: true,
@@ -253,9 +287,8 @@ class NotificationServiceImpl implements NotificationService {
   }
 
   @override
-  Future<List<PendingNotificationRequest>> getPendingNotifications() async {
-    return _notificationsPlugin.pendingNotificationRequests();
-  }
+  Future<List<PendingNotificationRequest>> getPendingNotifications() async =>
+      _notificationsPlugin.pendingNotificationRequests();
 
   @override
   Future<void> rescheduleAll() async {
@@ -305,16 +338,9 @@ class NotificationServiceImpl implements NotificationService {
   @override
   tz.Location get timeZoneLocation {
     if (_location == null) {
-      throw AppError.notification(message: 'Timezone not initialized');
+      throw const AppError.notification(message: 'Timezone not initialized');
     }
     return _location!;
-  }
-
-  /// Request exact alarm permission on Android 14+
-  Future<bool> requestExactAlarmPermission() async {
-    if (!Platform.isAndroid) return true;
-    // Exact alarm permission is granted through system settings
-    return true;
   }
 
   bool get isInitialized => _initialized;

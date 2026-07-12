@@ -1,40 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
-import 'package:takeyourpills_healthcare_app/core/utils/schedule_parser.dart';
-import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository_impl.dart';
-import 'package:takeyourpills_healthcare_app/features/medication/presentation/cubit/medication_detail_cubit.dart';
-import 'package:takeyourpills_healthcare_app/features/medication/presentation/detail/widgets/detail_card.dart';
-import 'package:takeyourpills_healthcare_app/features/medication/presentation/detail/widgets/info_row.dart';
-import 'package:takeyourpills_healthcare_app/features/medication/presentation/detail/widgets/stat_chip.dart';
-import 'package:takeyourpills_healthcare_app/shared/components/app_button.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_colors.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_text_styles.dart';
+
+import '../../../../core/entities/medication.dart';
+import '../../../../core/utils/schedule_parser.dart';
+import '../../../../data/repositories/medication_repository_impl.dart';
+import '../../../../shared/components/app_button.dart';
+import '../../../../shared/theme/app_colors.dart';
+import '../../../../shared/theme/app_text_styles.dart';
+import '../cubit/medication_detail_cubit.dart';
+import 'widgets/detail_card.dart';
+import 'widgets/info_row.dart';
+import 'widgets/stat_chip.dart';
 
 class MedicationDetailPage extends StatelessWidget {
+
+  const MedicationDetailPage({required this.medicationId, super.key});
   final int medicationId;
 
-  const MedicationDetailPage({super.key, required this.medicationId});
-
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
+  Widget build(BuildContext context) => BlocProvider(
       create: (context) => MedicationDetailCubit(
         repository: context.read<MedicationRepository>(),
         medicationId: medicationId,
       ),
       child: const _MedicationDetailView(),
     );
-  }
 }
 
 class _MedicationDetailView extends StatelessWidget {
   const _MedicationDetailView();
 
   @override
-  Widget build(BuildContext context) {
-    return BlocListener<MedicationDetailCubit, MedicationDetailState>(
+  Widget build(BuildContext context) => BlocListener<MedicationDetailCubit, MedicationDetailState>(
       listener: (context, state) {
         if (state is MedicationDetailDeleted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -65,10 +63,8 @@ class _MedicationDetailView extends StatelessWidget {
         },
       ),
     );
-  }
 
-  Scaffold _buildScaffold(BuildContext context, Widget body) {
-    return Scaffold(
+  Scaffold _buildScaffold(BuildContext context, Widget body) => Scaffold(
       appBar: AppBar(
         title: const Text('Medication Details'),
         backgroundColor: AppColors.surface,
@@ -76,10 +72,8 @@ class _MedicationDetailView extends StatelessWidget {
       ),
       body: body,
     );
-  }
 
-  Widget _buildErrorScreen(BuildContext context, String message) {
-    return _buildScaffold(
+  Widget _buildErrorScreen(BuildContext context, String message) => _buildScaffold(
       context,
       Center(
         child: Padding(
@@ -100,7 +94,6 @@ class _MedicationDetailView extends StatelessWidget {
                 child: AppButton(
                   text: 'Go Back',
                   onPressed: () => context.pop(),
-                  isPrimary: true,
                 ),
               ),
             ],
@@ -108,10 +101,8 @@ class _MedicationDetailView extends StatelessWidget {
         ),
       ),
     );
-  }
 
-  Widget _buildDetailScreen(BuildContext context, Medication medication) {
-    return Scaffold(
+  Widget _buildDetailScreen(BuildContext context, Medication medication) => Scaffold(
       appBar: AppBar(
         title: const Text('Medication Details'),
         backgroundColor: AppColors.surface,
@@ -170,7 +161,6 @@ class _MedicationDetailView extends StatelessWidget {
         ),
       ),
     );
-  }
 
   void _confirmDelete(BuildContext context, Medication medication) {
     showDialog(
@@ -264,8 +254,7 @@ class _MedicationDetailView extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoCard(Medication medication) {
-    return DetailCard(
+  Widget _buildInfoCard(Medication medication) => DetailCard(
       title: 'Basic Info',
       children: [
         InfoRow(
@@ -280,7 +269,6 @@ class _MedicationDetailView extends StatelessWidget {
           const InfoRow(label: 'Duration', value: 'Ongoing'),
       ],
     );
-  }
 
   Widget _buildScheduleCard(Medication medication) {
     final times = parseScheduleTimes(medication.scheduleTimes)
@@ -304,8 +292,7 @@ class _MedicationDetailView extends StatelessWidget {
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: times.map((time) {
-              return Container(
+            children: times.map((time) => Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 10,
@@ -313,9 +300,7 @@ class _MedicationDetailView extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: AppColors.primaryContainer.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: AppColors.primary.withValues(alpha: 0.2),
-                  ),
+                  border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
                 ),
                 child: Text(
                   time,
@@ -323,8 +308,7 @@ class _MedicationDetailView extends StatelessWidget {
                     color: AppColors.primary,
                   ),
                 ),
-              );
-            }).toList(),
+              )).toList(),
           ),
       ],
     );

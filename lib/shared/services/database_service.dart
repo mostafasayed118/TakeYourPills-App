@@ -1,19 +1,17 @@
-import 'package:takeyourpills_healthcare_app/data/database/app_database.dart';
-import 'package:takeyourpills_healthcare_app/data/database/tables/medications.dart';
-import 'package:takeyourpills_healthcare_app/data/database/tables/schedules.dart';
-import 'package:takeyourpills_healthcare_app/data/database/tables/dose_logs.dart';
-import 'package:takeyourpills_healthcare_app/data/database/tables/refill_tracking.dart';
+import '../../data/database/app_database.dart';
+import '../../data/database/tables/dose_logs.dart';
+import '../../data/database/tables/medications.dart';
+import '../../data/database/tables/refill_tracking.dart';
+import '../../data/database/tables/schedules.dart';
 
 /// Database service that manages the Drift database instance.
 /// This is a singleton service that provides access to the database and DAOs.
 class DatabaseService {
-  static final DatabaseService _instance = DatabaseService._internal();
 
-  factory DatabaseService() {
-    return _instance;
-  }
+  factory DatabaseService() => _instance;
 
   DatabaseService._internal();
+  static final DatabaseService _instance = DatabaseService._internal();
 
   late final AppDatabase _db;
 
@@ -39,25 +37,15 @@ class DatabaseService {
 
   /// Convenient methods for common operations
 
-  Future<List<MedicationData>> getAllMedications() {
-    return _db.getAllMedications();
-  }
+  Future<List<MedicationData>> getAllMedications() => _db.getAllMedications();
 
-  Future<MedicationData?> getMedicationById(int id) {
-    return _db.getMedicationById(id);
-  }
+  Future<MedicationData?> getMedicationById(int id) => _db.getMedicationById(id);
 
-  Future<int> createMedication(MedicationData medication) {
-    return _db.createMedication(medication);
-  }
+  Future<int> createMedication(MedicationData medication) => _db.createMedication(medication);
 
-  Future<int> updateMedication(MedicationData medication) {
-    return _db.updateMedicationRow(medication);
-  }
+  Future<int> updateMedication(MedicationData medication) => _db.updateMedicationRow(medication);
 
-  Future<int> deleteMedication(int id) {
-    return _db.deleteMedication(id);
-  }
+  Future<int> deleteMedication(int id) => _db.deleteMedication(id);
 
   /// Close the database connection.
   Future<void> close() async {

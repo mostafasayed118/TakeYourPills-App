@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_colors.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_text_styles.dart';
+import '../../../shared/routing/routes.dart';
+import '../../../shared/theme/app_colors.dart';
+import '../../../shared/theme/app_text_styles.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) => Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
         backgroundColor: AppColors.surface,
@@ -16,42 +16,42 @@ class SettingsPage extends StatelessWidget {
       body: ListView(
         children: [
           const SizedBox(height: 8),
-          _buildSection('Account'),
-          _buildTile('Edit Profile', Icons.person_outline, () {}),
-          _buildDivider(),
           _buildSection('Notifications'),
           _buildTile(
             'Notification Settings',
             Icons.notifications_outlined,
-            () => context.go('/settings/notifications'),
+            () => context.go(AppRoutes.settingsNotifications),
           ),
           _buildDivider(),
           _buildSection('Display'),
           _buildTile(
             'Appearance',
             Icons.palette_outlined,
-            () => context.go('/settings/appearance'),
+            () => context.go(AppRoutes.settingsAppearance),
           ),
           _buildDivider(),
           _buildSection('Privacy & Security'),
           _buildTile(
             'Privacy & Sharing',
             Icons.lock_outline,
-            () => context.go('/settings/privacy'),
+            () => context.go(AppRoutes.settingsPrivacy),
           ),
-          _buildTile('Data Management', Icons.storage, () {}),
+          _buildTile(
+            'Data Management',
+            Icons.storage,
+            () => context.go(AppRoutes.settingsData),
+          ),
           _buildDivider(),
           _buildSection('About'),
           _buildTile(
             'About TakeYourPills',
             Icons.info_outline,
-            () => context.go('/settings/about'),
+            () => context.go(AppRoutes.settingsAbout),
           ),
           const SizedBox(height: 32),
         ],
       ),
     );
-  }
 
   Widget _buildSection(String title) => Padding(
     padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),

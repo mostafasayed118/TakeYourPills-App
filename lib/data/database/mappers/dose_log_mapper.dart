@@ -1,6 +1,7 @@
+import 'package:drift/drift.dart';
+
 import '../../../core/entities/dose_log.dart'
     as domain;
-import 'package:drift/drift.dart';
 import '../app_database.dart';
 
 
@@ -37,16 +38,16 @@ class DoseLogMapper {
       medicationId: Value(entity.medicationId),
       scheduleId: entity.scheduleId == null
           ? const Value.absent()
-          : Value(entity.scheduleId!),
+          : Value(entity.scheduleId),
       scheduledTime: Value(entity.scheduledTime),
       actualTime: entity.actualTime == null
           ? const Value.absent()
-          : Value(entity.actualTime!),
+          : Value(entity.actualTime),
       status: Value(entity.status.index),
       snoozeCount: Value(entity.snoozeCount),
       notes: entity.notes == null
           ? const Value.absent()
-          : Value(entity.notes!),
+          : Value(entity.notes),
       createdAt: Value(entity.createdAt),
       updatedAt: Value(entity.updatedAt),
     );

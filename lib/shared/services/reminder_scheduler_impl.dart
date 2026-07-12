@@ -1,16 +1,16 @@
 import 'dart:convert';
 
-import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
-import 'package:takeyourpills_healthcare_app/shared/services/notification_service.dart';
-import 'package:takeyourpills_healthcare_app/shared/services/reminder_scheduler_service.dart';
+import '../../core/entities/medication.dart';
+import 'notification_service.dart';
+import 'reminder_scheduler_service.dart';
 
 /// Concrete reminder scheduler that converts medication schedules
 /// into notification instances and manages their lifecycle.
 class ReminderSchedulerImpl implements ReminderSchedulerService {
-  final NotificationService _notificationService;
 
   ReminderSchedulerImpl({required NotificationService notificationService})
     : _notificationService = notificationService;
+  final NotificationService _notificationService;
 
   @override
   Future<void> scheduleForMedication(Medication medication) async {
@@ -19,16 +19,16 @@ class ReminderSchedulerImpl implements ReminderSchedulerService {
     final schedules = await _parseSchedules(medication);
     if (schedules.isEmpty) return;
 
-    final List<DateTime> occurrences = _generateOccurrences(
+    final occurrences = _generateOccurrences(
       schedules,
       medication.frequencyType,
       medication.frequencyDays,
       daysAhead: 30,
     );
 
-    int notificationId = 0;
+    var notificationId = 0;
     for (final scheduledTime in occurrences) {
-      final int doseId = _computeDoseId(
+      final doseId = _computeDoseId(
         medication.id,
         scheduledTime,
         notificationId,
@@ -81,9 +81,9 @@ class ReminderSchedulerImpl implements ReminderSchedulerService {
 
   /// Parse schedule times from medication JSON scheduleTimes field.
   Future<List<DateTime>> _parseSchedules(Medication medication) async {
-    final List<DateTime> schedules = [];
+    final schedules = <DateTime>[];
     try {
-      final List<dynamic> times = List.from(
+      final times = List<dynamic>.from(
         medication.scheduleTimes.isEmpty
             ? []
             : List.from(
@@ -121,7 +121,7 @@ class ReminderSchedulerImpl implements ReminderSchedulerService {
     String frequencyDaysJson, {
     required int daysAhead,
   }) {
-    final List<DateTime> occurrences = [];
+    final occurrences = <DateTime>[];
     final now = DateTime.now();
     final limitDate = DateTime(
       now.year,
@@ -132,11 +132,11 @@ class ReminderSchedulerImpl implements ReminderSchedulerService {
     );
 
     for (final schedule in schedules) {
-      final int hour = schedule.hour;
-      final int minute = schedule.minute;
+      final hour = schedule.hour;
+      final minute = schedule.minute;
 
-      for (int dayOffset = 0; dayOffset <= daysAhead; dayOffset++) {
-        final DateTime candidate = DateTime(
+      for (var dayOffset = 0; dayOffset <= daysAhead; dayOffset++) {
+        final candidate = DateTime(
           now.year,
           now.month,
           now.day + dayOffset,
@@ -147,7 +147,7 @@ class ReminderSchedulerImpl implements ReminderSchedulerService {
         if (candidate.isBefore(now)) continue;
         if (!candidate.isBefore(limitDate)) break;
 
-        final bool shouldInclude = _shouldIncludeForFrequency(
+        final shouldInclude = _shouldIncludeForFrequency(
           frequencyType,
           frequencyDaysJson,
           candidate,
@@ -175,12 +175,12 @@ class ReminderSchedulerImpl implements ReminderSchedulerService {
         return true;
       case 'specific_days':
         try {
-          final List<dynamic> daysList = List.from(
+          final daysList = List<dynamic>.from(
             frequencyDaysJson.isEmpty
                 ? []
                 : List.from(jsonDecode(frequencyDaysJson)),
           );
-          final int weekday = candidate.weekday; // 1=Monday, 7=Sunday
+          final weekday = candidate.weekday; // 1=Monday, 7=Sunday
           return daysList.contains(weekday);
         } catch (_) {
           return false;
@@ -193,9 +193,7 @@ class ReminderSchedulerImpl implements ReminderSchedulerService {
   }
 
   /// Compute a deterministic notification ID.
-  int _computeDoseId(int medicationId, DateTime scheduledTime, int sequence) {
-    return (medicationId * 1000000) +
+  int _computeDoseId(int medicationId, DateTime scheduledTime, int sequence) => (medicationId * 1000000) +
         (scheduledTime.millisecondsSinceEpoch ~/ 1000) +
         sequence;
-  }
 }

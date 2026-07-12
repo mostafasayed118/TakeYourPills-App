@@ -13,9 +13,9 @@ class MedicationDetailLoading extends MedicationDetailState {}
 
 /// Successfully loaded medication.
 class MedicationDetailLoaded extends MedicationDetailState {
-  final Medication medication;
 
   const MedicationDetailLoaded({required this.medication});
+  final Medication medication;
 
   @override
   List<Object> get props => [medication];
@@ -23,9 +23,9 @@ class MedicationDetailLoaded extends MedicationDetailState {
 
 /// Error loading or operating on medication.
 class MedicationDetailError extends MedicationDetailState {
-  final String message;
 
   const MedicationDetailError({required this.message});
+  final String message;
 
   @override
   List<Object> get props => [message];

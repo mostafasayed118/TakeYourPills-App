@@ -1,34 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
-import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository_impl.dart';
-import 'package:takeyourpills_healthcare_app/features/medication/presentation/cubit/medication_list_cubit.dart';
-import 'package:takeyourpills_healthcare_app/features/medication/presentation/widgets/medication_card.dart';
-import 'package:takeyourpills_healthcare_app/features/medication/presentation/widgets/medication_list_error_view.dart';
-import 'package:takeyourpills_healthcare_app/features/medication/presentation/widgets/medication_list_empty_view.dart';
+
+import '../../../core/entities/medication.dart';
+import '../../../data/repositories/medication_repository_impl.dart';
+import 'cubit/medication_list_cubit.dart';
+import 'widgets/medication_card.dart';
+import 'widgets/medication_list_empty_view.dart';
+import 'widgets/medication_list_error_view.dart';
 
 /// Displays the user's medication list with real data from Drift.
 class MedicationListPage extends StatelessWidget {
   const MedicationListPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
+  Widget build(BuildContext context) => BlocProvider(
       create: (context) =>
           MedicationListCubit(context.read<MedicationRepository>())
             ..loadMedications(),
       child: const MedicationListView(),
     );
-  }
 }
 
 class MedicationListView extends StatelessWidget {
   const MedicationListView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return BlocListener<MedicationListCubit, MedicationListState>(
+  Widget build(BuildContext context) => BlocListener<MedicationListCubit, MedicationListState>(
       listener: _handleStateChanges,
       child: const Scaffold(
         appBar: MedicationListAppBar(),
@@ -36,7 +34,6 @@ class MedicationListView extends StatelessWidget {
         body: MedicationListBody(),
       ),
     );
-  }
 
   void _handleStateChanges(BuildContext context, MedicationListState state) {
     if (state is MedicationListError) {
@@ -55,13 +52,11 @@ class MedicationListAppBar extends StatelessWidget
   const MedicationListAppBar({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return AppBar(
+  Widget build(BuildContext context) => AppBar(
       title: const Text('My Medications'),
       backgroundColor: Theme.of(context).colorScheme.surface,
       scrolledUnderElevation: 0,
     );
-  }
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -71,15 +66,13 @@ class MedicationListFab extends StatelessWidget {
   const MedicationListFab({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return FloatingActionButton.extended(
+  Widget build(BuildContext context) => FloatingActionButton.extended(
       onPressed: () => _navigateToAddMedication(context),
       backgroundColor: Theme.of(context).colorScheme.primary,
       foregroundColor: Theme.of(context).colorScheme.onPrimary,
       icon: const Icon(Icons.add),
       label: const Text('Add'),
     );
-  }
 
   Future<void> _navigateToAddMedication(BuildContext context) async {
     await context.push('/add-medication/new');
@@ -93,10 +86,8 @@ class MedicationListBody extends StatelessWidget {
   const MedicationListBody({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<MedicationListCubit, MedicationListState>(
-      builder: (context, state) {
-        return switch (state) {
+  Widget build(BuildContext context) => BlocBuilder<MedicationListCubit, MedicationListState>(
+      builder: (context, state) => switch (state) {
           MedicationListLoading() => const Center(
             child: CircularProgressIndicator(),
           ),
@@ -115,10 +106,8 @@ class MedicationListBody extends StatelessWidget {
             medications: medications,
           ),
           MedicationListState() => const SizedBox.shrink(),
-        };
-      },
+        },
     );
-  }
 
   Future<void> _navigateToAddMedication(BuildContext context) async {
     await context.push('/add-medication/new');
@@ -129,13 +118,12 @@ class MedicationListBody extends StatelessWidget {
 }
 
 class MedicationListContent extends StatelessWidget {
-  final List<Medication> medications;
 
   const MedicationListContent({required this.medications, super.key});
+  final List<Medication> medications;
 
   @override
-  Widget build(BuildContext context) {
-    return RefreshIndicator(
+  Widget build(BuildContext context) => RefreshIndicator(
       onRefresh: () => context.read<MedicationListCubit>().refresh(),
       child: ListView.builder(
         padding: const EdgeInsets.only(top: 8, bottom: 100),
@@ -154,7 +142,6 @@ class MedicationListContent extends StatelessWidget {
         },
       ),
     );
-  }
 
   Future<void> _handleTap(BuildContext context, Medication medication) async {
     await context.push('/medication/${medication.id}');

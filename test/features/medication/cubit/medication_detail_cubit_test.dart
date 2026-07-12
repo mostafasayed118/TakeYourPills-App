@@ -2,11 +2,13 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
+import 'package:takeyourpills_healthcare_app/core/error/result.dart';
 import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository_impl.dart';
 import 'package:takeyourpills_healthcare_app/features/medication/presentation/cubit/medication_detail_cubit.dart';
 import 'package:takeyourpills_healthcare_app/shared/services/reminder_scheduler_service.dart';
 
 class MockMedicationRepository extends Mock implements MedicationRepository {}
+
 class MockReminderScheduler extends Mock implements ReminderSchedulerService {}
 
 void main() {
@@ -20,14 +22,10 @@ void main() {
     dosageAmount: '100',
     dosageUnit: 'mg',
     iconName: 'pill',
-    colorHex: '',
-    frequencyType: 'daily',
     frequencyDays: '[]',
-    frequencyInterval: 1,
     scheduleTimes: '["08:00"]',
-    isPaused: false,
-    createdAt: DateTime(2026, 1, 1),
-    updatedAt: DateTime(2026, 1, 1),
+    createdAt: DateTime(2026),
+    updatedAt: DateTime(2026),
   );
 
   setUpAll(() {
@@ -37,10 +35,11 @@ void main() {
   setUp(() {
     mockRepository = MockMedicationRepository();
     mockScheduler = MockReminderScheduler();
-    
-    when(() => mockRepository.getMedicationById(1))
-        .thenAnswer((_) async => testMedication);
-        
+
+    when(
+      () => mockRepository.getMedicationById(1),
+    ).thenAnswer((_) async => Success<Medication?>(testMedication));
+
     cubit = MedicationDetailCubit(
       repository: mockRepository,
       scheduler: mockScheduler,
@@ -61,16 +60,18 @@ void main() {
     blocTest<MedicationDetailCubit, MedicationDetailState>(
       'togglePause prevents race conditions by locking state (B8)',
       build: () {
-        when(() => mockRepository.updateMedication(any()))
-            .thenAnswer((_) async => 1);
-        when(() => mockScheduler.cancelAllForMedication(1))
-            .thenAnswer((_) async {});
+        when(
+          () => mockRepository.updateMedication(any()),
+        ).thenAnswer((_) async => const Success(1));
+        when(
+          () => mockScheduler.cancelAllForMedication(1),
+        ).thenAnswer((_) async {});
         return cubit;
       },
       act: (cubit) async {
         // Wait for initial load
         await Future.delayed(Duration.zero);
-        
+
         // Fire twice rapidly - should only execute once due to _isTogglingPause guard
         cubit.togglePause();
         cubit.togglePause();
@@ -85,19 +86,19 @@ void main() {
     blocTest<MedicationDetailCubit, MedicationDetailState>(
       'deleteMedication safely cancels notifications BEFORE repository deletion (P2)',
       build: () {
-        when(() => mockRepository.deleteMedication(1))
-            .thenAnswer((_) async => 1);
-        when(() => mockScheduler.cancelAllForMedication(1))
-            .thenAnswer((_) async {});
+        when(
+          () => mockRepository.deleteMedication(1),
+        ).thenAnswer((_) async => const Success(1));
+        when(
+          () => mockScheduler.cancelAllForMedication(1),
+        ).thenAnswer((_) async {});
         return cubit;
       },
       act: (cubit) async {
         await Future.delayed(Duration.zero);
         await cubit.deleteMedication();
       },
-      expect: () => [
-        isA<MedicationDetailDeleted>(),
-      ],
+      expect: () => [isA<MedicationDetailDeleted>()],
       verify: (_) {
         verifyInOrder([
           () => mockScheduler.cancelAllForMedication(1),

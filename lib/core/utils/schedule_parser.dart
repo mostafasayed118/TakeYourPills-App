@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 class ScheduleTime implements Comparable<ScheduleTime> {
-  final int hour;
-  final int minute;
 
   const ScheduleTime({required this.hour, required this.minute});
+  final int hour;
+  final int minute;
 
   @override
   int compareTo(ScheduleTime other) {
@@ -18,7 +18,7 @@ List<ScheduleTime> parseScheduleTimes(String scheduleTimesJson) {
     if (scheduleTimesJson.isEmpty || scheduleTimesJson == '[]') {
       return [];
     }
-    final List<dynamic> times = List.from(
+    final times = List<dynamic>.from(
       scheduleTimesJson.startsWith('[')
           ? (jsonDecode(scheduleTimesJson) as List)
           : scheduleTimesJson

@@ -44,6 +44,9 @@ abstract class PreferenceService {
 
 /// Implementation of [PreferenceService] using SharedPreferences.
 class PreferenceServiceImpl implements PreferenceService {
+  factory PreferenceServiceImpl() => _instance;
+
+  PreferenceServiceImpl._();
   static const String _notificationsEnabled = 'notifications_enabled';
   static const String _quietHoursStart = 'quiet_hours_start';
   static const String _quietHoursEnd = 'quiet_hours_end';
@@ -54,20 +57,16 @@ class PreferenceServiceImpl implements PreferenceService {
 
   late final SharedPreferences _prefs;
 
-  PreferenceServiceImpl._();
-
   static final PreferenceServiceImpl _instance = PreferenceServiceImpl._();
-  factory PreferenceServiceImpl() => _instance;
 
   /// Initialize the service. Must be called before any other method.
+  @override
   Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
   }
 
   @override
-  Future<String?> getString(String key, {String? defaultValue}) async {
-    return _prefs.getString(key) ?? defaultValue;
-  }
+  Future<String?> getString(String key, {String? defaultValue}) async => _prefs.getString(key) ?? defaultValue;
 
   @override
   Future<void> setString(String key, String value) async {
@@ -75,9 +74,7 @@ class PreferenceServiceImpl implements PreferenceService {
   }
 
   @override
-  Future<int?> getInt(String key, {int? defaultValue}) async {
-    return _prefs.getInt(key) ?? defaultValue;
-  }
+  Future<int?> getInt(String key, {int? defaultValue}) async => _prefs.getInt(key) ?? defaultValue;
 
   @override
   Future<void> setInt(String key, int value) async {
@@ -85,9 +82,7 @@ class PreferenceServiceImpl implements PreferenceService {
   }
 
   @override
-  Future<bool?> getBool(String key, {bool? defaultValue}) async {
-    return _prefs.getBool(key) ?? defaultValue;
-  }
+  Future<bool?> getBool(String key, {bool? defaultValue}) async => _prefs.getBool(key) ?? defaultValue;
 
   @override
   Future<void> setBool(String key, bool value) async {
@@ -107,44 +102,46 @@ class PreferenceServiceImpl implements PreferenceService {
   /// Convenience getters/setters for typed preferences
 
   Future<void> setNotificationsEnabled(bool value) async =>
-      await _prefs.setBool(_notificationsEnabled, value);
+      _prefs.setBool(_notificationsEnabled, value);
 
   Future<bool> getNotificationsEnabled() async =>
       _prefs.getBool(_notificationsEnabled) ?? true;
 
   Future<void> setQuietHoursStart(int value) async =>
-      await _prefs.setInt(_quietHoursStart, value);
+      _prefs.setInt(_quietHoursStart, value);
 
   Future<int> getQuietHoursStart() async =>
       _prefs.getInt(_quietHoursStart) ?? 1380; // 23:00 in minutes
 
   Future<void> setQuietHoursEnd(int value) async =>
-      await _prefs.setInt(_quietHoursEnd, value);
+      _prefs.setInt(_quietHoursEnd, value);
 
   Future<int> getQuietHoursEnd() async =>
       _prefs.getInt(_quietHoursEnd) ?? 420; // 07:00 in minutes
 
   Future<void> setDefaultSnoozeMinutes(int value) async =>
-      await _prefs.setInt(_defaultSnoozeMinutes, value);
+      _prefs.setInt(_defaultSnoozeMinutes, value);
 
   Future<int> getDefaultSnoozeMinutes() async =>
       _prefs.getInt(_defaultSnoozeMinutes) ?? 10;
 
   Future<void> setThemeMode(String value) async =>
-      await _prefs.setString(_themeMode, value);
+      _prefs.setString(_themeMode, value);
 
   Future<String> getThemeMode() async =>
       _prefs.getString(_themeMode) ?? 'system';
 
   Future<void> setFontSizeMultiplier(double value) async =>
-      await _prefs.setDouble(_fontSizeMultiplier, value);
+      _prefs.setDouble(_fontSizeMultiplier, value);
 
   Future<double> getFontSizeMultiplier() async =>
       _prefs.getDouble(_fontSizeMultiplier) ?? 1.0;
 
+  @override
   Future<void> setOnboardingComplete(bool value) async =>
-      await _prefs.setBool(_onboardingComplete, value);
+      _prefs.setBool(_onboardingComplete, value);
 
+  @override
   Future<bool> getOnboardingComplete() async =>
       _prefs.getBool(_onboardingComplete) ?? false;
 }

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
+import 'package:takeyourpills_healthcare_app/core/error/result.dart';
 import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository_impl.dart';
 import 'package:takeyourpills_healthcare_app/features/medication/presentation/add_edit_medication_page.dart';
 import 'package:takeyourpills_healthcare_app/features/medication/presentation/cubit/medication_form_cubit.dart';
-import 'package:takeyourpills_healthcare_app/shared/components/app_input.dart';
 import 'package:takeyourpills_healthcare_app/shared/components/app_button.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:takeyourpills_healthcare_app/shared/components/app_input.dart';
 
 class FakeMedication extends Fake implements Medication {}
 
@@ -22,17 +23,13 @@ void main() {
     dosageAmount: '100',
     dosageUnit: 'mg',
     iconName: 'pill',
-    colorHex: '',
-    frequencyType: 'daily',
     frequencyDays: '[]',
-    frequencyInterval: 1,
     scheduleTimes: '["08:00"]',
-    isPaused: false,
     instructions: 'Take with food',
     pillsRemaining: 30,
     refillThreshold: 10,
-    createdAt: DateTime(2026, 1, 1),
-    updatedAt: DateTime(2026, 1, 1),
+    createdAt: DateTime(2026),
+    updatedAt: DateTime(2026),
   );
 
   setUpAll(() {
@@ -43,20 +40,24 @@ void main() {
     mockRepository = MockMedicationRepository();
   });
 
-  Widget _createTestWidget({
+  Widget createTestWidget({
     required Widget child,
     bool isEditing = false,
     String? medicationId,
   }) {
     final router = GoRouter(
-      initialLocation: '/',
+      initialLocation: '/add',
       routes: [
         GoRoute(
           path: '/',
-          builder: (c, s) => Scaffold(body: child),
+          builder: (c, s) => const Scaffold(body: Text('Home')),
           routes: [
             GoRoute(
-              path: '/add-medication/:medicationId',
+              path: 'add',
+              builder: (c, s) => Scaffold(body: child),
+            ),
+            GoRoute(
+              path: 'add-medication/:medicationId',
               builder: (c, s) =>
                   const Scaffold(body: Text('Edit Medication Page')),
             ),
@@ -71,7 +72,7 @@ void main() {
           repository: mockRepository,
           isEditing: isEditing,
           existingMedId: medicationId != null
-              ? int.tryParse(medicationId!)
+              ? int.tryParse(medicationId)
               : null,
         ),
         child: MaterialApp.router(
@@ -89,10 +90,10 @@ void main() {
     ) async {
       when(
         () => mockRepository.getMedicationById(any()),
-      ).thenAnswer((_) async => null);
+      ).thenAnswer((_) async => const Success<Medication?>(null));
 
       await tester.pumpWidget(
-        _createTestWidget(child: const AddEditMedicationPage(isEditing: false)),
+        createTestWidget(child: const AddEditMedicationPage()),
       );
       await tester.pumpAndSettle();
 
@@ -107,10 +108,10 @@ void main() {
     ) async {
       when(
         () => mockRepository.getMedicationById(1),
-      ).thenAnswer((_) async => testMed);
+      ).thenAnswer((_) async => Success<Medication?>(testMed));
 
       await tester.pumpWidget(
-        _createTestWidget(
+        createTestWidget(
           child: const AddEditMedicationPage(
             isEditing: true,
             medicationId: '1',
@@ -133,10 +134,10 @@ void main() {
     ) async {
       when(
         () => mockRepository.getMedicationById(any()),
-      ).thenAnswer((_) async => null);
+      ).thenAnswer((_) async => const Success<Medication?>(null));
 
       await tester.pumpWidget(
-        _createTestWidget(child: const AddEditMedicationPage(isEditing: false)),
+        createTestWidget(child: const AddEditMedicationPage()),
       );
       await tester.pumpAndSettle();
 
@@ -158,34 +159,42 @@ void main() {
     ) async {
       when(
         () => mockRepository.getMedicationById(any()),
-      ).thenAnswer((_) async => null);
-      
+      ).thenAnswer((_) async => const Success<Medication?>(null));
+
       when(
         () => mockRepository.createMedication(any()),
-      ).thenAnswer((_) async => 1);
+      ).thenAnswer((_) async => const Success(1));
 
       await tester.pumpWidget(
-        _createTestWidget(child: const AddEditMedicationPage(isEditing: false)),
+        createTestWidget(child: const AddEditMedicationPage()),
       );
       await tester.pumpAndSettle();
 
       // Enter name
-      final nameInput = find.byType(AppInput).at(0);
+      final nameInput = find.byKey(const Key('medication_name'));
       await tester.ensureVisible(nameInput);
       await tester.enterText(nameInput, 'Ibuprofen');
-      
+
       // Enter dosage
-      final dosageInput = find.byType(AppInput).at(1);
+      final dosageInput = find.byKey(const Key('dosage_amount'));
       await tester.ensureVisible(dosageInput);
       await tester.enterText(dosageInput, '200');
-      
-      // Select unit (already defaults to mg)
-      
+
+      // Enter schedule time
+      final scheduleInput = find.byKey(const Key('schedule_times'));
+      await tester.ensureVisible(scheduleInput);
+      await tester.enterText(scheduleInput, '08:00');
+
       // Save form
-      final saveBtn = find.text('Save Medication');
-      await tester.ensureVisible(saveBtn);
-      await tester.tap(saveBtn);
+      await tester.drag(
+        find.byType(SingleChildScrollView),
+        const Offset(0, -500),
+      );
       await tester.pumpAndSettle();
+      final saveBtn = find.text('Save Medication');
+      await tester.tap(saveBtn);
+      // Wait a short duration instead of pumpAndSettle to avoid timeout from indefinite animations
+      await tester.pump(const Duration(milliseconds: 500));
 
       verify(() => mockRepository.createMedication(any())).called(1);
     });

@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
 
-import 'schedules.dart';
 import 'medications.dart';
+import 'schedules.dart';
 
 @DataClassName('DoseLogData')
 class DoseLogs extends Table {

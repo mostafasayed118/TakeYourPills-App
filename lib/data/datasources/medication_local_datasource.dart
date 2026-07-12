@@ -1,20 +1,21 @@
 import 'package:drift/drift.dart';
-import 'package:takeyourpills_healthcare_app/data/database/app_database.dart';
-import 'package:takeyourpills_healthcare_app/data/database/mappers/medication_mapper.dart';
-import 'package:takeyourpills_healthcare_app/data/database/mappers/schedule_mapper.dart';
-import 'package:takeyourpills_healthcare_app/data/database/mappers/dose_log_mapper.dart';
-import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
-import 'package:takeyourpills_healthcare_app/core/entities/schedule.dart';
-import 'package:takeyourpills_healthcare_app/core/entities/dose_log.dart';
+
+import '../../core/entities/dose_log.dart';
+import '../../core/entities/medication.dart';
+import '../../core/entities/schedule.dart';
+import '../database/app_database.dart';
+import '../database/mappers/dose_log_mapper.dart';
+import '../database/mappers/medication_mapper.dart';
+import '../database/mappers/schedule_mapper.dart';
 
 /// Local data source for medication-related operations.
 ///
 /// Bridges the gap between the Drift database layer and the
 /// domain entity layer using mappers for type conversion.
 class MedicationLocalDatasource {
-  final AppDatabase _db;
 
   MedicationLocalDatasource(this._db);
+  final AppDatabase _db;
 
   // ── Medications ──────────────────────────────────────────────
 
@@ -50,19 +51,15 @@ class MedicationLocalDatasource {
   }
 
   /// Watch all medications as a reactive stream.
-  Stream<List<Medication>> watchAllMedications() {
-    return _db.watchAllMedications().map(MedicationMapper.toEntityList);
-  }
+  Stream<List<Medication>> watchAllMedications() => _db.watchAllMedications().map(MedicationMapper.toEntityList);
 
   /// Batch insert multiple medications in a single transaction.
-  Future<void> bulkInsertMedications(List<Medication> medications) async {
-    return _db.batch((batch) {
+  Future<void> bulkInsertMedications(List<Medication> medications) async => _db.batch((batch) {
       for (final med in medications) {
         final model = MedicationMapper.toModel(med);
         batch.insert(_db.medications, model);
       }
     });
-  }
 
   // ── Schedules ────────────────────────────────────────────────
 
@@ -81,13 +78,9 @@ class MedicationLocalDatasource {
     return _db.updateScheduleRow(companion);
   }
 
-  Future<int> deleteSchedule(int id) async {
-    return _db.deleteSchedule(id);
-  }
+  Future<int> deleteSchedule(int id) async => _db.deleteSchedule(id);
 
-  Future<int> deleteSchedulesForMedication(int medicationId) async {
-    return _db.deleteSchedulesForMedication(medicationId);
-  }
+  Future<int> deleteSchedulesForMedication(int medicationId) async => _db.deleteSchedulesForMedication(medicationId);
 
   // ── Dose Logs ────────────────────────────────────────────────
 

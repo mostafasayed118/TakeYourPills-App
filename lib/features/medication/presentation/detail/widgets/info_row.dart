@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_colors.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_text_styles.dart';
+import '../../../../../shared/theme/app_colors.dart';
+import '../../../../../shared/theme/app_text_styles.dart';
 
 class InfoRow extends StatelessWidget {
+
+  const InfoRow({required this.label, required this.value, super.key});
   final String label;
   final String value;
 
-  const InfoRow({super.key, required this.label, required this.value});
-
   @override
-  Widget build(BuildContext context) {
-    return Padding(
+  Widget build(BuildContext context) => Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -28,5 +27,4 @@ class InfoRow extends StatelessWidget {
         ],
       ),
     );
-  }
 }

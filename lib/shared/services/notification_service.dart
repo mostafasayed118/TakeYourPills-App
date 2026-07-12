@@ -8,8 +8,19 @@ abstract class NotificationService {
   Future<void> init();
 
   /// Request notification permissions from the user.
-  /// Returns true if permission granted, false otherwise.
+  ///
+  /// On Android 13+: requests [POST_NOTIFICATIONS].
+  /// On Android 12+/14+: also requests exact-alarm permission when needed
+  /// for reliable dose reminders.
+  /// Returns true if notifications may be shown (exact alarm may still be denied).
   Future<bool> requestPermission();
+
+  /// Request permission to schedule exact alarms (Android 12+/14+).
+  /// Returns true on non-Android platforms or when already allowed.
+  Future<bool> requestExactAlarmPermission();
+
+  /// Whether the app can schedule exact alarms (dose times).
+  Future<bool> canScheduleExactAlarms();
 
   /// Check if notification permission is granted.
   Future<bool> isPermissionGranted();

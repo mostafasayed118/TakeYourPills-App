@@ -1,29 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository_impl.dart';
-import 'package:takeyourpills_healthcare_app/features/medication/presentation/cubit/medication_form_cubit.dart';
-import 'package:takeyourpills_healthcare_app/features/medication/presentation/widgets/dosage_unit_dropdown.dart';
-import 'package:takeyourpills_healthcare_app/features/medication/presentation/widgets/frequency_dropdown.dart';
-import 'package:takeyourpills_healthcare_app/features/medication/presentation/widgets/section_header.dart';
-import 'package:takeyourpills_healthcare_app/shared/components/app_button.dart';
-import 'package:takeyourpills_healthcare_app/shared/components/app_input.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_colors.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_text_styles.dart';
+
+import '../../../data/repositories/medication_repository_impl.dart';
+import '../../../shared/components/app_button.dart';
+import '../../../shared/components/app_input.dart';
+import '../../../shared/theme/app_colors.dart';
+import '../../../shared/theme/app_text_styles.dart';
+import 'cubit/medication_form_cubit.dart';
+import 'widgets/dosage_unit_dropdown.dart';
+import 'widgets/frequency_dropdown.dart';
+import 'widgets/section_header.dart';
 
 class AddEditMedicationPage extends StatelessWidget {
-  final bool isEditing;
-  final String? medicationId;
 
   const AddEditMedicationPage({
     super.key,
     this.isEditing = false,
     this.medicationId,
   });
+  final bool isEditing;
+  final String? medicationId;
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
+  Widget build(BuildContext context) => BlocProvider(
       create: (context) => MedicationFormCubit(
         repository: context.read<MedicationRepository>(),
         isEditing: isEditing,
@@ -33,17 +33,15 @@ class AddEditMedicationPage extends StatelessWidget {
       ),
       child: _AddEditMedicationView(isEditing: isEditing),
     );
-  }
 }
 
 class _AddEditMedicationView extends StatelessWidget {
-  final bool isEditing;
 
   const _AddEditMedicationView({required this.isEditing});
+  final bool isEditing;
 
   @override
-  Widget build(BuildContext context) {
-    return BlocListener<MedicationFormCubit, MedicationFormState>(
+  Widget build(BuildContext context) => BlocListener<MedicationFormCubit, MedicationFormState>(
       listener: (context, state) {
         if (state is MedicationFormSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -86,10 +84,8 @@ class _AddEditMedicationView extends StatelessWidget {
         ),
       ),
     );
-  }
 
-  Widget _buildErrorView(BuildContext context, String message) {
-    return Center(
+  Widget _buildErrorView(BuildContext context, String message) => Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -112,13 +108,11 @@ class _AddEditMedicationView extends StatelessWidget {
             AppButton(
               text: 'Go Back',
               onPressed: () => Navigator.of(context).pop(),
-              isPrimary: true,
             ),
           ],
         ),
       ),
     );
-  }
 
   Widget _buildForm(BuildContext context, MedicationFormEditing state) {
     final cubit = context.read<MedicationFormCubit>();
@@ -219,7 +213,7 @@ class _AddEditMedicationView extends StatelessWidget {
                   label: 'Pills Remaining',
                   hint: '30',
                   value: state.pillsRemaining?.toString() ?? '',
-                  keyboardType: const TextInputType.numberWithOptions(),
+                  keyboardType: TextInputType.number,
                   onChanged: (v) => cubit.updatePillsRemaining(int.tryParse(v)),
                 ),
               ),
@@ -229,7 +223,7 @@ class _AddEditMedicationView extends StatelessWidget {
                   label: 'Refill Alert At',
                   hint: '10',
                   value: state.refillThreshold?.toString() ?? '',
-                  keyboardType: const TextInputType.numberWithOptions(),
+                  keyboardType: TextInputType.number,
                   onChanged: (v) =>
                       cubit.updateRefillThreshold(int.tryParse(v)),
                 ),
@@ -277,7 +271,6 @@ class _AddEditMedicationView extends StatelessWidget {
             text: isEditing ? 'Update Medication' : 'Save Medication',
             onPressed: state.isSaving ? null : cubit.saveMedication,
             isLoading: state.isSaving,
-            isPrimary: true,
           ),
           const SizedBox(height: 40),
         ],

@@ -3,10 +3,11 @@ import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:get_it/get_it.dart';
-import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
-import 'package:takeyourpills_healthcare_app/core/utils/validators.dart';
-import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository_impl.dart';
-import 'package:takeyourpills_healthcare_app/shared/services/reminder_scheduler_service.dart';
+import '../../../../core/entities/medication.dart';
+import '../../../../core/error/result.dart';
+import '../../../../core/utils/validators.dart';
+import '../../../../data/repositories/medication_repository_impl.dart';
+import '../../../../shared/services/reminder_scheduler_service.dart';
 
 part 'medication_form_state.dart';
 
@@ -15,10 +16,6 @@ part 'medication_form_state.dart';
 /// Handles field updates, validation, and persistence through
 /// the medication repository. Shared between create and edit flows.
 class MedicationFormCubit extends Cubit<MedicationFormState> {
-  final MedicationRepository _repository;
-  final ReminderSchedulerService _scheduler;
-  final bool isEditing;
-  final int? existingMedId;
 
   MedicationFormCubit({
     required MedicationRepository repository,
@@ -36,57 +33,59 @@ class MedicationFormCubit extends Cubit<MedicationFormState> {
       _loadExistingData(existingMedId!);
     } else {
       emit(
-        MedicationFormEditing(
-          name: '',
-          dosageAmount: '',
-          dosageUnit: 'mg',
-          iconName: 'pill',
-          colorHex: '',
-          frequencyType: 'daily',
-          frequencyDays: '[]',
-          frequencyInterval: 1,
-          scheduleTimes: '',
-          isPaused: false,
+        const MedicationFormEditing(
+          
         ),
       );
     }
   }
+  final MedicationRepository _repository;
+  final ReminderSchedulerService _scheduler;
+  final bool isEditing;
+  final int? existingMedId;
 
   Future<void> _loadExistingData(int id) async {
     try {
-      final med = await _repository.getMedicationById(id);
-      if (med != null) {
-        String displayTimes = med.scheduleTimes;
-        try {
-          final List<dynamic> times = jsonDecode(med.scheduleTimes);
-          displayTimes = times.join(', ');
-        } catch (_) {
-          // Already in display format
-        }
+      final result = await _repository.getMedicationById(id);
+      result.fold(
+        (med) {
+          if (med != null) {
+            var displayTimes = med.scheduleTimes;
+            try {
+              final List<dynamic> times = jsonDecode(med.scheduleTimes);
+              displayTimes = times.join(', ');
+            } catch (_) {
+              // Already in display format
+            }
 
-        emit(
-          MedicationFormEditing(
-            name: med.name,
-            dosageAmount: med.dosageAmount,
-            dosageUnit: med.dosageUnit,
-            iconName: med.iconName,
-            colorHex: med.colorHex,
-            frequencyType: med.frequencyType,
-            frequencyDays: med.frequencyDays,
-            frequencyInterval: med.frequencyInterval,
-            scheduleTimes: displayTimes,
-            startDate: med.startDate,
-            endDate: med.endDate,
-            instructions: med.instructions,
-            isPaused: med.isPaused,
-            pillsRemaining: med.pillsRemaining,
-            refillThreshold: med.refillThreshold,
-            medication: med,
-          ),
-        );
-      } else {
-        emit(const MedicationFormError(message: 'Medication not found'));
-      }
+            emit(
+              MedicationFormEditing(
+                name: med.name,
+                dosageAmount: med.dosageAmount,
+                dosageUnit: med.dosageUnit,
+                iconName: med.iconName,
+                colorHex: med.colorHex,
+                frequencyType: med.frequencyType,
+                frequencyDays: med.frequencyDays,
+                frequencyInterval: med.frequencyInterval,
+                scheduleTimes: displayTimes,
+                startDate: med.startDate,
+                endDate: med.endDate,
+                instructions: med.instructions,
+                isPaused: med.isPaused,
+                pillsRemaining: med.pillsRemaining,
+                refillThreshold: med.refillThreshold,
+                medication: med,
+              ),
+            );
+          } else {
+            emit(const MedicationFormError(message: 'Medication not found'));
+          }
+        },
+        (error) => emit(
+          MedicationFormError(message: 'Failed to load medication: $error'),
+        ),
+      );
     } catch (e) {
       emit(
         MedicationFormError(
@@ -101,19 +100,19 @@ class MedicationFormCubit extends Cubit<MedicationFormState> {
   void updateName(String value) {
     final current = _ensureEditing();
     if (current == null) return;
-    emit(current.copyWith(name: value, validationError: null));
+    emit(current.copyWith(name: value));
   }
 
   void updateDosageAmount(String value) {
     final current = _ensureEditing();
     if (current == null) return;
-    emit(current.copyWith(dosageAmount: value, validationError: null));
+    emit(current.copyWith(dosageAmount: value));
   }
 
   void updateDosageUnit(String value) {
     final current = _ensureEditing();
     if (current == null) return;
-    emit(current.copyWith(dosageUnit: value, validationError: null));
+    emit(current.copyWith(dosageUnit: value));
   }
 
   void updateIconName(String value) {
@@ -131,25 +130,25 @@ class MedicationFormCubit extends Cubit<MedicationFormState> {
   void updateFrequencyType(String value) {
     final current = _ensureEditing();
     if (current == null) return;
-    emit(current.copyWith(frequencyType: value, validationError: null));
+    emit(current.copyWith(frequencyType: value));
   }
 
   void updateFrequencyDays(String value) {
     final current = _ensureEditing();
     if (current == null) return;
-    emit(current.copyWith(frequencyDays: value, validationError: null));
+    emit(current.copyWith(frequencyDays: value));
   }
 
   void updateFrequencyInterval(int value) {
     final current = _ensureEditing();
     if (current == null) return;
-    emit(current.copyWith(frequencyInterval: value, validationError: null));
+    emit(current.copyWith(frequencyInterval: value));
   }
 
   void updateScheduleTimes(String value) {
     final current = _ensureEditing();
     if (current == null) return;
-    emit(current.copyWith(scheduleTimes: value, validationError: null));
+    emit(current.copyWith(scheduleTimes: value));
   }
 
   void updateStartDate(String? value) {
@@ -255,61 +254,69 @@ class MedicationFormCubit extends Cubit<MedicationFormState> {
       return;
     }
 
-    emit(current.copyWith(isSaving: true, validationError: null));
+    emit(current.copyWith(isSaving: true));
 
-    try {
-      final scheduleTimesJson = _parseScheduleTimesToJson(
-        current.scheduleTimes,
-      );
+    final scheduleTimesJson = _parseScheduleTimesToJson(current.scheduleTimes);
 
-      final medication = Medication(
-        id: isEditing && current.medication != null
-            ? current.medication!.id
-            : 0,
-        name: current.name.trim(),
-        dosageAmount: current.dosageAmount.trim(),
-        dosageUnit: current.dosageUnit.trim(),
-        iconName: current.iconName,
-        colorHex: current.colorHex,
-        frequencyType: current.frequencyType,
-        frequencyDays: current.frequencyDays,
-        frequencyInterval: current.frequencyInterval,
-        scheduleTimes: scheduleTimesJson,
-        startDate: current.startDate,
-        endDate: current.endDate,
-        instructions: current.instructions?.trim(),
-        isPaused: current.isPaused,
-        pillsRemaining: current.pillsRemaining,
-        refillThreshold: current.refillThreshold,
-        createdAt: isEditing && current.medication != null
-            ? current.medication!.createdAt
-            : DateTime.now(),
-        updatedAt: DateTime.now(),
-      );
+    final medication = Medication(
+      id: isEditing && current.medication != null ? current.medication!.id : 0,
+      name: current.name.trim(),
+      dosageAmount: current.dosageAmount.trim(),
+      dosageUnit: current.dosageUnit.trim(),
+      iconName: current.iconName,
+      colorHex: current.colorHex,
+      frequencyType: current.frequencyType,
+      frequencyDays: current.frequencyDays,
+      frequencyInterval: current.frequencyInterval,
+      scheduleTimes: scheduleTimesJson,
+      startDate: current.startDate,
+      endDate: current.endDate,
+      instructions: current.instructions?.trim(),
+      isPaused: current.isPaused,
+      pillsRemaining: current.pillsRemaining,
+      refillThreshold: current.refillThreshold,
+      createdAt: isEditing && current.medication != null
+          ? current.medication!.createdAt
+          : DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
 
-      if (isEditing && current.medication != null) {
-        await _repository.updateMedication(medication);
-        await _scheduler.rescheduleForMedication(medication);
-        emit(
-          const MedicationFormSuccess(
-            message: 'Medication updated successfully',
+    if (isEditing && current.medication != null) {
+      final result = await _repository.updateMedication(medication);
+      result.fold(
+        (id) async {
+          await _scheduler.rescheduleForMedication(medication);
+          emit(
+            const MedicationFormSuccess(
+              message: 'Medication updated successfully',
+            ),
+          );
+        },
+        (error) => emit(
+          current.copyWith(
+            isSaving: false,
+            validationError: 'Failed to update: $error',
+            isSuccess: false,
           ),
-        );
-      } else {
-        await _repository.createMedication(medication);
-        await _scheduler.scheduleForMedication(medication);
-        emit(
-          const MedicationFormSuccess(
-            message: 'Medication created successfully',
+        ),
+      );
+    } else {
+      final result = await _repository.createMedication(medication);
+      result.fold(
+        (id) async {
+          await _scheduler.scheduleForMedication(medication);
+          emit(
+            const MedicationFormSuccess(
+              message: 'Medication created successfully',
+            ),
+          );
+        },
+        (error) => emit(
+          current.copyWith(
+            isSaving: false,
+            validationError: 'Failed to create: $error',
+            isSuccess: false,
           ),
-        );
-      }
-    } catch (e) {
-      emit(
-        current.copyWith(
-          isSaving: false,
-          validationError: 'Failed to save: ${e.toString()}',
-          isSuccess: false,
         ),
       );
     }

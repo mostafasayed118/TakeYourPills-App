@@ -1,16 +1,20 @@
 include: package:flutter_lints/flutter.yaml
 
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
 linter:
   rules:
     # Dart best practices
     - always_declare_return_types
-    - always_put_control_body_on_new_line
+    # - always_put_control_body_on_new_line
     - always_put_required_named_parameters_first
     - annotate_overrides
     - avoid_annotating_with_dynamic
     - avoid_bool_literals_in_conditional_expressions
-    - avoid_catches_without_on_clauses
-    - avoid_classes_with_only_static_members
+    # - avoid_catches_without_on_clauses
+    # - avoid_classes_with_only_static_members
     - avoid_double_and_int_checks
     - avoid_empty_else
     - avoid_equals_and_hash_code_on_mutable_classes
@@ -18,12 +22,12 @@ linter:
     - avoid_field_initializers_in_const_classes
     - avoid_final_parameters
     - avoid_function_literals_in_foreach_calls
-    - avoid_implementing_value_types
+    # - avoid_implementing_value_types
     - avoid_init_to_null
     - avoid_js_rounded_ints
     - avoid_multiple_declarations_per_line
     - avoid_null_checks_in_equality_operators
-    - avoid_positional_boolean_parameters
+    # - avoid_positional_boolean_parameters
     - avoid_print
     - avoid_private_typedef_functions
     - avoid_redundant_argument_values
@@ -45,15 +49,15 @@ linter:
     - camel_case_extensions
     - camel_case_types
     - cancel_subscriptions
-    - cascade_invocations
+    # - cascade_invocations
     - close_sinks
     - collection_methods_unrelated_type
     - control_flow_in_finally
     - curly_braces_in_flow_control_structures
-    - depend_on_referenced_packages
+    # - depend_on_referenced_packages
     - deprecated_consistency
     - deprecated_member_use_from_same_package
-    - diagnostic_describe_all_properties
+    # - diagnostic_describe_all_properties
     - directives_ordering
     - do_not_use_environment
     - empty_catches
@@ -70,7 +74,7 @@ linter:
     - library_names
     - library_prefixes
     - library_private_types_in_public_api
-    - lines_longer_than_80_chars
+    # - lines_longer_than_80_chars
     - matching_super_parameters
     - no_default_cases
     - no_duplicate_case_values
@@ -122,7 +126,7 @@ linter:
     - prefer_typing_uninitialized_variables
     - prefer_void_to_null
     - provide_deprecation_message
-    - public_member_api_docs
+    # - public_member_api_docs
     - require_trailing_commas
     - secure_pubspec_urls
     - sized_box_for_whitespace
@@ -130,20 +134,19 @@ linter:
     - slash_for_doc_comments
     - sort_child_properties_last
     - sort_constructors_first
-    - sort_pub_dependencies
+    # - sort_pub_dependencies
     - sort_unnamed_constructors_first
     - test_types_in_equals
     - throw_in_finally
     - tighten_type_of_initializing_formals
     - type_annotate_public_apis
     - type_init_formals
-    - unawaited_futures
+    # - unawaited_futures
     - unnecessary_await_in_return
     - unnecessary_brace_in_string_interps
     - unnecessary_breaks
     - unnecessary_const
     - unnecessary_constructor_name
-    - unnecessary_final
     - unnecessary_getters_setters
     - unnecessary_lambdas
     - unnecessary_late

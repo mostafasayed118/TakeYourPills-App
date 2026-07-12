@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-import 'package:takeyourpills_healthcare_app/shared/routing/routes.dart';
-import 'package:takeyourpills_healthcare_app/shared/services/preference_service.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_colors.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_text_styles.dart';
+import '../../../shared/routing/routes.dart';
+import '../../../shared/services/notification_service.dart';
+import '../../../shared/services/preference_service.dart';
+import '../../../shared/theme/app_colors.dart';
+import '../../../shared/theme/app_text_styles.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -33,8 +34,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     },
   ];
   @override
-  Widget build(BuildContext context) {
-    return PopScope(
+  Widget build(BuildContext context) => PopScope(
       canPop: _currentPage == 0,
       onPopInvokedWithResult: (didPop, result) {
         if (!didPop && _currentPage > 0) {
@@ -52,7 +52,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 controller: _pageController,
                 itemCount: _pages.length,
                 onPageChanged: (i) => setState(() => _currentPage = i),
-                itemBuilder: (_, __) => _buildPage(_pages[__]),
+                itemBuilder: (_, index) => _buildPage(_pages[index]),
               ),
             ),
             _buildDots(),
@@ -61,7 +61,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
         ),
       ),
     );
-  }
 
   Widget _buildPage(Map<String, dynamic> p) => Padding(
     padding: const EdgeInsets.all(32),
@@ -130,6 +129,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
             width: 140,
             child: ElevatedButton(
               onPressed: () async {
+                // Request notification + exact-alarm permissions before
+                // entering the main app so dose reminders can fire.
+                try {
+                  await GetIt.instance<NotificationService>()
+                      .requestPermission();
+                } on Object {
+                  // User may deny; app still works without reminders.
+                }
                 await GetIt.instance<PreferenceService>().setOnboardingComplete(
                   true,
                 );

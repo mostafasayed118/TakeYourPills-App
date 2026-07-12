@@ -5,10 +5,10 @@ import 'package:drift/native.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
-import 'tables/medications.dart';
-import 'tables/schedules.dart';
 import 'tables/dose_logs.dart';
+import 'tables/medications.dart';
 import 'tables/refill_tracking.dart';
+import 'tables/schedules.dart';
 
 part 'app_database.g.dart';
 
@@ -16,7 +16,7 @@ part 'app_database.g.dart';
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
-  AppDatabase.forTesting(QueryExecutor e) : super(e);
+  AppDatabase.forTesting(super.e);
 
   @override
   int get schemaVersion => 3;
@@ -44,89 +44,58 @@ class AppDatabase extends _$AppDatabase {
     },
   );
 
-  Future<int> createMedication(MedicationData medication) {
-    return into(medications).insert(medication);
-  }
+  Future<int> createMedication(MedicationData medication) => into(medications).insert(medication);
 
-  Future<int> updateMedicationRow(MedicationData medication) {
-    return (update(
+  Future<int> updateMedicationRow(MedicationData medication) => (update(
       medications,
     )..where((t) => t.id.equals(medication.id))).write(medication);
-  }
 
-  Future<int> deleteMedication(int id) {
-    return (delete(medications)..where((t) => t.id.equals(id))).go();
-  }
+  Future<int> deleteMedication(int id) => (delete(medications)..where((t) => t.id.equals(id))).go();
 
-  Future<MedicationData?> getMedicationById(int id) {
-    return (select(
+  Future<MedicationData?> getMedicationById(int id) => (select(
       medications,
     )..where((t) => t.id.equals(id))).getSingleOrNull();
-  }
 
-  Future<List<MedicationData>> getAllMedications() {
-    return (select(
+  Future<List<MedicationData>> getAllMedications() => (select(
       medications,
     )..orderBy([(t) => OrderingTerm.desc(t.createdAt)])).get();
-  }
 
-  Future<List<MedicationData>> getActiveMedications() {
-    return (select(medications)..where((t) => t.isPaused.equals(false))).get();
-  }
+  Future<List<MedicationData>> getActiveMedications() => (select(medications)..where((t) => t.isPaused.equals(false))).get();
 
-  Stream<List<MedicationData>> watchAllMedications() {
-    return (select(
+  Stream<List<MedicationData>> watchAllMedications() => (select(
       medications,
     )..orderBy([(t) => OrderingTerm.desc(t.createdAt)])).watch();
-  }
 
-  Future<int> createSchedule(SchedulesCompanion schedule) {
-    return into(schedules).insert(schedule);
-  }
+  Future<int> createSchedule(SchedulesCompanion schedule) => into(schedules).insert(schedule);
 
-  Future<int> updateScheduleRow(SchedulesCompanion schedule) {
-    return (update(
+  Future<int> updateScheduleRow(SchedulesCompanion schedule) => (update(
       schedules,
     )..where((t) => t.id.equals(schedule.id.value))).write(schedule);
-  }
 
-  Future<int> deleteSchedule(int id) {
-    return (delete(schedules)..where((t) => t.id.equals(id))).go();
-  }
+  Future<int> deleteSchedule(int id) => (delete(schedules)..where((t) => t.id.equals(id))).go();
 
-  Future<int> deleteSchedulesForMedication(int medicationId) {
-    return (delete(
+  Future<int> deleteSchedulesForMedication(int medicationId) => (delete(
       schedules,
     )..where((t) => t.medicationId.equals(medicationId))).go();
-  }
 
-  Future<List<ScheduleData>> getSchedulesForMedication(int medicationId) {
-    return (select(
+  Future<List<ScheduleData>> getSchedulesForMedication(int medicationId) => (select(
       schedules,
     )..where((t) => t.medicationId.equals(medicationId))).get();
-  }
 
-  Future<int> createDoseLog(DoseLogsCompanion doseLog) {
-    return into(doseLogs).insert(doseLog);
-  }
+  Future<int> createDoseLog(DoseLogsCompanion doseLog) => into(doseLogs).insert(doseLog);
 
-  Future<List<DoseLogData>> getDoseLogsForMedication(int medicationId) {
-    return (select(
+  Future<List<DoseLogData>> getDoseLogsForMedication(int medicationId) => (select(
       doseLogs,
     )..where((t) => t.medicationId.equals(medicationId))).get();
-  }
 
-  Future<int> deleteDoseLogsForMedication(int medicationId) {
-    return (delete(
+  Future<int> deleteDoseLogsForMedication(int medicationId) => (delete(
       doseLogs,
     )..where((t) => t.medicationId.equals(medicationId))).go();
-  }
 
   Future<List<DoseLogData>> getDoseLogsForDateRange(
     DateTime start,
     DateTime end,
-  ) {
-    return (select(doseLogs)
+  ) => (select(doseLogs)
           ..where(
             (t) =>
                 t.scheduledTime.isBiggerOrEqualValue(start.toIso8601String()),
@@ -135,23 +104,16 @@ class AppDatabase extends _$AppDatabase {
             (t) => t.scheduledTime.isSmallerOrEqualValue(end.toIso8601String()),
           ))
         .get();
-  }
 
-  Future<int> createRefillTracking(RefillTrackingCompanion refill) {
-    return into(refillTracking).insert(refill);
-  }
+  Future<int> createRefillTracking(RefillTrackingCompanion refill) => into(refillTracking).insert(refill);
 
-  Future<int> updateRefillTracking(RefillTrackingCompanion refill) {
-    return (update(refillTracking)
+  Future<int> updateRefillTracking(RefillTrackingCompanion refill) => (update(refillTracking)
           ..where((t) => t.medicationId.equals(refill.medicationId.value)))
         .write(refill);
-  }
 
-  Future<RefillTrackingData?> getRefillTrackingForMedication(int medicationId) {
-    return (select(
+  Future<RefillTrackingData?> getRefillTrackingForMedication(int medicationId) => (select(
       refillTracking,
     )..where((t) => t.medicationId.equals(medicationId))).getSingleOrNull();
-  }
 }
 
 LazyDatabase _openConnection() {

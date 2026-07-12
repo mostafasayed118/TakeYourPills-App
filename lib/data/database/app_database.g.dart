@@ -2606,10 +2606,7 @@ final class $$MedicationsTableReferences
   static MultiTypedResultKey<$SchedulesTable, List<ScheduleData>>
   _schedulesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.schedules,
-    aliasName: $_aliasNameGenerator(
-      db.medications.id,
-      db.schedules.medicationId,
-    ),
+    aliasName: 'medications__id__schedules__medication_id',
   );
 
   $$SchedulesTableProcessedTableManager get schedulesRefs {
@@ -2627,10 +2624,7 @@ final class $$MedicationsTableReferences
   static MultiTypedResultKey<$DoseLogsTable, List<DoseLogData>>
   _doseLogsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.doseLogs,
-    aliasName: $_aliasNameGenerator(
-      db.medications.id,
-      db.doseLogs.medicationId,
-    ),
+    aliasName: 'medications__id__dose_logs__medication_id',
   );
 
   $$DoseLogsTableProcessedTableManager get doseLogsRefs {
@@ -2648,10 +2642,7 @@ final class $$MedicationsTableReferences
   static MultiTypedResultKey<$RefillTrackingTable, List<RefillTrackingData>>
   _refillTrackingRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.refillTracking,
-    aliasName: $_aliasNameGenerator(
-      db.medications.id,
-      db.refillTracking.medicationId,
-    ),
+    aliasName: 'medications__id__refill_tracking__medication_id',
   );
 
   $$RefillTrackingTableProcessedTableManager get refillTrackingRefs {
@@ -3346,9 +3337,7 @@ final class $$SchedulesTableReferences
   $$SchedulesTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
   static $MedicationsTable _medicationIdTable(_$AppDatabase db) =>
-      db.medications.createAlias(
-        $_aliasNameGenerator(db.schedules.medicationId, db.medications.id),
-      );
+      db.medications.createAlias('schedules__medication_id__medications__id');
 
   $$MedicationsTableProcessedTableManager get medicationId {
     final $_column = $_itemColumn<int>('medication_id')!;
@@ -3367,7 +3356,7 @@ final class $$SchedulesTableReferences
   static MultiTypedResultKey<$DoseLogsTable, List<DoseLogData>>
   _doseLogsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.doseLogs,
-    aliasName: $_aliasNameGenerator(db.schedules.id, db.doseLogs.scheduleId),
+    aliasName: 'schedules__id__dose_logs__schedule_id',
   );
 
   $$DoseLogsTableProcessedTableManager get doseLogsRefs {
@@ -3781,9 +3770,7 @@ final class $$DoseLogsTableReferences
   $$DoseLogsTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
   static $MedicationsTable _medicationIdTable(_$AppDatabase db) =>
-      db.medications.createAlias(
-        $_aliasNameGenerator(db.doseLogs.medicationId, db.medications.id),
-      );
+      db.medications.createAlias('dose_logs__medication_id__medications__id');
 
   $$MedicationsTableProcessedTableManager get medicationId {
     final $_column = $_itemColumn<int>('medication_id')!;
@@ -3800,9 +3787,7 @@ final class $$DoseLogsTableReferences
   }
 
   static $SchedulesTable _scheduleIdTable(_$AppDatabase db) =>
-      db.schedules.createAlias(
-        $_aliasNameGenerator(db.doseLogs.scheduleId, db.schedules.id),
-      );
+      db.schedules.createAlias('dose_logs__schedule_id__schedules__id');
 
   $$SchedulesTableProcessedTableManager? get scheduleId {
     final $_column = $_itemColumn<int>('schedule_id');
@@ -4283,10 +4268,9 @@ final class $$RefillTrackingTableReferences
     super.$_typedResult,
   );
 
-  static $MedicationsTable _medicationIdTable(_$AppDatabase db) =>
-      db.medications.createAlias(
-        $_aliasNameGenerator(db.refillTracking.medicationId, db.medications.id),
-      );
+  static $MedicationsTable _medicationIdTable(_$AppDatabase db) => db
+      .medications
+      .createAlias('refill_tracking__medication_id__medications__id');
 
   $$MedicationsTableProcessedTableManager get medicationId {
     final $_column = $_itemColumn<int>('medication_id')!;

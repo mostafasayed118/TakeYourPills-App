@@ -2,6 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
+import 'package:takeyourpills_healthcare_app/core/error/result.dart';
 import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository_impl.dart';
 import 'package:takeyourpills_healthcare_app/features/medication/presentation/cubit/medication_form_cubit.dart';
 
@@ -46,18 +47,12 @@ void main() {
 
     test('updateDosageAmount changes dosageAmount field', () {
       cubit.updateDosageAmount('100');
-      expect(
-        (cubit.state as MedicationFormEditing).dosageAmount,
-        '100',
-      );
+      expect((cubit.state as MedicationFormEditing).dosageAmount, '100');
     });
 
     test('updateFrequencyType changes frequencyType field', () {
       cubit.updateFrequencyType('weekly');
-      expect(
-        (cubit.state as MedicationFormEditing).frequencyType,
-        'weekly',
-      );
+      expect((cubit.state as MedicationFormEditing).frequencyType, 'weekly');
     });
 
     blocTest<MedicationFormCubit, MedicationFormState>(
@@ -74,8 +69,11 @@ void main() {
         // updateScheduleTimes
         isA<MedicationFormEditing>(),
         // validation error
-        isA<MedicationFormEditing>()
-            .having((s) => s.validationError, 'error', isNotNull),
+        isA<MedicationFormEditing>().having(
+          (s) => s.validationError,
+          'error',
+          isNotNull,
+        ),
       ],
     );
 
@@ -103,8 +101,9 @@ void main() {
     blocTest<MedicationFormCubit, MedicationFormState>(
       'saveMedication succeeds with valid data',
       build: () {
-        when(() => mockRepository.createMedication(any()))
-            .thenAnswer((_) async => 1);
+        when(
+          () => mockRepository.createMedication(any()),
+        ).thenAnswer((_) async => const Success(1));
         return cubit;
       },
       act: (c) {
@@ -137,21 +136,18 @@ void main() {
       dosageAmount: '50',
       dosageUnit: 'mg',
       iconName: 'pill',
-      colorHex: '',
-      frequencyType: 'daily',
       frequencyDays: '[]',
-      frequencyInterval: 1,
       scheduleTimes: '["08:00","20:00"]',
-      isPaused: false,
-      createdAt: DateTime(2026, 1, 1),
-      updatedAt: DateTime(2026, 1, 1),
+      createdAt: DateTime(2026),
+      updatedAt: DateTime(2026),
     );
 
     blocTest<MedicationFormCubit, MedicationFormState>(
       'loads existing medication data in edit mode',
       build: () {
-        when(() => mockRepository.getMedicationById(42))
-            .thenAnswer((_) async => existingMed);
+        when(
+          () => mockRepository.getMedicationById(42),
+        ).thenAnswer((_) async => Success<Medication?>(existingMed));
         return MedicationFormCubit(
           repository: mockRepository,
           isEditing: true,
@@ -170,8 +166,9 @@ void main() {
     blocTest<MedicationFormCubit, MedicationFormState>(
       'emits error when medication not found in edit mode',
       build: () {
-        when(() => mockRepository.getMedicationById(999))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockRepository.getMedicationById(999),
+        ).thenAnswer((_) async => const Success<Medication?>(null));
         return MedicationFormCubit(
           repository: mockRepository,
           isEditing: true,

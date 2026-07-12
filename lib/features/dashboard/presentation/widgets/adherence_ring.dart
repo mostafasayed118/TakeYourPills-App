@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_colors.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_text_styles.dart';
+import '../../../../shared/theme/app_colors.dart';
+import '../../../../shared/theme/app_text_styles.dart';
 
 class AdherenceRing extends StatelessWidget {
+
+  const AdherenceRing({required this.value, super.key});
   final double value;
 
-  const AdherenceRing({super.key, required this.value});
-
   @override
-  Widget build(BuildContext context) {
-    return Stack(
+  Widget build(BuildContext context) => Stack(
       alignment: Alignment.center,
       children: [
         SizedBox(
@@ -36,5 +35,4 @@ class AdherenceRing extends StatelessWidget {
         ),
       ],
     );
-  }
 }

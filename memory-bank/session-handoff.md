@@ -1,6 +1,23 @@
 ## Completed (This Session)
 
-### ✅ Unawaited Deletion Side Effects Fix (P2)
+### ✅ Architectural Refactor - Phase 1
+- **Files created:**
+  - `lib/core/error/result.dart` — Functional Result<T> type for error handling
+  - `lib/data/repositories/medication_read_repository.dart` — ISP read interface
+  - `lib/data/repositories/medication_write_repository.dart` — ISP write interface
+  - `lib/core/domain/medication_schedule_service.dart` — Domain service for business logic
+  - `lib/core/state/dashboard_state.dart` — Reactive ChangeNotifier for dashboard
+
+- **Files modified:**
+  - `lib/core/entities/dose_log.dart` — Improved formatting and documentation
+  - `lib/data/repositories/medication_repository_impl.dart` — Implements ISP interfaces with mixin
+  - `lib/core/di/service_locator.dart` — Updated dependency registration
+
+- **Architecture improvements:**
+  - Repository split per Interface Segregation Principle
+  - Result<T> type for predictable error handling
+  - Domain service extraction from Cubits
+  - Reactive dashboard state management
 - **Module affected:** `lib/features/medication/presentation/cubit/medication_list_cubit.dart`, `lib/features/medication/presentation/cubit/medication_detail_cubit.dart`
 - **What was fixed:** Reversed the execution order in `deleteMedication()` so that `_scheduler.cancelAllForMedication(id)` strictly runs *before* `_repository.deleteMedication(id)`. This guarantees that even if the app process is terminated or the UI pops mid-execution, phantom notifications are avoided because schedules are cleared before the underlying database record is destroyed.
 - **Verification:** Unit tests added in `medication_list_cubit_test.dart` and `medication_detail_cubit_test.dart`. Tests passed.

@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_colors.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_text_styles.dart';
+import '../../../../shared/theme/app_colors.dart';
+import '../../../../shared/theme/app_text_styles.dart';
 
 class FrequencyDropdown extends StatelessWidget {
-  final String value;
-  final void Function(String) onChanged;
 
   const FrequencyDropdown({
-    super.key,
-    required this.value,
-    required this.onChanged,
+    required this.value, required this.onChanged, super.key,
   });
+  final String value;
+  final void Function(String) onChanged;
 
   static const _frequencies = {
     'daily': 'Every day',
@@ -20,8 +18,7 @@ class FrequencyDropdown extends StatelessWidget {
   };
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
+  Widget build(BuildContext context) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -59,5 +56,4 @@ class FrequencyDropdown extends StatelessWidget {
         ),
       ],
     );
-  }
 }

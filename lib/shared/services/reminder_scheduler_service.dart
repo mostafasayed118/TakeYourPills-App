@@ -1,4 +1,4 @@
-import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
+import '../../core/entities/medication.dart';
 
 /// Abstract interface for scheduling medication reminders.
 ///

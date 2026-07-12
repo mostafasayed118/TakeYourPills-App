@@ -6,8 +6,8 @@ import '../../data/repositories/medication_repository_impl.dart';
 import '../../shared/services/notification_service.dart';
 import '../../shared/services/notification_service_impl.dart';
 import '../../shared/services/preference_service.dart';
-import '../../shared/services/reminder_scheduler_service.dart';
 import '../../shared/services/reminder_scheduler_impl.dart';
+import '../../shared/services/reminder_scheduler_service.dart';
 
 final getIt = GetIt.instance;
 
@@ -16,27 +16,20 @@ final getIt = GetIt.instance;
 /// Called once from main() before runApp().
 void setupServiceLocator() {
   // Database (singleton — single connection for the whole app lifecycle)
-  getIt.registerLazySingleton<AppDatabase>(AppDatabase.new);
-
-  // Datasources
-  getIt.registerLazySingleton<MedicationLocalDatasource>(
-    () => MedicationLocalDatasource(getIt<AppDatabase>()),
-  );
-
-  // Repositories (register both abstract and concrete for flexibility)
-  getIt.registerLazySingleton<MedicationRepositoryImpl>(
-    () => MedicationRepositoryImpl(getIt<MedicationLocalDatasource>()),
-  );
-  getIt.registerLazySingleton<MedicationRepository>(
-    () => getIt<MedicationRepositoryImpl>(),
-  );
-
-  // Services
-  getIt.registerLazySingleton<NotificationService>(NotificationServiceImpl.new);
-  getIt.registerLazySingleton<ReminderSchedulerService>(
-    () => ReminderSchedulerImpl(
-      notificationService: getIt<NotificationService>(),
-    ),
-  );
-  getIt.registerLazySingleton<PreferenceService>(PreferenceServiceImpl.new);
+  getIt
+    ..registerLazySingleton<AppDatabase>(AppDatabase.new)
+    // Datasources
+    ..registerLazySingleton<MedicationLocalDatasource>(
+      () => MedicationLocalDatasource(getIt()),
+    )
+    // Repositories
+    ..registerLazySingleton<MedicationRepository>(
+      () => MedicationRepositoryImpl(getIt()),
+    )
+    // Services
+    ..registerLazySingleton<NotificationService>(NotificationServiceImpl.new)
+    ..registerLazySingleton<ReminderSchedulerService>(
+      () => ReminderSchedulerImpl(notificationService: getIt()),
+    )
+    ..registerLazySingleton<PreferenceService>(PreferenceServiceImpl.new);
 }

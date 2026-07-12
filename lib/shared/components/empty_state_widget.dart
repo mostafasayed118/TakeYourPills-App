@@ -1,28 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_colors.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_text_styles.dart';
-import 'package:takeyourpills_healthcare_app/shared/components/app_button.dart';
+import '../theme/app_colors.dart';
+import '../theme/app_text_styles.dart';
+import 'app_button.dart';
 
 /// Reusable empty state widget with icon, title, subtitle, and CTA.
 class EmptyStateWidget extends StatelessWidget {
+
+  const EmptyStateWidget({
+    required this.title, super.key,
+    this.subtitle,
+    this.icon,
+    this.onAction,
+    this.actionLabel,
+  });
   final String title;
   final String? subtitle;
   final Widget? icon;
   final VoidCallback? onAction;
   final String? actionLabel;
 
-  const EmptyStateWidget({
-    super.key,
-    required this.title,
-    this.subtitle,
-    this.icon,
-    this.onAction,
-    this.actionLabel,
-  });
-
   @override
-  Widget build(BuildContext context) {
-    return Center(
+  Widget build(BuildContext context) => Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 40),
         child: Column(
@@ -59,12 +57,10 @@ class EmptyStateWidget extends StatelessWidget {
                 child: AppButton(
                   text: actionLabel!,
                   onPressed: onAction,
-                  isPrimary: true,
                 ),
               ),
           ],
         ),
       ),
     );
-  }
 }

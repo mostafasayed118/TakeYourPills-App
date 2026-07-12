@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_colors.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_text_styles.dart';
+import '../theme/app_colors.dart';
+import '../theme/app_text_styles.dart';
 
 /// Primary action button following the Calm & Clinical design system.
 class AppButton extends StatelessWidget {
+
+  const AppButton({
+    required this.text, required this.onPressed, super.key,
+    this.isPrimary = true,
+    this.isLoading = false,
+    this.icon,
+  });
   final String text;
   final VoidCallback? onPressed;
   final bool isPrimary;
   final bool isLoading;
   final Widget? icon;
-
-  const AppButton({
-    super.key,
-    required this.text,
-    required this.onPressed,
-    this.isPrimary = true,
-    this.isLoading = false,
-    this.icon,
-  });
 
   @override
   Widget build(BuildContext context) {

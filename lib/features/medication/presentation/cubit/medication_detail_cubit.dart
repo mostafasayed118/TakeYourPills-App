@@ -1,9 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:get_it/get_it.dart';
-import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
-import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository_impl.dart';
-import 'package:takeyourpills_healthcare_app/shared/services/reminder_scheduler_service.dart';
+import '../../../../core/entities/medication.dart';
+import '../../../../core/error/result.dart';
+import '../../../../data/repositories/medication_repository_impl.dart';
+import '../../../../shared/services/reminder_scheduler_service.dart';
 
 part 'medication_detail_state.dart';
 
@@ -12,15 +13,10 @@ part 'medication_detail_state.dart';
 /// Loads a single medication by ID from the repository.
 /// Standalone — does not depend on MedicationListCubit.
 class MedicationDetailCubit extends Cubit<MedicationDetailState> {
-  final MedicationRepository _repository;
-  final ReminderSchedulerService _scheduler;
-  final int medicationId;
-  bool _isTogglingPause = false;
 
   MedicationDetailCubit({
     required MedicationRepository repository,
-    ReminderSchedulerService? scheduler,
-    required this.medicationId,
+    required this.medicationId, ReminderSchedulerService? scheduler,
   }) : _repository = repository,
        _scheduler =
            scheduler ??
@@ -30,16 +26,22 @@ class MedicationDetailCubit extends Cubit<MedicationDetailState> {
        super(MedicationDetailLoading()) {
     loadMedication();
   }
+  final MedicationRepository _repository;
+  final ReminderSchedulerService _scheduler;
+  final int medicationId;
+  bool _isTogglingPause = false;
 
   Future<void> loadMedication() async {
     try {
       emit(MedicationDetailLoading());
-      final medication = await _repository.getMedicationById(medicationId);
-      if (medication != null) {
-        emit(MedicationDetailLoaded(medication: medication));
-      } else {
-        emit(const MedicationDetailError(message: 'Medication not found'));
-      }
+      final result = await _repository.getMedicationById(medicationId);
+      result.fold((medication) {
+        if (medication != null) {
+          emit(MedicationDetailLoaded(medication: medication));
+        } else {
+          emit(const MedicationDetailError(message: 'Medication not found'));
+        }
+      }, (error) => emit(MedicationDetailError(message: error.toString())));
     } catch (e) {
       emit(MedicationDetailError(message: e.toString()));
     }
@@ -48,8 +50,12 @@ class MedicationDetailCubit extends Cubit<MedicationDetailState> {
   Future<void> deleteMedication() async {
     try {
       await _scheduler.cancelAllForMedication(medicationId);
-      await _repository.deleteMedication(medicationId);
-      emit(MedicationDetailDeleted());
+      final result = await _repository.deleteMedication(medicationId);
+      result.fold(
+        (_) => emit(MedicationDetailDeleted()),
+        (error) =>
+            emit(MedicationDetailError(message: 'Failed to delete: $error')),
+      );
     } catch (e) {
       emit(MedicationDetailError(message: 'Failed to delete: ${e.toString()}'));
     }
@@ -57,7 +63,7 @@ class MedicationDetailCubit extends Cubit<MedicationDetailState> {
 
   Future<void> togglePause() async {
     if (_isTogglingPause) return;
-    
+
     final currentState = state;
     if (currentState is! MedicationDetailLoaded) return;
 
@@ -68,15 +74,19 @@ class MedicationDetailCubit extends Cubit<MedicationDetailState> {
         isPaused: !med.isPaused,
         updatedAt: DateTime.now(),
       );
-      await _repository.updateMedication(updated);
+      final result = await _repository.updateMedication(updated);
 
-      if (updated.isPaused) {
-        await _scheduler.cancelAllForMedication(medicationId);
+      if (result.isSuccess) {
+        if (updated.isPaused) {
+          await _scheduler.cancelAllForMedication(medicationId);
+        } else {
+          await _scheduler.rescheduleForMedication(updated);
+        }
+
+        emit(MedicationDetailLoaded(medication: updated));
       } else {
-        await _scheduler.rescheduleForMedication(updated);
+        emit(const MedicationDetailError(message: 'Failed to update medication'));
       }
-
-      emit(MedicationDetailLoaded(medication: updated));
     } catch (e) {
       emit(MedicationDetailError(message: e.toString()));
     } finally {

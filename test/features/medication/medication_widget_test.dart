@@ -9,7 +9,7 @@ void main() {
     ) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(body: AddEditMedicationPage(isEditing: false)),
+          home: Scaffold(body: AddEditMedicationPage()),
         ),
       );
 
@@ -21,7 +21,7 @@ void main() {
     testWidgets('form accepts valid input', (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(body: AddEditMedicationPage(isEditing: false)),
+          home: Scaffold(body: AddEditMedicationPage()),
         ),
       );
 

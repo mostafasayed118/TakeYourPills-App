@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_colors.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_text_styles.dart';
+import '../../../../core/entities/medication.dart';
+import '../../../../shared/theme/app_colors.dart';
+import '../../../../shared/theme/app_text_styles.dart';
 
 class MedicationCard extends StatelessWidget {
-  final Medication medication;
-  final VoidCallback onTap;
-  final VoidCallback onEdit;
-  final void Function(bool) onPauseChanged;
-  final VoidCallback onDelete;
 
   const MedicationCard({
     required this.medication,
@@ -18,6 +13,11 @@ class MedicationCard extends StatelessWidget {
     required this.onDelete,
     super.key,
   });
+  final Medication medication;
+  final VoidCallback onTap;
+  final VoidCallback onEdit;
+  final void Function(bool) onPauseChanged;
+  final VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -57,8 +57,7 @@ class MedicationCard extends StatelessWidget {
     );
   }
 
-  Widget _buildIcon(bool isPaused) {
-    return Container(
+  Widget _buildIcon(bool isPaused) => Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: isPaused
@@ -74,10 +73,8 @@ class MedicationCard extends StatelessWidget {
             : AppColors.onSecondaryContainer,
       ),
     );
-  }
 
-  Widget _buildDetails(BuildContext context, bool isPaused) {
-    return Column(
+  Widget _buildDetails(BuildContext context, bool isPaused) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -107,14 +104,22 @@ class MedicationCard extends StatelessWidget {
         ],
       ],
     );
-  }
 
-  Widget _buildPausedBadge() {
-    return const SizedBox(
+  Widget _buildPausedBadge() => SizedBox(
       height: 24,
-      child: Padding(padding: EdgeInsets.only(top: 6), child: Text('PAUSED')),
+      child: Padding(
+        padding: const EdgeInsets.only(top: 6),
+        child: Text(
+          'PAUSED',
+          style: AppTextStyles.bodySmall.copyWith(
+            fontSize: 10,
+            fontWeight: FontWeight.w600,
+            color: AppColors.onSurfaceVariant,
+            letterSpacing: 0.5,
+          ),
+        ),
+      ),
     );
-  }
 
   Widget _buildPillsIndicator() {
     final remaining = medication.pillsRemaining!;
@@ -140,8 +145,7 @@ class MedicationCard extends StatelessWidget {
     );
   }
 
-  Widget _buildPopupMenu() {
-    return PopupMenuButton<String>(
+  Widget _buildPopupMenu() => PopupMenuButton<String>(
       icon: const Icon(Icons.more_vert, color: AppColors.onSurfaceVariant),
       onSelected: _handleMenuSelection,
       itemBuilder: (_) => [
@@ -156,18 +160,21 @@ class MedicationCard extends StatelessWidget {
         ),
       ],
     );
-  }
 
   void _handleMenuSelection(String value) {
     switch (value) {
       case 'edit':
         onEdit();
+        return;
       case 'pause':
         onPauseChanged(true);
+        return;
       case 'resume':
         onPauseChanged(false);
+        return;
       case 'delete':
         onDelete();
+        return;
     }
   }
 

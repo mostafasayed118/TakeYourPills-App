@@ -24,12 +24,8 @@ void main() {
         dosageAmount: '1',
         dosageUnit: 'pill',
         iconName: 'pill',
-        colorHex: '',
-        frequencyType: 'daily',
         frequencyDays: '[]',
-        frequencyInterval: 1,
         scheduleTimes: '["23:59"]', // Edge case near midnight
-        isPaused: false,
         createdAt: DateTime(2026),
         updatedAt: DateTime(2026),
       );

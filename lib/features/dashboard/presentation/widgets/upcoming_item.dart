@@ -1,26 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_colors.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_text_styles.dart';
+import '../../../../shared/theme/app_colors.dart';
+import '../../../../shared/theme/app_text_styles.dart';
 
 class UpcomingItem extends StatelessWidget {
+
+  const UpcomingItem({
+    required this.name, required this.dosage, required this.time, required this.icon, super.key,
+    this.onTap,
+  });
   final String name;
   final String dosage;
   final String time;
   final IconData icon;
   final VoidCallback? onTap;
 
-  const UpcomingItem({
-    super.key,
-    required this.name,
-    required this.dosage,
-    required this.time,
-    required this.icon,
-    this.onTap,
-  });
-
   @override
-  Widget build(BuildContext context) {
-    return InkWell(
+  Widget build(BuildContext context) => InkWell(
       onTap: onTap,
       child: Container(
         color: AppColors.surfaceContainerLowest,
@@ -83,5 +78,4 @@ class UpcomingItem extends StatelessWidget {
         ),
       ),
     );
-  }
 }

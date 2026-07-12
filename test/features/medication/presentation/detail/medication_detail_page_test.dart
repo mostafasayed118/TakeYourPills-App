@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
-import 'package:go_router/go_router.dart';
-import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
-import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository_impl.dart';
-import 'package:takeyourpills_healthcare_app/features/medication/presentation/detail/medication_detail_page.dart';
-import 'package:takeyourpills_healthcare_app/features/medication/presentation/cubit/medication_detail_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
+import 'package:takeyourpills_healthcare_app/core/error/result.dart';
+import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository_impl.dart';
+import 'package:takeyourpills_healthcare_app/features/medication/presentation/cubit/medication_detail_cubit.dart';
+import 'package:takeyourpills_healthcare_app/features/medication/presentation/detail/medication_detail_page.dart';
 
 class FakeMedication extends Fake implements Medication {}
 
@@ -20,17 +21,13 @@ void main() {
     dosageAmount: '100',
     dosageUnit: 'mg',
     iconName: 'pill',
-    colorHex: '',
-    frequencyType: 'daily',
     frequencyDays: '[]',
-    frequencyInterval: 1,
     scheduleTimes: '["08:00"]',
-    isPaused: false,
     instructions: 'Take with food',
     pillsRemaining: 30,
     refillThreshold: 10,
-    createdAt: DateTime(2026, 1, 1),
-    updatedAt: DateTime(2026, 1, 1),
+    createdAt: DateTime(2026),
+    updatedAt: DateTime(2026),
   );
 
   setUpAll(() {
@@ -41,7 +38,7 @@ void main() {
     mockRepository = MockMedicationRepository();
   });
 
-  Widget _createTestWidget({required Widget child}) {
+  Widget createTestWidget({required Widget child}) {
     final router = GoRouter(
       initialLocation: '/detail',
       routes: [
@@ -79,10 +76,10 @@ void main() {
     testWidgets('shows loading state initially', (WidgetTester tester) async {
       when(
         () => mockRepository.getMedicationById(1),
-      ).thenAnswer((_) async => testMed);
+      ).thenAnswer((_) async => Success<Medication?>(testMed));
 
       await tester.pumpWidget(
-        _createTestWidget(child: const MedicationDetailPage(medicationId: 1)),
+        createTestWidget(child: const MedicationDetailPage(medicationId: 1)),
       );
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -94,10 +91,10 @@ void main() {
     ) async {
       when(
         () => mockRepository.getMedicationById(1),
-      ).thenAnswer((_) async => null);
+      ).thenAnswer((_) async => const Success<Medication?>(null));
 
       await tester.pumpWidget(
-        _createTestWidget(child: const MedicationDetailPage(medicationId: 1)),
+        createTestWidget(child: const MedicationDetailPage(medicationId: 1)),
       );
 
       await tester.pumpAndSettle();
@@ -112,10 +109,10 @@ void main() {
     ) async {
       when(
         () => mockRepository.getMedicationById(1),
-      ).thenAnswer((_) async => testMed);
+      ).thenAnswer((_) async => Success<Medication?>(testMed));
 
       await tester.pumpWidget(
-        _createTestWidget(child: const MedicationDetailPage(medicationId: 1)),
+        createTestWidget(child: const MedicationDetailPage(medicationId: 1)),
       );
 
       await tester.pumpAndSettle();
@@ -133,10 +130,10 @@ void main() {
     ) async {
       when(
         () => mockRepository.getMedicationById(1),
-      ).thenAnswer((_) async => testMed);
+      ).thenAnswer((_) async => Success<Medication?>(testMed));
 
       await tester.pumpWidget(
-        _createTestWidget(child: const MedicationDetailPage(medicationId: 1)),
+        createTestWidget(child: const MedicationDetailPage(medicationId: 1)),
       );
 
       await tester.pumpAndSettle();
@@ -153,13 +150,13 @@ void main() {
     ) async {
       when(
         () => mockRepository.getMedicationById(1),
-      ).thenAnswer((_) async => testMed);
+      ).thenAnswer((_) async => Success<Medication?>(testMed));
       when(
         () => mockRepository.updateMedication(any()),
-      ).thenAnswer((_) async => 1);
+      ).thenAnswer((_) async => const Success(1));
 
       await tester.pumpWidget(
-        _createTestWidget(child: const MedicationDetailPage(medicationId: 1)),
+        createTestWidget(child: const MedicationDetailPage(medicationId: 1)),
       );
 
       await tester.pumpAndSettle();
@@ -179,11 +176,13 @@ void main() {
     ) async {
       when(
         () => mockRepository.getMedicationById(1),
-      ).thenAnswer((_) async => testMed);
-      when(() => mockRepository.deleteMedication(1)).thenAnswer((_) async => 1);
+      ).thenAnswer((_) async => Success<Medication?>(testMed));
+      when(
+        () => mockRepository.deleteMedication(1),
+      ).thenAnswer((_) async => const Success(1));
 
       await tester.pumpWidget(
-        _createTestWidget(child: const MedicationDetailPage(medicationId: 1)),
+        createTestWidget(child: const MedicationDetailPage(medicationId: 1)),
       );
 
       await tester.pumpAndSettle();
@@ -205,10 +204,10 @@ void main() {
     ) async {
       when(
         () => mockRepository.getMedicationById(1),
-      ).thenAnswer((_) async => testMed);
+      ).thenAnswer((_) async => Success<Medication?>(testMed));
 
       await tester.pumpWidget(
-        _createTestWidget(child: const MedicationDetailPage(medicationId: 1)),
+        createTestWidget(child: const MedicationDetailPage(medicationId: 1)),
       );
 
       await tester.pumpAndSettle();

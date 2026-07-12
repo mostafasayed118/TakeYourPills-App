@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_colors.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_text_styles.dart';
+import '../../../../../shared/theme/app_colors.dart';
+import '../../../../../shared/theme/app_text_styles.dart';
 
 class DetailCard extends StatelessWidget {
+
+  const DetailCard({required this.title, required this.children, super.key});
   final String title;
   final List<Widget> children;
 
-  const DetailCard({super.key, required this.title, required this.children});
-
   @override
-  Widget build(BuildContext context) {
-    return Container(
+  Widget build(BuildContext context) => Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -33,5 +32,4 @@ class DetailCard extends StatelessWidget {
         ],
       ),
     );
-  }
 }

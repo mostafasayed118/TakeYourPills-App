@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_colors.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_text_styles.dart';
+import '../../../../shared/theme/app_colors.dart';
+import '../../../../shared/theme/app_text_styles.dart';
 
 class MedicationListErrorView extends StatelessWidget {
-  final String message;
-  final VoidCallback onRetry;
 
   const MedicationListErrorView({
     required this.message,
     required this.onRetry,
     super.key,
   });
+  final String message;
+  final VoidCallback onRetry;
 
   @override
-  Widget build(BuildContext context) {
-    return Center(
+  Widget build(BuildContext context) => Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 40),
         child: Column(
@@ -44,5 +43,4 @@ class MedicationListErrorView extends StatelessWidget {
         ),
       ),
     );
-  }
 }

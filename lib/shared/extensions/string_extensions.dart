@@ -1,5 +1,5 @@
 extension StringX on String {
-  bool get isNullOrEmpty => this.isEmpty;
+  bool get isNullOrEmpty => isEmpty;
   bool get isNotNullOrEmpty => !isNullOrEmpty;
   String capitalize() {
     if (isEmpty) return this;

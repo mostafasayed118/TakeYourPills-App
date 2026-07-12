@@ -1,11 +1,10 @@
-import 'package:takeyourpills_healthcare_app/core/entities/medication.dart'
+import '../../../core/entities/medication.dart'
     as domain;
-import 'package:takeyourpills_healthcare_app/data/database/app_database.dart';
+import '../app_database.dart';
 
 /// Maps between Drift's [MedicationData] and domain [domain.Medication].
 class MedicationMapper {
-  static domain.Medication toEntity(MedicationData model) {
-    return domain.Medication(
+  static domain.Medication toEntity(MedicationData model) => domain.Medication(
       id: model.id,
       name: model.name,
       dosageAmount: model.dosageAmount,
@@ -25,10 +24,8 @@ class MedicationMapper {
       createdAt: model.createdAt,
       updatedAt: model.updatedAt,
     );
-  }
 
-  static MedicationData toModel(domain.Medication entity) {
-    return MedicationData(
+  static MedicationData toModel(domain.Medication entity) => MedicationData(
       id: entity.id,
       name: entity.name,
       dosageAmount: entity.dosageAmount,
@@ -48,13 +45,8 @@ class MedicationMapper {
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
     );
-  }
 
-  static List<domain.Medication> toEntityList(List<MedicationData> models) {
-    return models.map(toEntity).toList();
-  }
+  static List<domain.Medication> toEntityList(List<MedicationData> models) => models.map(toEntity).toList();
 
-  static List<MedicationData> toModelList(List<domain.Medication> entities) {
-    return entities.map(toModel).toList();
-  }
+  static List<MedicationData> toModelList(List<domain.Medication> entities) => entities.map(toModel).toList();
 }

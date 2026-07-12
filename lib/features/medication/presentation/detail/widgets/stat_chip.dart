@@ -1,24 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_colors.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_text_styles.dart';
+import '../../../../../shared/theme/app_colors.dart';
+import '../../../../../shared/theme/app_text_styles.dart';
 
 class StatChip extends StatelessWidget {
+
+  const StatChip({
+    required this.label, required this.value, required this.unit, required this.isWarning, super.key,
+  });
   final String label;
   final String value;
   final String unit;
   final bool isWarning;
 
-  const StatChip({
-    super.key,
-    required this.label,
-    required this.value,
-    required this.unit,
-    required this.isWarning,
-  });
-
   @override
-  Widget build(BuildContext context) {
-    return Container(
+  Widget build(BuildContext context) => Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isWarning
@@ -50,5 +45,4 @@ class StatChip extends StatelessWidget {
         ],
       ),
     );
-  }
 }

@@ -1,32 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_colors.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_text_styles.dart';
+import '../theme/app_colors.dart';
+import '../theme/app_text_styles.dart';
 
 /// Reusable text input field following the Calm & Clinical design system.
 ///
 /// Supports both controlled (via [value]) and uncontrolled (via [controller])
 /// modes. When [value] is provided, the text field is controlled by the parent.
 class AppInput extends StatefulWidget {
-  final String label;
-  final String? hint;
-  final String? value;
-  final TextEditingController? controller;
-  final TextInputType? keyboardType;
-  final bool obscureText;
-  final bool readOnly;
-  final Widget? suffixIcon;
-  final Widget? prefixIcon;
-  final String? Function(String?)? validator;
-  final void Function(String)? onChanged;
-  final void Function(String)? onSubmitted;
-  final VoidCallback? onTap;
-  final int maxLines;
-  final TextCapitalization textCapitalization;
-  final EdgeInsetsGeometry? contentPadding;
 
   const AppInput({
-    super.key,
-    required this.label,
+    required this.label, super.key,
     this.hint,
     this.value,
     this.controller,
@@ -43,6 +26,22 @@ class AppInput extends StatefulWidget {
     this.textCapitalization = TextCapitalization.none,
     this.contentPadding,
   });
+  final String label;
+  final String? hint;
+  final String? value;
+  final TextEditingController? controller;
+  final TextInputType? keyboardType;
+  final bool obscureText;
+  final bool readOnly;
+  final Widget? suffixIcon;
+  final Widget? prefixIcon;
+  final String? Function(String?)? validator;
+  final void Function(String)? onChanged;
+  final void Function(String)? onSubmitted;
+  final VoidCallback? onTap;
+  final int maxLines;
+  final TextCapitalization textCapitalization;
+  final EdgeInsetsGeometry? contentPadding;
 
   @override
   State<AppInput> createState() => _AppInputState();
@@ -87,8 +86,7 @@ class _AppInputState extends State<AppInput> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
+  Widget build(BuildContext context) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -148,5 +146,4 @@ class _AppInputState extends State<AppInput> {
         ),
       ],
     );
-  }
 }

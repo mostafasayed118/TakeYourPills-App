@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:provider/provider.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
+import 'package:takeyourpills_healthcare_app/core/error/result.dart';
 import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository_impl.dart';
 import 'package:takeyourpills_healthcare_app/features/medication/presentation/cubit/medication_list_cubit.dart';
 import 'package:takeyourpills_healthcare_app/features/medication/presentation/medication_list_page.dart';
@@ -29,7 +30,7 @@ void main() {
     ) async {
       when(
         () => mockRepository.getAllMedications(),
-      ).thenAnswer((_) async => []);
+      ).thenAnswer((_) async => const Success<List<Medication>>([]));
 
       await tester.pumpWidget(
         MaterialApp(
@@ -59,14 +60,10 @@ void main() {
           dosageAmount: '100',
           dosageUnit: 'mg',
           iconName: 'pill',
-          colorHex: '',
-          frequencyType: 'daily',
           frequencyDays: '[]',
-          frequencyInterval: 1,
           scheduleTimes: '["08:00"]',
-          isPaused: false,
-          createdAt: DateTime(2026, 1, 1),
-          updatedAt: DateTime(2026, 1, 1),
+          createdAt: DateTime(2026),
+          updatedAt: DateTime(2026),
         ),
         Medication(
           id: 2,
@@ -74,12 +71,8 @@ void main() {
           dosageAmount: '10',
           dosageUnit: 'mg',
           iconName: 'pill',
-          colorHex: '',
-          frequencyType: 'daily',
           frequencyDays: '[]',
-          frequencyInterval: 1,
           scheduleTimes: '["09:00","21:00"]',
-          isPaused: false,
           createdAt: DateTime(2026, 1, 2),
           updatedAt: DateTime(2026, 1, 2),
         ),
@@ -87,7 +80,7 @@ void main() {
 
       when(
         () => mockRepository.getAllMedications(),
-      ).thenAnswer((_) async => meds);
+      ).thenAnswer((_) async => Success<List<Medication>>(meds));
 
       await tester.pumpWidget(
         MaterialApp(
@@ -114,7 +107,7 @@ void main() {
     ) async {
       when(
         () => mockRepository.getAllMedications(),
-      ).thenThrow(Exception('DB error'));
+      ).thenAnswer((_) async => const ResultFailure<List<Medication>>('DB error'));
 
       await tester.pumpWidget(
         MaterialApp(
@@ -131,7 +124,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Something went wrong'), findsOneWidget);
-      expect(find.textContaining('DB error'), findsOneWidget);
+      expect(find.text('Error: DB error'), findsOneWidget);
     });
   });
 }
