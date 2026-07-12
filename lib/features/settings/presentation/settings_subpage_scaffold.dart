@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../shared/routing/routes.dart';
-import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_text_styles.dart';
+import '../../../shared/theme/theme_context.dart';
 
 /// Shared chrome for settings sub-screens (back → main Settings).
 class SettingsSubpageScaffold extends StatelessWidget {
   const SettingsSubpageScaffold({
-    required this.title, required this.body, super.key,
+    required this.title,
+    required this.body,
+    super.key,
   });
 
   final String title;
@@ -15,18 +18,15 @@ class SettingsSubpageScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: Text(title),
-        backgroundColor: AppColors.surface,
-        scrolledUnderElevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go(AppRoutes.settings),
+        appBar: AppBar(
+          title: Text(title),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => context.go(AppRoutes.settings),
+          ),
         ),
-      ),
-      body: body,
-    );
+        body: body,
+      );
 }
 
 /// Section label matching the main settings list style.
@@ -37,44 +37,48 @@ class SettingsSectionLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
-      child: Text(
-        title,
-        style: AppTextStyles.bodySmall.copyWith(
-          color: AppColors.onSurfaceVariant,
-          fontWeight: FontWeight.w600,
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+        child: Text(
+          title,
+          style: AppTextStyles.bodySmall.copyWith(
+            color: context.mutedText,
+            fontWeight: FontWeight.w600,
+          ),
         ),
-      ),
-    );
+      );
 }
 
 /// Helper card for explanatory / privacy copy.
 class SettingsInfoCard extends StatelessWidget {
   const SettingsInfoCard({
-    required this.icon, required this.message, super.key,
+    required this.icon,
+    required this.message,
+    super.key,
   });
 
   final IconData icon;
   final String message;
 
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) {
+    final scheme = context.scheme;
+    return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.surfaceContainerLow,
+        color: context.cardColor,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: AppColors.primary, size: 22),
+          Icon(icon, color: scheme.primary, size: 22),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               message,
               style: AppTextStyles.bodySmall.copyWith(
-                color: AppColors.onSurfaceVariant,
+                color: context.mutedText,
                 height: 1.4,
               ),
             ),
@@ -82,4 +86,5 @@ class SettingsInfoCard extends StatelessWidget {
         ],
       ),
     );
+  }
 }

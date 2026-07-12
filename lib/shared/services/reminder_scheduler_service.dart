@@ -1,10 +1,10 @@
 import '../../core/entities/medication.dart';
+import '../../data/repositories/medication_repository_impl.dart';
 
 /// Abstract interface for scheduling medication reminders.
 ///
-/// Phase 3 will provide a concrete implementation using
-/// `flutter_local_notifications`. This interface defines
-/// the hooks needed by the medication CRUD flow.
+/// Concrete implementation uses `flutter_local_notifications`.
+/// This interface defines the hooks needed by the medication CRUD flow.
 abstract class ReminderSchedulerService {
   /// Schedule all reminders for a newly created medication.
   Future<void> scheduleForMedication(Medication medication);
@@ -22,12 +22,15 @@ abstract class ReminderSchedulerService {
 
   /// Cancel all reminders (e.g., app reset or user logout).
   Future<void> cancelAll();
+
+  /// Cancel everything, then re-schedule active medications from [repository].
+  ///
+  /// Call on cold start so reboot / force-stop / OS cancellation does not
+  /// leave the user without dose reminders.
+  Future<void> rebuildFromRepository(MedicationRepository repository);
 }
 
-/// No-op implementation used during development before Phase 3.
-///
-/// Prevents runtime errors when reminder hooks are called
-/// but no notification service is configured yet.
+/// No-op implementation used in tests or when notifications are unavailable.
 class NoOpReminderSchedulerService implements ReminderSchedulerService {
   @override
   Future<void> scheduleForMedication(Medication medication) async {}
@@ -43,4 +46,7 @@ class NoOpReminderSchedulerService implements ReminderSchedulerService {
 
   @override
   Future<void> cancelAll() async {}
+
+  @override
+  Future<void> rebuildFromRepository(MedicationRepository repository) async {}
 }

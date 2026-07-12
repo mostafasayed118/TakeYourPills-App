@@ -1,16 +1,23 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+
 import '../../core/entities/medication.dart';
+import '../../core/error/result.dart';
+import '../../data/repositories/medication_repository_impl.dart';
 import 'notification_service.dart';
 import 'reminder_scheduler_service.dart';
 
 /// Concrete reminder scheduler that converts medication schedules
 /// into notification instances and manages their lifecycle.
 class ReminderSchedulerImpl implements ReminderSchedulerService {
-
   ReminderSchedulerImpl({required NotificationService notificationService})
     : _notificationService = notificationService;
   final NotificationService _notificationService;
+
+  /// How far ahead to materialize one-shot notifications.
+  /// Kept modest so multi-med users stay under OS pending limits (~500).
+  static const int _daysAhead = 14;
 
   @override
   Future<void> scheduleForMedication(Medication medication) async {
@@ -23,27 +30,35 @@ class ReminderSchedulerImpl implements ReminderSchedulerService {
       schedules,
       medication.frequencyType,
       medication.frequencyDays,
-      daysAhead: 30,
+      daysAhead: _daysAhead,
     );
 
-    var notificationId = 0;
+    var sequence = 0;
     for (final scheduledTime in occurrences) {
-      final doseId = _computeDoseId(
+      final doseId = computeNotificationId(
         medication.id,
         scheduledTime,
-        notificationId,
+        sequence,
       );
 
-      await _notificationService.scheduleNotification(
-        id: doseId,
-        medicationId: medication.id,
-        doseId: doseId,
-        scheduledTime: scheduledTime,
-        title: 'Time for ${medication.name}',
-        body: '${medication.dosageAmount} ${medication.dosageUnit}',
-        payload: '${medication.id},$doseId,${scheduledTime.toIso8601String()}',
-      );
-      notificationId++;
+      try {
+        await _notificationService.scheduleNotification(
+          id: doseId,
+          medicationId: medication.id,
+          doseId: doseId,
+          scheduledTime: scheduledTime,
+          title: 'Time for ${medication.name}',
+          body: '${medication.dosageAmount} ${medication.dosageUnit}',
+          payload:
+              '${medication.id},$doseId,${scheduledTime.toIso8601String()}',
+        );
+      } on Object catch (e, st) {
+        // Continue scheduling remaining doses; one failure must not wipe the rest.
+        if (kDebugMode) {
+          debugPrint('scheduleNotification failed for $doseId: $e\n$st');
+        }
+      }
+      sequence++;
     }
   }
 
@@ -79,42 +94,63 @@ class ReminderSchedulerImpl implements ReminderSchedulerService {
     await _notificationService.cancelAllNotifications();
   }
 
-  /// Parse schedule times from medication JSON scheduleTimes field.
+  @override
+  Future<void> rebuildFromRepository(MedicationRepository repository) async {
+    await cancelAll();
+    final result = await repository.getActiveMedications();
+    final medications = result.getOrNull() ?? const <Medication>[];
+    for (final medication in medications) {
+      try {
+        await scheduleForMedication(medication);
+      } on Object catch (e, st) {
+        if (kDebugMode) {
+          debugPrint(
+            'rebuildFromRepository failed for med ${medication.id}: $e\n$st',
+          );
+        }
+      }
+    }
+  }
+
+  /// Parse schedule times from medication scheduleTimes field.
   Future<List<DateTime>> _parseSchedules(Medication medication) async {
     final schedules = <DateTime>[];
     try {
-      final times = List<dynamic>.from(
-        medication.scheduleTimes.isEmpty
-            ? []
-            : List.from(
-                medication.scheduleTimes
-                    .replaceAll('[', '')
-                    .replaceAll(']', '')
-                    .split(',')
-                    .map((s) => s.trim())
-                    .where((s) => s.isNotEmpty)
-                    .map((s) {
-                      final parts = s.split(':');
-                      final hour = int.tryParse(parts[0]) ?? 0;
-                      final minute = int.tryParse(parts[1]) ?? 0;
-                      return DateTime(
-                        2000, // Dummy year - we only care about time of day
-                        1,
-                        1,
-                        hour,
-                        minute,
-                      );
-                    }),
-              ),
-      );
-      schedules.addAll(times.cast<DateTime>());
+      final raw = medication.scheduleTimes.trim();
+      if (raw.isEmpty) return schedules;
+
+      // Accept JSON array `["08:00","20:00"]` or loose `08:00,20:00`.
+      List<String> timeStrings;
+      if (raw.startsWith('[')) {
+        final decoded = jsonDecode(raw);
+        if (decoded is! List) return schedules;
+        timeStrings = decoded.map((e) => e.toString().trim()).toList();
+      } else {
+        timeStrings = raw
+            .replaceAll('[', '')
+            .replaceAll(']', '')
+            .split(',')
+            .map((s) => s.trim().replaceAll('"', '').replaceAll("'", ''))
+            .where((s) => s.isNotEmpty)
+            .toList();
+      }
+
+      for (final s in timeStrings) {
+        final cleaned = s.replaceAll('"', '').replaceAll("'", '');
+        final parts = cleaned.split(':');
+        if (parts.isEmpty) continue;
+        final hour = int.tryParse(parts[0]) ?? 0;
+        final minute = parts.length > 1 ? (int.tryParse(parts[1]) ?? 0) : 0;
+        if (hour < 0 || hour > 23 || minute < 0 || minute > 59) continue;
+        schedules.add(DateTime(2000, 1, 1, hour, minute));
+      }
     } catch (_) {
       // Fallback: no schedules
     }
     return schedules;
   }
 
-  /// Generate future occurrence times for a medication.
+  /// Generate future occurrence times for a medication (local calendar days).
   List<DateTime> _generateOccurrences(
     List<DateTime> schedules,
     String frequencyType,
@@ -123,13 +159,8 @@ class ReminderSchedulerImpl implements ReminderSchedulerService {
   }) {
     final occurrences = <DateTime>[];
     final now = DateTime.now();
-    final limitDate = DateTime(
-      now.year,
-      now.month,
-      now.day + daysAhead,
-      now.hour,
-      now.minute,
-    );
+    // Exclusive end: end of the last local day in the window.
+    final limitDate = DateTime(now.year, now.month, now.day + daysAhead + 1);
 
     for (final schedule in schedules) {
       final hour = schedule.hour;
@@ -144,7 +175,7 @@ class ReminderSchedulerImpl implements ReminderSchedulerService {
           minute,
         );
 
-        if (candidate.isBefore(now)) continue;
+        if (!candidate.isAfter(now)) continue;
         if (!candidate.isBefore(limitDate)) break;
 
         final shouldInclude = _shouldIncludeForFrequency(
@@ -192,8 +223,24 @@ class ReminderSchedulerImpl implements ReminderSchedulerService {
     }
   }
 
-  /// Compute a deterministic notification ID.
-  int _computeDoseId(int medicationId, DateTime scheduledTime, int sequence) => (medicationId * 1000000) +
-        (scheduledTime.millisecondsSinceEpoch ~/ 1000) +
-        sequence;
+  /// Deterministic notification ID that fits in a signed 32-bit int (Android).
+  ///
+  /// Exposed for tests. Avoids wall-clock epoch math that overflows `int32`.
+  static int computeNotificationId(
+    int medicationId,
+    DateTime scheduledTime,
+    int sequence,
+  ) {
+    final hash = Object.hash(
+      medicationId,
+      scheduledTime.year,
+      scheduledTime.month,
+      scheduledTime.day,
+      scheduledTime.hour,
+      scheduledTime.minute,
+      sequence,
+    );
+    // Positive 31-bit range required by Android notification IDs.
+    return hash & 0x7fffffff;
+  }
 }

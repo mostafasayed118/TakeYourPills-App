@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/di/service_locator.dart';
+import '../../features/calendar/presentation/calendar_page.dart';
 import '../../features/dashboard/presentation/dashboard_page.dart';
 import '../../features/medication/presentation/add_edit_medication_page.dart';
 import '../../features/medication/presentation/detail/medication_detail_page.dart';
 import '../../features/medication/presentation/medication_list_page.dart';
 import '../../features/onboarding/presentation/onboarding_page.dart';
+import '../../features/progress/presentation/progress_page.dart';
 import '../../features/settings/presentation/about_page.dart';
 import '../../features/settings/presentation/appearance_settings_page.dart';
 import '../../features/settings/presentation/data_management_page.dart';
@@ -14,7 +16,6 @@ import '../../features/settings/presentation/notification_settings_page.dart';
 import '../../features/settings/presentation/privacy_settings_page.dart';
 import '../../features/settings/presentation/settings_page.dart';
 import '../services/preference_service.dart';
-import '../theme/app_colors.dart';
 import 'routes.dart';
 
 class AppRouter {
@@ -106,21 +107,14 @@ class AppRouter {
               pageBuilder: (c, s) => _fadeTransition(
                 c: c,
                 s: s,
-                child: const Scaffold(
-                  body: Center(child: Text('Calendar — Coming Soon')),
-                ),
+                child: const CalendarPage(),
               ),
             ),
             GoRoute(
               path: AppRoutes.history,
               name: 'history',
-              pageBuilder: (c, s) => _fadeTransition(
-                c: c,
-                s: s,
-                child: const Scaffold(
-                  body: Center(child: Text('History — Coming Soon')),
-                ),
-              ),
+              // History is folded into Progress for MVP.
+              redirect: (_, _) => AppRoutes.progress,
             ),
             GoRoute(
               path: AppRoutes.progress,
@@ -128,9 +122,7 @@ class AppRouter {
               pageBuilder: (c, s) => _fadeTransition(
                 c: c,
                 s: s,
-                child: const Scaffold(
-                  body: Center(child: Text('Progress — Coming Soon')),
-                ),
+                child: const ProgressPage(),
               ),
             ),
             GoRoute(
@@ -181,16 +173,21 @@ class AppRouter {
                 child: const DataManagementPage(),
               ),
             ),
+            // Provider messaging is intentionally not shipped in MVP.
             GoRoute(
               path: AppRoutes.messaging,
               name: 'messaging',
-              pageBuilder: (c, s) => _fadeTransition(
-                c: c,
-                s: s,
-                child: const Scaffold(
-                  body: Center(child: Text('Provider Messaging — Coming Soon')),
-                ),
-              ),
+              redirect: (_, _) => AppRoutes.settings,
+            ),
+            GoRoute(
+              path: AppRoutes.conversation,
+              name: 'conversation',
+              redirect: (_, _) => AppRoutes.settings,
+            ),
+            GoRoute(
+              path: AppRoutes.composer,
+              name: 'composer',
+              redirect: (_, _) => AppRoutes.settings,
             ),
           ],
         ),
@@ -232,15 +229,17 @@ class _MainScaffold extends StatelessWidget {
     final isTabRoute = selectedIndex != -1;
     final effectiveIndex = isTabRoute ? selectedIndex : 0;
 
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       body: child,
       bottomNavigationBar: isTabRoute
           ? BottomNavigationBar(
               type: BottomNavigationBarType.fixed,
               currentIndex: effectiveIndex,
-              selectedItemColor: AppColors.primary,
-              unselectedItemColor: AppColors.onSurfaceVariant,
-              backgroundColor: AppColors.surface,
+              selectedItemColor: colorScheme.primary,
+              unselectedItemColor: colorScheme.onSurfaceVariant,
+              backgroundColor: colorScheme.surface,
               elevation: 8,
               onTap: (i) {
                 if (i != effectiveIndex) {

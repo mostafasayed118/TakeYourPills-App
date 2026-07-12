@@ -64,7 +64,13 @@ class NotificationServiceImpl implements NotificationService {
     const androidSettings = AndroidInitializationSettings(
       '@mipmap/ic_launcher',
     );
-    const iosSettings = DarwinInitializationSettings();
+    // Permissions are requested explicitly via [requestPermission] during
+    // onboarding / settings — avoid surprising the user at cold start.
+    const iosSettings = DarwinInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+    );
     const initSettings = InitializationSettings(
       android: androidSettings,
       iOS: iosSettings,
@@ -86,8 +92,16 @@ class NotificationServiceImpl implements NotificationService {
 
   Future<void> _initializeTimezone() async {
     tz.initializeTimeZones();
-    final timezoneInfo = await FlutterTimezone.getLocalTimezone();
-    _location = tz.getLocation(timezoneInfo.identifier);
+    try {
+      final timezoneInfo = await FlutterTimezone.getLocalTimezone();
+      final location = tz.getLocation(timezoneInfo.identifier);
+      tz.setLocalLocation(location);
+      _location = location;
+    } on Object {
+      // Device/OEM timezone strings are occasionally unknown to the TZ DB.
+      tz.setLocalLocation(tz.UTC);
+      _location = tz.UTC;
+    }
   }
 
   Future<void> _setupNotificationChannels() async {
@@ -229,12 +243,14 @@ class NotificationServiceImpl implements NotificationService {
         ? AndroidScheduleMode.exactAllowWhileIdle
         : AndroidScheduleMode.inexactAllowWhileIdle;
 
+    // One-shot schedule: the scheduler already materializes each occurrence.
+    // Do NOT set matchDateTimeComponents — that would re-fire daily forever
+    // and ignore specific_days / as_needed frequency rules.
     await _notificationsPlugin.zonedSchedule(
       id: id,
       scheduledDate: zonedTime,
       notificationDetails: _notificationDetails(),
       androidScheduleMode: scheduleMode,
-      matchDateTimeComponents: DateTimeComponents.time,
       payload: payload ?? '$medicationId,$doseId,$scheduledTime',
       title: title,
       body: body,
@@ -255,6 +271,8 @@ class NotificationServiceImpl implements NotificationService {
   }
 
   NotificationDetails _notificationDetails() {
+    // private: lock-screen shows redacted content until device unlocked —
+    // reduces PHI leakage (medication names/doses) on shared devices.
     const androidDetails = AndroidNotificationDetails(
       _channelMedicationReminders,
       'Medication Reminders',
@@ -262,7 +280,7 @@ class NotificationServiceImpl implements NotificationService {
       importance: Importance.high,
       priority: Priority.high,
       category: AndroidNotificationCategory.reminder,
-      visibility: NotificationVisibility.public,
+      visibility: NotificationVisibility.private,
     );
 
     const iosDetails = DarwinNotificationDetails(

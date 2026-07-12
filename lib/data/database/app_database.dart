@@ -41,6 +41,8 @@ class AppDatabase extends _$AppDatabase {
         await m.addColumn(medications, medications.pillsRemaining);
         await m.addColumn(medications, medications.refillThreshold);
       }
+      // schemaVersion 3: no structural changes (version bump for deploy hygiene).
+      // Future migrations: add `if (from < N) { ... }` blocks only.
     },
   );
 

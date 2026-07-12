@@ -40,6 +40,12 @@ abstract class PreferenceService {
 
   /// Set onboarding completion status.
   Future<void> setOnboardingComplete(bool value);
+
+  /// Theme mode: `system` | `light` | `dark`.
+  Future<String> getThemeMode();
+
+  /// Persist theme mode string.
+  Future<void> setThemeMode(String value);
 }
 
 /// Implementation of [PreferenceService] using SharedPreferences.
@@ -125,9 +131,11 @@ class PreferenceServiceImpl implements PreferenceService {
   Future<int> getDefaultSnoozeMinutes() async =>
       _prefs.getInt(_defaultSnoozeMinutes) ?? 10;
 
+  @override
   Future<void> setThemeMode(String value) async =>
       _prefs.setString(_themeMode, value);
 
+  @override
   Future<String> getThemeMode() async =>
       _prefs.getString(_themeMode) ?? 'system';
 

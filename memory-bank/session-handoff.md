@@ -1,5 +1,19 @@
 ## Completed (This Session)
 
+### ✅ Production close-out (2026-07-12 follow-up)
+- **Keystore:** local `android/upload-keystore.jks` + `key.properties` (gitignored); R8 Play Core dontwarn; AAB produced at `build/app/outputs/bundle/release/app-release.aab`
+- **OEM reliability:** `DeviceReliabilityService`, dashboard banner, Notification Settings battery/exact-alarm deep links (`app_settings`, `device_info_plus`)
+- **Data export:** `DataExportService` JSON + share sheet (Settings → Data Management)
+- **Crash logs:** `LocalCrashReportingService` in main zone hooks; About → Share diagnostics
+- **Verification:** analyze clean; 57 tests passed; release AAB built (~58MB)
+- **Next (optional):** dark-theme pass on feature screens; hide Coming Soon stubs; Sentry when ready
+
+### ✅ Production audit pass (2026-07-12)
+- **What was fixed:** Compile break (`rebuildFromRepository`), Android int32 notification IDs, one-shot scheduling (no daily matchDateTimeComponents), cold-start schedule rebuild, TZ fallback, lock-screen PHI (`private`), Android backup off + network security, release minify + optional keystore, unused deps removed, dark-theme bottom nav, iOS display name.
+- **Doc:** `PRODUCTION_AUDIT.md`
+- **Verification:** analyze clean; tests passed
+- **Next:** completed in follow-up pass above
+
 ### ✅ Architectural Refactor - Phase 1
 - **Files created:**
   - `lib/core/error/result.dart` — Functional Result<T> type for error handling

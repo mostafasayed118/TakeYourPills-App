@@ -1,74 +1,223 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
-import '../../../shared/theme/app_colors.dart';
+import '../../../core/utils/dose_occurrence_utils.dart';
+import '../../../core/utils/schedule_parser.dart';
+import '../../../shared/components/reliability_banner.dart';
+import '../../../shared/routing/routes.dart';
 import '../../../shared/theme/app_text_styles.dart';
+import '../../../shared/theme/theme_context.dart';
+import 'cubit/dashboard_cubit.dart';
 import 'widgets/adherence_ring.dart';
 import 'widgets/upcoming_item.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
 
+  String _greeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return 'Good morning';
+    if (hour < 17) return 'Good afternoon';
+    return 'Good evening';
+  }
+
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) {
+    final scheme = context.scheme;
+
+    return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.surface,
-        scrolledUnderElevation: 0,
         title: const Text('TakeYourPills'),
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications_outlined),
-            onPressed: () {},
+            onPressed: () => context.go(AppRoutes.settingsNotifications),
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildGreeting(),
-            const SizedBox(height: 24),
-            _buildAdherenceCard(),
-            const SizedBox(height: 24),
-            _buildNextDoseCard(),
-            const SizedBox(height: 24),
-            _buildUpcomingList(),
-          ],
-        ),
+      body: BlocBuilder<DashboardCubit, DashboardState>(
+        builder: (context, state) {
+          if (state is DashboardLoading || state is DashboardInitial) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (state is DashboardError) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(
+                  state.message,
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    color: scheme.error,
+                  ),
+                ),
+              ),
+            );
+          }
+          if (state is! DashboardLoaded) {
+            return const SizedBox.shrink();
+          }
+
+          final adherence = (state.adherencePercent / 100).clamp(0.0, 1.0);
+          final next = state.nextDose;
+          final nextTime = state.nextDoseTime;
+
+          return RefreshIndicator(
+            onRefresh: () => context.read<DashboardCubit>().loadDashboard(),
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const ReliabilityBanner(),
+                  const SizedBox(height: 16),
+                  Text(
+                    _greeting(),
+                    style: AppTextStyles.headlineMedium.copyWith(
+                      color: scheme.onSurface,
+                    ),
+                  ),
+                  Text(
+                    'Here is your wellness summary for today.',
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: context.mutedText,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  _AdherenceCard(
+                    taken: state.takenToday,
+                    total: state.totalToday,
+                    value: adherence,
+                  ),
+                  const SizedBox(height: 24),
+                  if (next != null && nextTime != null)
+                    _NextDoseCard(
+                      name: next.name,
+                      dosage:
+                          '${next.dosageAmount} ${next.dosageUnit}',
+                      timeLabel: formatTimeOfDay(nextTime),
+                      onLog: () => context.go('/medication/${next.id}'),
+                    )
+                  else
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: context.cardColor,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: Text(
+                            state.medications.isEmpty
+                                ? 'Add a medication to see your next dose here.'
+                                : 'No more doses scheduled for today.',
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: context.mutedText,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Upcoming today',
+                    style: AppTextStyles.titleSmall.copyWith(
+                      color: scheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  if (state.upcomingMedications.isEmpty)
+                    Text(
+                      'Nothing else upcoming.',
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: context.mutedText,
+                      ),
+                    )
+                  else
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: context.cardColor,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Column(
+                        children: [
+                          for (var i = 0;
+                              i < state.upcomingMedications.length;
+                              i++) ...[
+                            if (i > 0)
+                              Divider(
+                                height: 1,
+                                color: context.dividerColor,
+                              ),
+                            UpcomingItem(
+                              name: state.upcomingMedications[i].name,
+                              dosage:
+                                  '${state.upcomingMedications[i].dosageAmount} ${state.upcomingMedications[i].dosageUnit}',
+                              time: _firstUpcomingTimeLabel(
+                                state.upcomingMedications[i].scheduleTimes,
+                              ),
+                              icon: Icons.medication_outlined,
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
+  }
 
-  Widget _buildGreeting() => Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Good Morning, Alex', style: AppTextStyles.headlineMedium),
-        Text(
-          'Here is your wellness summary for today.',
-          style: AppTextStyles.bodySmall.copyWith(
-            color: AppColors.onSurfaceVariant,
-          ),
-        ),
-      ],
+  String _firstUpcomingTimeLabel(String scheduleTimes) {
+    final now = DateTime.now();
+    final times = parseScheduleTimes(scheduleTimes);
+    for (final t in times) {
+      final dt = DateTime(now.year, now.month, now.day, t.hour, t.minute);
+      if (dt.isAfter(now)) {
+        return formatTimeOfDay(dt);
+      }
+    }
+    if (times.isEmpty) return '—';
+    final t = times.first;
+    return formatTimeOfDay(
+      DateTime(now.year, now.month, now.day, t.hour, t.minute),
     );
+  }
+}
 
-  Widget _buildAdherenceCard() => Container(
+class _AdherenceCard extends StatelessWidget {
+  const _AdherenceCard({
+    required this.taken,
+    required this.total,
+    required this.value,
+  });
+
+  final int taken;
+  final int total;
+  final double value;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = context.scheme;
+    final missed = (total - taken).clamp(0, total);
+
+    return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: context.cardColor,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A000000),
-            blurRadius: 20,
-            offset: Offset(0, 4),
-          ),
-        ],
       ),
       child: Column(
         children: [
           Row(
             children: [
-              const AdherenceRing(value: 0.8),
+              AdherenceRing(value: value),
               const SizedBox(width: 24),
               Expanded(
                 child: Column(
@@ -80,13 +229,13 @@ class DashboardPage extends StatelessWidget {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.primaryContainer,
+                        color: scheme.primaryContainer,
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
-                        '4 of 5',
+                        '$taken of $total',
                         style: AppTextStyles.titleSmall.copyWith(
-                          color: AppColors.onPrimaryContainer,
+                          color: scheme.onPrimaryContainer,
                         ),
                       ),
                     ),
@@ -94,7 +243,7 @@ class DashboardPage extends StatelessWidget {
                     Text(
                       'Taken today',
                       style: AppTextStyles.bodySmall.copyWith(
-                        color: AppColors.onSurfaceVariant,
+                        color: context.mutedText,
                       ),
                     ),
                   ],
@@ -102,53 +251,67 @@ class DashboardPage extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: AppColors.errorContainer,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.warning,
-                  size: 20,
-                  color: AppColors.onErrorContainer,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '1 Missed',
-                  style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.onErrorContainer,
+          if (missed > 0) ...[
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: scheme.errorContainer,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    size: 20,
+                    color: scheme.onErrorContainer,
                   ),
-                ),
-                const Spacer(),
-                Text(
-                  'Action needed',
-                  style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.onErrorContainer,
+                  const SizedBox(width: 8),
+                  Text(
+                    '$missed missed',
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: scheme.onErrorContainer,
+                    ),
                   ),
-                ),
-              ],
+                  const Spacer(),
+                  Text(
+                    'Review calendar',
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: scheme.onErrorContainer,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
+          ],
         ],
       ),
     );
+  }
+}
 
-  Widget _buildNextDoseCard() => Container(
+class _NextDoseCard extends StatelessWidget {
+  const _NextDoseCard({
+    required this.name,
+    required this.dosage,
+    required this.timeLabel,
+    required this.onLog,
+  });
+
+  final String name;
+  final String dosage;
+  final String timeLabel;
+  final VoidCallback onLog;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = context.scheme;
+
+    return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.primary,
+        color: scheme.primary,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A000000),
-            blurRadius: 20,
-            offset: Offset(0, 4),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -156,13 +319,13 @@ class DashboardPage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: AppColors.primaryContainer.withValues(alpha: 0.5),
+              color: scheme.onPrimary.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
-              '10:00 AM • WITH FOOD',
+              timeLabel.toUpperCase(),
               style: AppTextStyles.labelLarge.copyWith(
-                color: AppColors.onPrimaryContainer,
+                color: scheme.onPrimary,
               ),
             ),
           ),
@@ -174,16 +337,16 @@ class DashboardPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Lisinopril',
+                      name,
                       style: AppTextStyles.headlineMedium.copyWith(
-                        color: AppColors.onPrimary,
+                        color: scheme.onPrimary,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '10mg • 1 Pill',
+                      dosage,
                       style: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.primaryContainer,
+                        color: scheme.onPrimary.withValues(alpha: 0.85),
                       ),
                     ),
                   ],
@@ -192,10 +355,10 @@ class DashboardPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColors.onPrimary.withValues(alpha: 0.15),
+                  color: scheme.onPrimary.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.medication, color: AppColors.onPrimary),
+                child: Icon(Icons.medication, color: scheme.onPrimary),
               ),
             ],
           ),
@@ -204,16 +367,16 @@ class DashboardPage extends StatelessWidget {
             width: double.infinity,
             height: 48,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: onLog,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.onPrimary,
-                foregroundColor: AppColors.primary,
+                backgroundColor: scheme.onPrimary,
+                foregroundColor: scheme.primary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
               child: const Text(
-                'Log Taken',
+                'View medication',
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
             ),
@@ -221,46 +384,5 @@ class DashboardPage extends StatelessWidget {
         ],
       ),
     );
-
-  Widget _buildUpcomingList() => Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Upcoming Today', style: AppTextStyles.titleSmall),
-        const SizedBox(height: 12),
-        Container(
-          padding: const EdgeInsets.all(1),
-          decoration: BoxDecoration(
-            color: Colors.transparent,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x0A000000),
-                blurRadius: 20,
-                offset: Offset(0, 4),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: Column(
-              children: [
-                const UpcomingItem(
-                  name: 'Vitamin D3',
-                  dosage: '2000 IU • 1 Capsule',
-                  time: '1:00 PM',
-                  icon: Icons.water_drop,
-                ),
-                Container(height: 1, color: AppColors.surfaceContainerHighest),
-                const UpcomingItem(
-                  name: 'Atorvastatin',
-                  dosage: '20mg • 1 Tablet',
-                  time: '8:00 PM',
-                  icon: Icons.medication_outlined,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
+  }
 }
