@@ -30,7 +30,9 @@ Future<void> onBackgroundNotificationTapped(
 
     // Navigate using global key if available
     if (AppRouter.navigatorKey.currentContext != null) {
-      AppRouter.navigatorKey.currentContext!.go('/medication/$medicationId');
+      AppRouter.navigatorKey.currentContext!.go(
+        '/reminder-action-sheet?medicationId=$medicationId&doseId=${parts[1]}&scheduledTime=${parts[2]}',
+      );
     }
   } catch (e) {
     // Silently fail in background
@@ -331,22 +333,11 @@ class NotificationServiceImpl implements NotificationService {
         return;
       }
 
-      // Create dose log - use id: 0 to let database auto-assign
-      final doseLog = DoseLog(
-        id: 0,
-        medicationId: medicationId,
-        scheduledTime: scheduledTime.toIso8601String(),
-        status: DoseLogStatus.taken,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      );
-
-      final repository = GetIt.instance<MedicationRepository>();
-      await repository.createDoseLog(doseLog);
-
-      // Navigate to medication detail
+      // Navigate to reminder action sheet
       if (AppRouter.navigatorKey.currentContext != null) {
-        AppRouter.navigatorKey.currentContext!.go('/medication/$medicationId');
+        AppRouter.navigatorKey.currentContext!.go(
+          '/reminder-action-sheet?medicationId=$medicationId&doseId=$doseId&scheduledTime=${scheduledTime.toIso8601String()}',
+        );
       }
     } catch (e) {
       // Silently fail - notification tap is best-effort

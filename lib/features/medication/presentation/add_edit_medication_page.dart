@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc';
 import 'package:go_router/go_router.dart';
 
 import '../../../data/repositories/medication_repository_impl.dart';
@@ -9,7 +9,9 @@ import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_text_styles.dart';
 import 'cubit/medication_form_cubit.dart';
 import 'widgets/dosage_unit_dropdown.dart';
+import 'widgets/frequency_days_selector.dart';
 import 'widgets/frequency_dropdown.dart';
+import 'widgets/schedule_time_picker.dart';
 import 'widgets/section_header.dart';
 
 class AddEditMedicationPage extends StatelessWidget {
@@ -170,29 +172,15 @@ class _AddEditMedicationView extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           if (state.frequencyType == 'specific_days') ...[
-            AppInput(
-              label: 'Days (0=Mon, 6=Sun)',
-              hint: 'e.g., 0,2,4',
-              value: state.frequencyDays == '[]' ? '' : state.frequencyDays,
+            FrequencyDaysSelector(
+              initialDays: state.frequencyDays,
               onChanged: cubit.updateFrequencyDays,
             ),
             const SizedBox(height: 16),
           ],
-          AppInput(
-            key: const Key('schedule_times'),
-            label: 'Schedule Times',
-            hint: '08:00, 14:00, 20:00',
-            value: state.scheduleTimes,
+          ScheduleTimePicker(
+            initialTimes: state.scheduleTimes,
             onChanged: cubit.updateScheduleTimes,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 6, left: 4),
-            child: Text(
-              'Enter times in 24h format, separated by commas',
-              style: AppTextStyles.bodySmall.copyWith(
-                color: AppColors.onSurfaceVariant,
-              ),
-            ),
           ),
           const SizedBox(height: 24),
           const SectionHeader(title: 'Additional Details'),

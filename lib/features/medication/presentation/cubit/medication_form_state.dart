@@ -21,9 +21,9 @@ class MedicationFormEditing extends MedicationFormState {
     this.iconName = 'pill',
     this.colorHex = '',
     this.frequencyType = 'daily',
-    this.frequencyDays = '[]',
+    this.frequencyDays = const [],
     this.frequencyInterval = 1,
-    this.scheduleTimes = '',
+    this.scheduleTimes = const [],
     this.startDate,
     this.endDate,
     this.instructions,
@@ -41,9 +41,9 @@ class MedicationFormEditing extends MedicationFormState {
   final String iconName;
   final String colorHex;
   final String frequencyType;
-  final String frequencyDays;
+  final List<int> frequencyDays;
   final int frequencyInterval;
-  final String scheduleTimes;
+  final List<String> scheduleTimes;
   final String? startDate;
   final String? endDate;
   final String? instructions;
@@ -70,9 +70,9 @@ class MedicationFormEditing extends MedicationFormState {
     String? iconName,
     String? colorHex,
     String? frequencyType,
-    String? frequencyDays,
+    List<int>? frequencyDays,
     int? frequencyInterval,
-    String? scheduleTimes,
+    List<String>? scheduleTimes,
     String? startDate,
     String? endDate,
     String? instructions,

@@ -116,24 +116,8 @@ class ReminderSchedulerImpl implements ReminderSchedulerService {
   Future<List<DateTime>> _parseSchedules(Medication medication) async {
     final schedules = <DateTime>[];
     try {
-      final raw = medication.scheduleTimes.trim();
-      if (raw.isEmpty) return schedules;
-
-      // Accept JSON array `["08:00","20:00"]` or loose `08:00,20:00`.
-      List<String> timeStrings;
-      if (raw.startsWith('[')) {
-        final decoded = jsonDecode(raw);
-        if (decoded is! List) return schedules;
-        timeStrings = decoded.map((e) => e.toString().trim()).toList();
-      } else {
-        timeStrings = raw
-            .replaceAll('[', '')
-            .replaceAll(']', '')
-            .split(',')
-            .map((s) => s.trim().replaceAll('"', '').replaceAll("'", ''))
-            .where((s) => s.isNotEmpty)
-            .toList();
-      }
+        final timeStrings = List<String>.from(jsonDecode(medication.scheduleTimes));
+        if (timeStrings.isEmpty) return schedules;
 
       for (final s in timeStrings) {
         final cleaned = s.replaceAll('"', '').replaceAll("'", '');
@@ -202,15 +186,9 @@ class ReminderSchedulerImpl implements ReminderSchedulerService {
     switch (frequencyType) {
       case 'daily':
         return true;
-      case 'weekly':
-        return true;
       case 'specific_days':
         try {
-          final daysList = List<dynamic>.from(
-            frequencyDaysJson.isEmpty
-                ? []
-                : List.from(jsonDecode(frequencyDaysJson)),
-          );
+          final daysList = List<int>.from(jsonDecode(frequencyDaysJson));
           final weekday = candidate.weekday; // 1=Monday, 7=Sunday
           return daysList.contains(weekday);
         } catch (_) {
@@ -219,7 +197,7 @@ class ReminderSchedulerImpl implements ReminderSchedulerService {
       case 'as_needed':
         return false; // As-needed meds don't have automatic reminders
       default:
-        return true;
+        return true; // Fallback to daily
     }
   }
 

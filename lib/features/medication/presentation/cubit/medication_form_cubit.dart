@@ -50,13 +50,13 @@ class MedicationFormCubit extends Cubit<MedicationFormState> {
       result.fold(
         (med) {
           if (med != null) {
-            var displayTimes = med.scheduleTimes;
-            try {
-              final List<dynamic> times = jsonDecode(med.scheduleTimes);
-              displayTimes = times.join(', ');
-            } catch (_) {
-              // Already in display format
-            }
+            final displayTimes = (jsonDecode(med.scheduleTimes) as List<dynamic>)
+                .map((e) => e.toString())
+                .toList();
+
+            final displayFrequencyDays = (jsonDecode(med.frequencyDays) as List<dynamic>)
+                .map((e) => e as int)
+                .toList();
 
             emit(
               MedicationFormEditing(
@@ -66,9 +66,10 @@ class MedicationFormCubit extends Cubit<MedicationFormState> {
                 iconName: med.iconName,
                 colorHex: med.colorHex,
                 frequencyType: med.frequencyType,
-                frequencyDays: med.frequencyDays,
+
                 frequencyInterval: med.frequencyInterval,
                 scheduleTimes: displayTimes,
+                frequencyDays: displayFrequencyDays,
                 startDate: med.startDate,
                 endDate: med.endDate,
                 instructions: med.instructions,
@@ -133,7 +134,7 @@ class MedicationFormCubit extends Cubit<MedicationFormState> {
     emit(current.copyWith(frequencyType: value));
   }
 
-  void updateFrequencyDays(String value) {
+  void updateFrequencyDays(List<int> value) {
     final current = _ensureEditing();
     if (current == null) return;
     emit(current.copyWith(frequencyDays: value));
@@ -145,7 +146,7 @@ class MedicationFormCubit extends Cubit<MedicationFormState> {
     emit(current.copyWith(frequencyInterval: value));
   }
 
-  void updateScheduleTimes(String value) {
+  void updateScheduleTimes(List<String> value) {
     final current = _ensureEditing();
     if (current == null) return;
     emit(current.copyWith(scheduleTimes: value));
@@ -196,14 +197,14 @@ class MedicationFormCubit extends Cubit<MedicationFormState> {
     return null;
   }
 
-  String _parseScheduleTimesToJson(String input) {
+  String _convertScheduleTimesListToJson(List<String> input) {
     if (input.isEmpty) return '[]';
-    final times = input
-        .split(',')
-        .map((t) => t.trim())
-        .where((t) => t.isNotEmpty)
-        .toList();
-    return jsonEncode(times);
+    return jsonEncode(input);
+  }
+
+  String _convertFrequencyDaysListToJson(List<int> input) {
+    if (input.isEmpty) return '[]';
+    return jsonEncode(input);
   }
 
   String? _validateForm(MedicationFormEditing s) {
@@ -222,13 +223,8 @@ class MedicationFormCubit extends Cubit<MedicationFormState> {
       return 'At least one schedule time is required (e.g., 08:00)';
     }
 
-    final times = s.scheduleTimes
-        .split(',')
-        .map((t) => t.trim())
-        .where((t) => t.isNotEmpty)
-        .toList();
     final timeRegex = RegExp(r'^([01]?\d|2[0-3]):([0-5]\d)$');
-    for (final time in times) {
+    for (final time in s.scheduleTimes) {
       if (!timeRegex.hasMatch(time)) {
         return 'Invalid time format: "$time". Use HH:MM (e.g., 08:00)';
       }
@@ -237,6 +233,10 @@ class MedicationFormCubit extends Cubit<MedicationFormState> {
     const validFrequencies = ['daily', 'weekly', 'as_needed', 'specific_days'];
     if (!validFrequencies.contains(s.frequencyType)) {
       return 'Invalid frequency type';
+    }
+
+    if (s.frequencyType == 'specific_days' && s.frequencyDays.isEmpty) {
+      return 'Select at least one day for specific days frequency';
     }
 
     return null;
@@ -256,7 +256,8 @@ class MedicationFormCubit extends Cubit<MedicationFormState> {
 
     emit(current.copyWith(isSaving: true));
 
-    final scheduleTimesJson = _parseScheduleTimesToJson(current.scheduleTimes);
+    final scheduleTimesJson = _convertScheduleTimesListToJson(current.scheduleTimes);
+    final frequencyDaysJson = _convertFrequencyDaysListToJson(current.frequencyDays);
 
     final medication = Medication(
       id: isEditing && current.medication != null ? current.medication!.id : 0,
@@ -266,7 +267,7 @@ class MedicationFormCubit extends Cubit<MedicationFormState> {
       iconName: current.iconName,
       colorHex: current.colorHex,
       frequencyType: current.frequencyType,
-      frequencyDays: current.frequencyDays,
+      frequencyDays: frequencyDaysJson,
       frequencyInterval: current.frequencyInterval,
       scheduleTimes: scheduleTimesJson,
       startDate: current.startDate,

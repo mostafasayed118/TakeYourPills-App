@@ -7,6 +7,7 @@ import '../../features/dashboard/presentation/dashboard_page.dart';
 import '../../features/medication/presentation/add_edit_medication_page.dart';
 import '../../features/medication/presentation/detail/medication_detail_page.dart';
 import '../../features/medication/presentation/medication_list_page.dart';
+import '../../features/medication/presentation/reminder_action_sheet_page.dart';
 import '../../features/onboarding/presentation/onboarding_page.dart';
 import '../../features/progress/presentation/progress_page.dart';
 import '../../features/settings/presentation/about_page.dart';
@@ -45,6 +46,34 @@ class AppRouter {
           name: 'onboarding',
           pageBuilder: (c, s) =>
               _fadeTransition(c: c, s: s, child: const OnboardingPage()),
+        ),
+        GoRoute(
+          path: AppRoutes.reminderActionSheet,
+          name: 'reminderActionSheet',
+          pageBuilder: (c, s) {
+            final medicationId = int.tryParse(s.queryParameters['medicationId'] ?? '');
+            final doseId = int.tryParse(s.queryParameters['doseId'] ?? '');
+            final scheduledTime = DateTime.tryParse(s.queryParameters['scheduledTime'] ?? '');
+
+            if (medicationId == null || doseId == null || scheduledTime == null) {
+              return _fadeTransition(
+                c: c,
+                s: s,
+                child: const Scaffold(
+                  body: Center(child: Text('Invalid reminder data')),
+                ),
+              );
+            }
+            return _fadeTransition(
+              c: c,
+              s: s,
+              child: ReminderActionSheetPage(
+                medicationId: medicationId,
+                doseId: doseId,
+                scheduledTime: scheduledTime,
+              ),
+            );
+          },
         ),
         ShellRoute(
           builder: (c, s, child) => _MainScaffold(child: child),
@@ -213,68 +242,82 @@ class _MainScaffold extends StatelessWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext context) {
-    final currentPath = GoRouter.of(
-      context,
-    ).routeInformationProvider.value.uri.path;
-    final tabRoutes = [
-      AppRoutes.dashboard,
-      AppRoutes.medications,
-      AppRoutes.calendar,
-      AppRoutes.progress,
-      AppRoutes.settings,
-    ];
-    // Sub-settings screens hide the bottom bar (back goes to Settings).
-    final selectedIndex = tabRoutes.indexWhere((r) => currentPath == r);
-    final isTabRoute = selectedIndex != -1;
-    final effectiveIndex = isTabRoute ? selectedIndex : 0;
-
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Scaffold(
+  Widget build(BuildContext context) => Scaffold(
       body: child,
-      bottomNavigationBar: isTabRoute
-          ? BottomNavigationBar(
-              type: BottomNavigationBarType.fixed,
-              currentIndex: effectiveIndex,
-              selectedItemColor: colorScheme.primary,
-              unselectedItemColor: colorScheme.onSurfaceVariant,
-              backgroundColor: colorScheme.surface,
-              elevation: 8,
-              onTap: (i) {
-                if (i != effectiveIndex) {
-                  context.go(tabRoutes[i]);
-                }
-              },
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home_outlined),
-                  activeIcon: Icon(Icons.home),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.medication_outlined),
-                  activeIcon: Icon(Icons.medication),
-                  label: 'Meds',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.calendar_today_outlined),
-                  activeIcon: Icon(Icons.calendar_today),
-                  label: 'Calendar',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.insights_outlined),
-                  activeIcon: Icon(Icons.insights),
-                  label: 'Progress',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.settings_outlined),
-                  activeIcon: Icon(Icons.settings),
-                  label: 'Settings',
-                ),
-              ],
-            )
-          : null,
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        currentIndex: GoRouter.of(context).routeInformationProvider.value.uri.path ==
+                AppRoutes.dashboard
+            ? 0
+            : GoRouter.of(context)
+                    .routeInformationProvider
+                    .value
+                    .uri
+                    .path ==
+                AppRoutes.medications
+                ? 1
+                : GoRouter.of(context)
+                        .routeInformationProvider
+                        .value
+                        .uri
+                        .path ==
+                    AppRoutes.calendar
+                    ? 2
+                    : GoRouter.of(context)
+                            .routeInformationProvider
+                            .value
+                            .uri
+                            .path ==
+                        AppRoutes.progress
+                        ? 3
+                        : 4,
+        selectedItemColor: Theme.of(context).colorScheme.primary,
+        unselectedItemColor: Theme.of(context).colorScheme.onSurfaceVariant,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        elevation: 8,
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              GoRouter.of(context).go(AppRoutes.dashboard);
+            case 1:
+              GoRouter.of(context).go(AppRoutes.medications);
+            case 2:
+              GoRouter.of(context).go(AppRoutes.calendar);
+            case 3:
+              GoRouter.of(context).go(AppRoutes.progress);
+            case 4:
+              GoRouter.of(context).go(AppRoutes.settings);
+          }
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            activeIcon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.medication_outlined),
+            activeIcon: Icon(Icons.medication),
+            label: 'Meds',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today_outlined),
+            activeIcon: Icon(Icons.calendar_today),
+            label: 'Calendar',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.insights_outlined),
+            activeIcon: Icon(Icons.insights),
+            label: 'Progress',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings_outlined),
+            activeIcon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+      ),
     );
   }
 }
+

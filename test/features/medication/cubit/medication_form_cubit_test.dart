@@ -59,9 +59,9 @@ void main() {
       'saveMedication emits validation error when name is empty',
       build: () => cubit,
       act: (c) {
-        c.updateDosageAmount('10');
-        c.updateScheduleTimes('08:00');
-        c.saveMedication();
+                c.updateDosageAmount('10');
+                c.updateScheduleTimes(['08:00']);
+                c.saveMedication();
       },
       expect: () => [
         // updateDosageAmount
@@ -83,7 +83,7 @@ void main() {
       act: (c) {
         c.updateName('Aspirin');
         c.updateDosageAmount('10');
-        c.updateScheduleTimes('25:99');
+        c.updateScheduleTimes(['25:99']);
         c.saveMedication();
       },
       expect: () => [
@@ -108,9 +108,9 @@ void main() {
       },
       act: (c) {
         c.updateName('Aspirin');
-        c.updateDosageAmount('100');
-        c.updateScheduleTimes('08:00');
-        c.saveMedication();
+                c.updateDosageAmount('100');
+                c.updateScheduleTimes(['08:00']);
+                c.saveMedication();
       },
       expect: () => [
         isA<MedicationFormEditing>(), // name
@@ -136,7 +136,7 @@ void main() {
       dosageAmount: '50',
       dosageUnit: 'mg',
       iconName: 'pill',
-      frequencyDays: '[]',
+      frequencyDays: [],
       scheduleTimes: '["08:00","20:00"]',
       createdAt: DateTime(2026),
       updatedAt: DateTime(2026),
