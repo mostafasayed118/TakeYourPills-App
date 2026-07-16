@@ -46,11 +46,11 @@ class AppDatabase extends _$AppDatabase {
     },
   );
 
-  Future<int> createMedication(MedicationData medication) => into(medications).insert(medication);
+  Future<int> createMedication(MedicationsCompanion medication) => into(medications).insert(medication);
 
-  Future<int> updateMedicationRow(MedicationData medication) => (update(
+  Future<int> updateMedicationRow(MedicationsCompanion medication) => (update(
       medications,
-    )..where((t) => t.id.equals(medication.id))).write(medication);
+    )..where((t) => t.id.equals(medication.id.value))).write(medication);
 
   Future<int> deleteMedication(int id) => (delete(medications)..where((t) => t.id.equals(id))).go();
 

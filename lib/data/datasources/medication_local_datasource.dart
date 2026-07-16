@@ -30,13 +30,13 @@ class MedicationLocalDatasource {
   }
 
   Future<int> createMedication(Medication medication) async {
-    final model = MedicationMapper.toModel(medication);
-    return _db.createMedication(model);
+    final companion = MedicationMapper.toCreateCompanion(medication);
+    return _db.createMedication(companion);
   }
 
   Future<int> updateMedication(Medication medication) async {
-    final model = MedicationMapper.toModel(medication);
-    return _db.updateMedicationRow(model);
+    final companion = MedicationMapper.toUpdateCompanion(medication);
+    return _db.updateMedicationRow(companion);
   }
 
   Future<int> deleteMedication(int id) async {
@@ -54,12 +54,13 @@ class MedicationLocalDatasource {
   Stream<List<Medication>> watchAllMedications() => _db.watchAllMedications().map(MedicationMapper.toEntityList);
 
   /// Batch insert multiple medications in a single transaction.
-  Future<void> bulkInsertMedications(List<Medication> medications) async => _db.batch((batch) {
-      for (final med in medications) {
-        final model = MedicationMapper.toModel(med);
-        batch.insert(_db.medications, model);
-      }
-    });
+  Future<void> bulkInsertMedications(List<Medication> medications) async =>
+      _db.batch((batch) {
+        for (final med in medications) {
+          final companion = MedicationMapper.toCreateCompanion(med);
+          batch.insert(_db.medications, companion);
+        }
+      });
 
   // ── Schedules ────────────────────────────────────────────────
 

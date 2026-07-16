@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../../shared/theme/app_colors.dart';
 import '../../../../../shared/theme/app_text_styles.dart';
 
 class StatChip extends StatelessWidget {
@@ -13,12 +12,15 @@ class StatChip extends StatelessWidget {
   final bool isWarning;
 
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isWarning
-            ? AppColors.errorContainer.withValues(alpha: 0.5)
-            : AppColors.surfaceContainerLow,
+            ? colorScheme.errorContainer.withValues(alpha: 0.5)
+            : colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -26,23 +28,24 @@ class StatChip extends StatelessWidget {
           Text(
             label,
             style: AppTextStyles.bodySmall.copyWith(
-              color: AppColors.onSurfaceVariant,
+              color: colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             value,
             style: AppTextStyles.headlineMedium.copyWith(
-              color: isWarning ? AppColors.error : AppColors.onSurface,
+              color: isWarning ? colorScheme.error : colorScheme.onSurface,
             ),
           ),
           Text(
             unit,
             style: AppTextStyles.bodySmall.copyWith(
-              color: AppColors.onSurfaceVariant,
+              color: colorScheme.onSurfaceVariant,
             ),
           ),
         ],
       ),
     );
+  }
 }

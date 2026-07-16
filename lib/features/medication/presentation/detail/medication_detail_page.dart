@@ -149,7 +149,7 @@ class _MedicationDetailView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader(medication),
+            _buildHeader(context, medication),
             const SizedBox(height: 24),
             _buildInfoCard(medication),
             const SizedBox(height: 16),
@@ -196,24 +196,26 @@ class _MedicationDetailView extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(Medication medication) {
+  Widget _buildHeader(BuildContext context, Medication medication) {
+    final colorScheme = Theme.of(context).colorScheme;
     final isPaused = medication.isPaused;
+
     return Row(
       children: [
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: isPaused
-                ? AppColors.surfaceContainerLow
-                : AppColors.secondaryContainer,
+                ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.4)
+                : colorScheme.primaryContainer,
             borderRadius: BorderRadius.circular(16),
           ),
           child: Icon(
             Icons.medication,
             size: 40,
             color: isPaused
-                ? AppColors.onSurfaceVariant
-                : AppColors.onSecondaryContainer,
+                ? colorScheme.onSurfaceVariant
+                : colorScheme.onPrimaryContainer,
           ),
         ),
         const SizedBox(width: 16),
@@ -221,12 +223,17 @@ class _MedicationDetailView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(medication.name, style: AppTextStyles.headlineMedium),
+              Text(
+                medication.name,
+                style: AppTextStyles.headlineMedium.copyWith(
+                  color: colorScheme.onSurface,
+                ),
+              ),
               const SizedBox(height: 4),
               Text(
                 '${medication.dosageAmount} ${medication.dosageUnit}',
                 style: AppTextStyles.bodyMedium.copyWith(
-                  color: AppColors.onSurfaceVariant,
+                  color: colorScheme.onSurfaceVariant,
                 ),
               ),
               if (isPaused) ...[
@@ -237,7 +244,7 @@ class _MedicationDetailView extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.surfaceContainerHigh,
+                    color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
@@ -245,7 +252,7 @@ class _MedicationDetailView extends StatelessWidget {
                     style: AppTextStyles.bodySmall.copyWith(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.onSurfaceVariant,
+                      color: colorScheme.onSurfaceVariant,
                       letterSpacing: 0.5,
                     ),
                   ),

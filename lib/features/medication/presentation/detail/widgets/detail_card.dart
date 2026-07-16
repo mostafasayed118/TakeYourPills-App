@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../../shared/theme/app_colors.dart';
 import '../../../../../shared/theme/app_text_styles.dart';
 
 class DetailCard extends StatelessWidget {
@@ -9,27 +8,29 @@ class DetailCard extends StatelessWidget {
   final List<Widget> children;
 
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A000000),
-            blurRadius: 20,
-            offset: Offset(0, 4),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: AppTextStyles.titleSmall),
+          Text(
+            title,
+            style: AppTextStyles.titleSmall.copyWith(
+              color: colorScheme.primary,
+            ),
+          ),
           const SizedBox(height: 16),
           ...children,
         ],
       ),
     );
+  }
 }
