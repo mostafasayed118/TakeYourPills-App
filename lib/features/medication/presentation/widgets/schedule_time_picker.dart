@@ -31,11 +31,17 @@ class _ScheduleTimePickerState extends State<ScheduleTimePicker> {
   }
 
   TimeOfDay _parseTimeString(String timeString) {
-    final parts = timeString.split(':');
-    return TimeOfDay(
-      hour: int.parse(parts[0]),
-      minute: int.parse(parts[1]),
-    );
+    try {
+      final parts = timeString.split(':');
+      return TimeOfDay(
+        hour: int.parse(parts[0]),
+        minute: int.parse(parts[1]),
+      );
+    } catch (_) {
+      // Handle potential malformed time strings from initialTimes
+      // e.g., during development or if data gets corrupted.
+      return TimeOfDay.now(); // Fallback to current time
+    }
   }
 
   String _formatTimeOfDay(TimeOfDay time) =>

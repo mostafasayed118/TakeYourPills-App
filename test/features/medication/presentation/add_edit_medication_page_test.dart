@@ -175,15 +175,56 @@ void main() {
       await tester.ensureVisible(nameInput);
       await tester.enterText(nameInput, 'Ibuprofen');
 
-      // Enter dosage
-      final dosageInput = find.byKey(const Key('dosage_amount'));
-      await tester.ensureVisible(dosageInput);
-      await tester.enterText(dosageInput, '200');
+      // Enter dosage amount
+      final dosageAmountInput = find.byKey(const Key('dosage_amount'));
+      await tester.ensureVisible(dosageAmountInput);
+      await tester.enterText(dosageAmountInput, '200');
 
-      // Enter schedule time
-      final scheduleInput = find.byKey(const Key('schedule_times'));
-      await tester.ensureVisible(scheduleInput);
-      await tester.enterText(scheduleInput, '08:00');
+      // Select dosage unit: 'pill'
+      // Find the DropdownButton (which contains the current value 'mg')
+      final dosageUnitDropdown = find.byWidgetPredicate(
+        (widget) => widget is DropdownButton<String> && find.descendant(of: find.byWidget(widget), matching: find.text('mg')).evaluate().isNotEmpty,
+        description: 'DropdownButton containing "mg"',
+      );
+      await tester.ensureVisible(dosageUnitDropdown);
+      await tester.tap(dosageUnitDropdown);
+      await tester.pumpAndSettle(); // Wait for the dropdown menu to open
+
+      // Find and tap the 'pill' option
+      await tester.tap(find.text('pill').last); // .last to avoid issues if 'pill' appears elsewhere
+      await tester.pumpAndSettle(); // Wait for the dropdown menu to close
+
+      // Select frequency type: 'daily' (which displays as 'Every day')
+      // Find the DropdownButton (which contains the current value 'Every day')
+      final frequencyTypeDropdown = find.byWidgetPredicate(
+        (widget) => widget is DropdownButton<String> && find.descendant(of: find.byWidget(widget), matching: find.text('Every day')).evaluate().isNotEmpty,
+        description: 'DropdownButton containing "Every day"',
+      );
+      await tester.ensureVisible(frequencyTypeDropdown);
+      await tester.tap(frequencyTypeDropdown);
+      await tester.pumpAndSettle(); // Wait for the dropdown menu to open
+
+      // Find and tap the 'Every day' option
+      await tester.tap(find.text('Every day').last);
+      await tester.pumpAndSettle(); // Wait for the dropdown menu to close
+
+      // Add schedule time: tap 'Add Time' and then 'OK' on the time picker
+      await tester.tap(find.text('Add Time'));
+      await tester.pumpAndSettle(); // Wait for time picker to appear
+      await tester.tap(find.text('OK')); // Just tap OK to select current time
+      await tester.pumpAndSettle(); // Wait for time picker to close
+
+      // Enter pills remaining
+      // Find the AppInput by its label text, then its internal TextField
+      final pillsRemainingInput = find.widgetWithText(AppInput, 'Pills Remaining');
+      await tester.ensureVisible(pillsRemainingInput);
+      await tester.enterText(find.descendant(of: pillsRemainingInput, matching: find.byType(TextField)), '30');
+
+      // Enter refill alert at
+      // Find the AppInput by its label text, then its internal TextField
+      final refillAlertInput = find.widgetWithText(AppInput, 'Refill Alert At');
+      await tester.ensureVisible(refillAlertInput);
+      await tester.enterText(find.descendant(of: refillAlertInput, matching: find.byType(TextField)), '10');
 
       // Save form
       await tester.drag(

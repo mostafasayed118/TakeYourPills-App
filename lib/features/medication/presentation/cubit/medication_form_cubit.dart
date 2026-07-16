@@ -50,35 +50,7 @@ class MedicationFormCubit extends Cubit<MedicationFormState> {
       result.fold(
         (med) {
           if (med != null) {
-            final displayTimes = (jsonDecode(med.scheduleTimes) as List<dynamic>)
-                .map((e) => e.toString())
-                .toList();
-
-            final displayFrequencyDays = (jsonDecode(med.frequencyDays) as List<dynamic>)
-                .map((e) => e as int)
-                .toList();
-
-            emit(
-              MedicationFormEditing(
-                name: med.name,
-                dosageAmount: med.dosageAmount,
-                dosageUnit: med.dosageUnit,
-                iconName: med.iconName,
-                colorHex: med.colorHex,
-                frequencyType: med.frequencyType,
-
-                frequencyInterval: med.frequencyInterval,
-                scheduleTimes: displayTimes,
-                frequencyDays: displayFrequencyDays,
-                startDate: med.startDate,
-                endDate: med.endDate,
-                instructions: med.instructions,
-                isPaused: med.isPaused,
-                pillsRemaining: med.pillsRemaining,
-                refillThreshold: med.refillThreshold,
-                medication: med,
-              ),
-            );
+            emit(MedicationFormEditing.fromMedication(med));
           } else {
             emit(const MedicationFormError(message: 'Medication not found'));
           }

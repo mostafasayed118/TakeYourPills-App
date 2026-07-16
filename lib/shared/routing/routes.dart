@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
 class AppRoutes {
   // Main routes
   static const String root = '/';
@@ -35,4 +38,13 @@ class RouteNames {
   static const String history = 'History';
   static const String progress = 'Progress';
   static const String settings = 'Settings';
+}
+
+/// Pops the current route if possible, otherwise navigates to [fallback].
+void safePop(BuildContext context, String fallback) {
+  if (Navigator.of(context).canPop()) {
+    Navigator.of(context).pop();
+  } else {
+    context.go(fallback);
+  }
 }

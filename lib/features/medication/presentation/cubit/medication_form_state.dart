@@ -11,9 +11,8 @@ abstract class MedicationFormState extends Equatable {
 /// Initial state before form is ready.
 class MedicationFormInitial extends MedicationFormState {}
 
-/// Active editing state containing all form field values.
+  /// Active editing state containing all form field values.
 class MedicationFormEditing extends MedicationFormState {
-
   const MedicationFormEditing({
     this.name = '',
     this.dosageAmount = '',
@@ -35,6 +34,31 @@ class MedicationFormEditing extends MedicationFormState {
     this.isSaving = false,
     this.isSuccess = false,
   });
+
+  factory MedicationFormEditing.fromMedication(Medication med) {
+    return MedicationFormEditing(
+      name: med.name,
+      dosageAmount: med.dosageAmount,
+      dosageUnit: med.dosageUnit,
+      iconName: med.iconName,
+      colorHex: med.colorHex,
+      frequencyType: med.frequencyType,
+      frequencyDays: (jsonDecode(med.frequencyDays) as List<dynamic>)
+          .map((e) => e as int)
+          .toList(),
+      frequencyInterval: med.frequencyInterval,
+      scheduleTimes: (jsonDecode(med.scheduleTimes) as List<dynamic>)
+          .map((e) => e.toString())
+          .toList(),
+      startDate: med.startDate,
+      endDate: med.endDate,
+      instructions: med.instructions,
+      isPaused: med.isPaused,
+      pillsRemaining: med.pillsRemaining,
+      refillThreshold: med.refillThreshold,
+      medication: med,
+    );
+  }
   final String name;
   final String dosageAmount;
   final String dosageUnit;

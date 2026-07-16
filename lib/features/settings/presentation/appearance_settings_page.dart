@@ -44,11 +44,17 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
 
   Future<void> _setTheme(String mode) async {
     await _theme.setModeFromString(mode);
+    if (!mounted) {
+      return;
+    }
     setState(() => _themeMode = mode);
   }
 
   Future<void> _setFontScale(double value) async {
     await _prefs.setFontSizeMultiplier(value);
+    if (!mounted) {
+      return;
+    }
     setState(() => _fontScale = value);
   }
 

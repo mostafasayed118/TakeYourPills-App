@@ -51,9 +51,9 @@ class AppRouter {
           path: AppRoutes.reminderActionSheet,
           name: 'reminderActionSheet',
           pageBuilder: (c, s) {
-            final medicationId = int.tryParse(s.queryParameters['medicationId'] ?? '');
-            final doseId = int.tryParse(s.queryParameters['doseId'] ?? '');
-            final scheduledTime = DateTime.tryParse(s.queryParameters['scheduledTime'] ?? '');
+            final medicationId = int.tryParse(s.uri.queryParameters['medicationId'] ?? '');
+            final doseId = int.tryParse(s.uri.queryParameters['doseId'] ?? '');
+            final scheduledTime = DateTime.tryParse(s.uri.queryParameters['scheduledTime'] ?? '');
 
             if (medicationId == null || doseId == null || scheduledTime == null) {
               return _fadeTransition(
@@ -319,5 +319,3 @@ class _MainScaffold extends StatelessWidget {
       ),
     );
   }
-
-
