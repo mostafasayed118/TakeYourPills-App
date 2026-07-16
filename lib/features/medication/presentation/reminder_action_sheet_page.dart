@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../shared/components/app_button.dart';
+import '../../../shared/routing/routes.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_text_styles.dart';
 import 'cubit/reminder_action_cubit.dart';
@@ -39,7 +39,7 @@ class _ReminderActionSheetView extends StatelessWidget {
   ) => BlocListener<ReminderActionCubit, ReminderActionState>(
     listener: (context, state) {
       if (state is ReminderActionSuccess) {
-        context.pop(); // Close action sheet on success
+        safePop(context, AppRoutes.dashboard); // Close action sheet on success
       } else if (state is ReminderActionError) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -104,7 +104,7 @@ class _ReminderActionSheetView extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   TextButton(
-                    onPressed: () => context.pop(), // Close without action
+                    onPressed: () => safePop(context, AppRoutes.dashboard), // Close without action
                     child: Text(
                       'Close',
                       style: AppTextStyles.displayLarge.copyWith(

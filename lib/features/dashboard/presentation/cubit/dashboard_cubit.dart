@@ -7,7 +7,7 @@ import '../../../../core/entities/dose_log.dart';
 import '../../../../core/entities/medication.dart';
 import '../../../../core/error/result.dart';
 import '../../../../core/utils/schedule_parser.dart';
-import '../../../../data/repositories/medication_repository_impl.dart';
+import '../../../../data/repositories/medication_repository.dart';
 
 part 'dashboard_state.dart';
 

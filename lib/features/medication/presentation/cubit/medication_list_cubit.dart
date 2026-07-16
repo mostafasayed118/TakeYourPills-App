@@ -5,7 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:get_it/get_it.dart';
 import '../../../../core/entities/medication.dart';
 import '../../../../core/error/result.dart';
-import '../../../../data/repositories/medication_repository_impl.dart';
+import '../../../../data/repositories/medication_repository.dart';
 import '../../../../shared/services/reminder_scheduler_service.dart';
 
 part 'medication_list_state.dart';

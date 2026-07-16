@@ -10,7 +10,6 @@ import 'package:timezone/timezone.dart' as tz;
 
 import '../../core/entities/dose_log.dart';
 import '../../core/error/app_error.dart';
-import '../../data/repositories/medication_repository_impl.dart';
 import '../routing/app_router.dart';
 import 'notification_service.dart';
 

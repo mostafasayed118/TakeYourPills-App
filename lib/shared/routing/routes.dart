@@ -45,6 +45,6 @@ void safePop(BuildContext context, String fallback) {
   if (Navigator.of(context).canPop()) {
     Navigator.of(context).pop();
   } else {
-    context.go(fallback);
+    GoRouter.of(context).go(fallback);
   }
 }

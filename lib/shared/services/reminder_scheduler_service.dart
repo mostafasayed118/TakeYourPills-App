@@ -1,5 +1,5 @@
 import '../../core/entities/medication.dart';
-import '../../data/repositories/medication_repository_impl.dart';
+import '../../data/repositories/medication_repository.dart';
 
 /// Abstract interface for scheduling medication reminders.
 ///

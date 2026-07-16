@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/entities/medication.dart';
-import '../../../data/repositories/medication_repository_impl.dart';
+import '../../../data/repositories/medication_repository.dart';
 import 'cubit/medication_list_cubit.dart';
 import 'widgets/medication_card.dart';
 import 'widgets/medication_list_empty_view.dart';

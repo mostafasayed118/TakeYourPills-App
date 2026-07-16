@@ -1,9 +1,8 @@
-import '../../core/entities/dose_log.dart';
 import '../../core/entities/medication.dart';
-import '../../core/entities/schedule.dart';
 import '../../core/error/result.dart';
 import '../datasources/medication_local_datasource.dart';
 import 'medication_read_repository.dart';
+import 'medication_repository.dart';
 import 'medication_write_repository.dart';
 
 /// Mixin providing write operations for repository implementations.
@@ -143,11 +142,6 @@ mixin MedicationWriteRepositoryMixin on MedicationReadRepository
     }
   }
 }
-
-/// Combined interface for backward compatibility.
-/// Prefer injecting specific interfaces for better testability.
-abstract class MedicationRepository
-    implements MedicationReadRepository, MedicationWriteRepository {}
 
 /// Concrete implementation of repository interfaces using local datasource.
 class MedicationRepositoryImpl extends MedicationReadRepository

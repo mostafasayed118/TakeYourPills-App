@@ -4,7 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/dose_log.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
 import 'package:takeyourpills_healthcare_app/core/error/result.dart';
-import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository_impl.dart';
+import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository.dart';
 import 'package:takeyourpills_healthcare_app/shared/services/notification_service.dart';
 import 'package:takeyourpills_healthcare_app/shared/services/reminder_scheduler_service.dart';
 

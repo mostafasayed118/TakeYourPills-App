@@ -9,7 +9,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../core/entities/dose_log.dart';
 import '../../core/entities/medication.dart';
 import '../../core/error/result.dart';
-import '../../data/repositories/medication_repository_impl.dart';
+import '../../data/repositories/medication_repository.dart';
 
 /// Exports local medication data as portable JSON for backup / sharing.
 class DataExportService {

@@ -3,7 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../core/error/result.dart';
-import '../../../data/repositories/medication_repository_impl.dart';
+import '../../../data/repositories/medication_repository.dart';
 import '../../../shared/services/data_export_service.dart';
 import '../../../shared/services/notification_service.dart';
 import '../../../shared/services/preference_service.dart';

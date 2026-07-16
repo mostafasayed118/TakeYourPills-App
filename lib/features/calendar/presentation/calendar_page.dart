@@ -7,7 +7,7 @@ import '../../../core/entities/dose_log.dart';
 import '../../../core/entities/medication.dart';
 import '../../../core/error/result.dart';
 import '../../../core/utils/dose_occurrence_utils.dart';
-import '../../../data/repositories/medication_repository_impl.dart';
+import '../../../data/repositories/medication_repository.dart';
 import '../../../shared/theme/app_text_styles.dart';
 import '../../../shared/theme/theme_context.dart';
 
