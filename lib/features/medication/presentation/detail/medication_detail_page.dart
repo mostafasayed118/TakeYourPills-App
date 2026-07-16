@@ -9,7 +9,6 @@ import '../../../../data/repositories/medication_repository.dart';
 import '../../../../shared/components/app_button.dart';
 import '../../../../shared/routing/routes.dart';
 import '../../../../shared/services/reminder_scheduler_service.dart';
-import '../../../../shared/theme/app_colors.dart';
 import '../../../../shared/theme/app_text_styles.dart';
 import '../cubit/medication_detail_cubit.dart';
 import 'widgets/detail_card.dart';
@@ -40,9 +39,9 @@ class _MedicationDetailView extends StatelessWidget {
       listener: (context, state) {
         if (state is MedicationDetailDeleted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Medication deleted'),
-              backgroundColor: AppColors.primary,
+            SnackBar(
+              content: const Text('Medication deleted'),
+              backgroundColor: Theme.of(context).colorScheme.primary,
               behavior: SnackBarBehavior.floating,
             ),
           );
@@ -68,16 +67,23 @@ class _MedicationDetailView extends StatelessWidget {
       ),
     );
 
-  Scaffold _buildScaffold(BuildContext context, Widget body) => Scaffold(
+  Scaffold _buildScaffold(BuildContext context, Widget body) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Scaffold(
       appBar: AppBar(
         title: const Text('Medication Details'),
-        backgroundColor: AppColors.surface,
+        backgroundColor: colorScheme.surface,
         scrolledUnderElevation: 0,
       ),
       body: body,
     );
+  }
 
-  Widget _buildErrorScreen(BuildContext context, String message) => _buildScaffold(
+  Widget _buildErrorScreen(BuildContext context, String message) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return _buildScaffold(
       context,
       Center(
         child: Padding(
@@ -85,11 +91,17 @@ class _MedicationDetailView extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 60, color: AppColors.error),
+              Icon(
+                Icons.error_outline,
+                size: 60,
+                color: colorScheme.error,
+              ),
               const SizedBox(height: 16),
               Text(
                 message,
-                style: AppTextStyles.bodyMedium,
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: colorScheme.onSurface,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
@@ -105,11 +117,15 @@ class _MedicationDetailView extends StatelessWidget {
         ),
       ),
     );
+  }
 
-  Widget _buildDetailScreen(BuildContext context, Medication medication) => Scaffold(
+  Widget _buildDetailScreen(BuildContext context, Medication medication) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Scaffold(
       appBar: AppBar(
         title: const Text('Medication Details'),
-        backgroundColor: AppColors.surface,
+        backgroundColor: colorScheme.surface,
         scrolledUnderElevation: 0,
         actions: [
           IconButton(
@@ -136,9 +152,12 @@ class _MedicationDetailView extends StatelessWidget {
                 value: 'toggle_pause',
                 child: Text(medication.isPaused ? 'Resume' : 'Pause'),
               ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'delete',
-                child: Text('Delete', style: TextStyle(color: AppColors.error)),
+                child: Text(
+                  'Delete',
+                  style: TextStyle(color: colorScheme.error),
+                ),
               ),
             ],
           ),
@@ -153,20 +172,23 @@ class _MedicationDetailView extends StatelessWidget {
             const SizedBox(height: 24),
             _buildInfoCard(medication),
             const SizedBox(height: 16),
-            _buildScheduleCard(medication),
+            _buildScheduleCard(context, medication),
             const SizedBox(height: 16),
-            _buildInstructionsCard(medication),
+            _buildInstructionsCard(context, medication),
             if (medication.pillsRemaining != null) ...[
               const SizedBox(height: 16),
-              _buildRefillCard(medication),
+              _buildRefillCard(context, medication),
             ],
             const SizedBox(height: 40),
           ],
         ),
       ),
     );
+  }
 
   void _confirmDelete(BuildContext context, Medication medication) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -186,9 +208,9 @@ class _MedicationDetailView extends StatelessWidget {
               Navigator.pop(dialogContext);
               context.read<MedicationDetailCubit>().deleteMedication();
             },
-            child: const Text(
+            child: Text(
               'Delete',
-              style: TextStyle(color: AppColors.error),
+              style: TextStyle(color: colorScheme.error),
             ),
           ),
         ],
@@ -281,7 +303,8 @@ class _MedicationDetailView extends StatelessWidget {
       ],
     );
 
-  Widget _buildScheduleCard(Medication medication) {
+  Widget _buildScheduleCard(BuildContext context, Medication medication) {
+    final colorScheme = Theme.of(context).colorScheme;
     final times = parseScheduleTimes(medication.scheduleTimes)
         .map(
           (t) =>
@@ -296,7 +319,7 @@ class _MedicationDetailView extends StatelessWidget {
           Text(
             'No times configured',
             style: AppTextStyles.bodySmall.copyWith(
-              color: AppColors.onSurfaceVariant,
+              color: colorScheme.onSurfaceVariant,
             ),
           )
         else
@@ -309,14 +332,16 @@ class _MedicationDetailView extends StatelessWidget {
                   vertical: 10,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.primaryContainer.withValues(alpha: 0.3),
+                  color: colorScheme.primaryContainer.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
+                  border: Border.all(
+                    color: colorScheme.primary.withValues(alpha: 0.3),
+                  ),
                 ),
                 child: Text(
                   time,
                   style: AppTextStyles.titleSmall.copyWith(
-                    color: AppColors.primary,
+                    color: colorScheme.primary,
                   ),
                 ),
               )).toList(),
@@ -325,7 +350,8 @@ class _MedicationDetailView extends StatelessWidget {
     );
   }
 
-  Widget _buildInstructionsCard(Medication medication) {
+  Widget _buildInstructionsCard(BuildContext context, Medication medication) {
+    final colorScheme = Theme.of(context).colorScheme;
     final hasInstructions =
         medication.instructions != null && medication.instructions!.isNotEmpty;
 
@@ -337,9 +363,11 @@ class _MedicationDetailView extends StatelessWidget {
               ? medication.instructions!
               : 'No instructions provided',
           style: hasInstructions
-              ? AppTextStyles.bodyMedium
+              ? AppTextStyles.bodyMedium.copyWith(
+                  color: colorScheme.onSurface,
+                )
               : AppTextStyles.bodySmall.copyWith(
-                  color: AppColors.onSurfaceVariant,
+                  color: colorScheme.onSurfaceVariant,
                   fontStyle: FontStyle.italic,
                 ),
         ),
@@ -347,7 +375,8 @@ class _MedicationDetailView extends StatelessWidget {
     );
   }
 
-  Widget _buildRefillCard(Medication medication) {
+  Widget _buildRefillCard(BuildContext context, Medication medication) {
+    final colorScheme = Theme.of(context).colorScheme;
     final remaining = medication.pillsRemaining!;
     final threshold = medication.refillThreshold ?? 0;
     final isLow = threshold > 0 && remaining <= threshold;
@@ -381,14 +410,14 @@ class _MedicationDetailView extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.errorContainer,
+              color: colorScheme.errorContainer,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.warning_amber_rounded,
-                  color: AppColors.onErrorContainer,
+                  color: colorScheme.onErrorContainer,
                   size: 20,
                 ),
                 const SizedBox(width: 8),
@@ -396,7 +425,7 @@ class _MedicationDetailView extends StatelessWidget {
                   child: Text(
                     'Running low — consider refilling soon',
                     style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.onErrorContainer,
+                      color: colorScheme.onErrorContainer,
                     ),
                   ),
                 ),

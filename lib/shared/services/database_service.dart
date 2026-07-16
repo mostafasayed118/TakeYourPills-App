@@ -7,7 +7,6 @@ import '../../data/database/tables/schedules.dart';
 /// Database service that manages the Drift database instance.
 /// This is a singleton service that provides access to the database and DAOs.
 class DatabaseService {
-
   factory DatabaseService() => _instance;
 
   DatabaseService._internal();
@@ -39,11 +38,15 @@ class DatabaseService {
 
   Future<List<MedicationData>> getAllMedications() => _db.getAllMedications();
 
-  Future<MedicationData?> getMedicationById(int id) => _db.getMedicationById(id);
+  Future<MedicationData?> getMedicationById(int id) =>
+      _db.getMedicationById(id);
 
-  Future<int> createMedication(MedicationData medication) => _db.createMedication(medication);
+  Future<int> createMedication(MedicationData medication) =>
+      _db.into(_db.medications).insert(medication);
 
-  Future<int> updateMedication(MedicationData medication) => _db.updateMedicationRow(medication);
+  Future<int> updateMedication(MedicationData medication) => (_db.update(
+    _db.medications,
+  )..where((t) => t.id.equals(medication.id))).write(medication);
 
   Future<int> deleteMedication(int id) => _db.deleteMedication(id);
 
