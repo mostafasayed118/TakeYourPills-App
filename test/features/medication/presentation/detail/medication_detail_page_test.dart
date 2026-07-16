@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
@@ -41,6 +42,11 @@ void main() {
   setUp(() {
     mockRepository = MockMedicationRepository();
     mockScheduler = MockReminderScheduler();
+    GetIt.instance.registerSingleton<ReminderSchedulerService>(mockScheduler);
+  });
+
+  tearDown(() {
+    GetIt.instance.unregister<ReminderSchedulerService>();
   });
 
   Widget createTestWidget({required Widget child}) {
@@ -159,6 +165,12 @@ void main() {
       when(
         () => mockRepository.updateMedication(any()),
       ).thenAnswer((_) async => const Success(1));
+      when(
+        () => mockScheduler.cancelAllForMedication(1),
+      ).thenAnswer((_) async {});
+      when(
+        () => mockScheduler.rescheduleForMedication(any()),
+      ).thenAnswer((_) async {});
 
       await tester.pumpWidget(
         createTestWidget(child: const MedicationDetailPage(medicationId: 1)),
@@ -185,6 +197,9 @@ void main() {
       when(
         () => mockRepository.deleteMedication(1),
       ).thenAnswer((_) async => const Success(1));
+      when(
+        () => mockScheduler.cancelAllForMedication(1),
+      ).thenAnswer((_) async {});
 
       await tester.pumpWidget(
         createTestWidget(child: const MedicationDetailPage(medicationId: 1)),

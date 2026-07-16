@@ -109,6 +109,9 @@ void main() {
         when(
           () => mockRepository.createMedication(any()),
         ).thenAnswer((_) async => const Success(1));
+        when(
+          () => mockScheduler.scheduleForMedication(any()),
+        ).thenAnswer((_) async {});
         return cubit;
       },
       act: (c) {

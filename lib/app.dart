@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'core/di/service_locator.dart';
+import 'core/domain/dashboard_domain_service.dart';
 import 'data/repositories/medication_repository.dart';
 import 'features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'shared/routing/app_router.dart';
@@ -46,7 +47,10 @@ class _TakeYourPillsAppState extends State<TakeYourPillsApp> {
       child: MultiBlocProvider(
         providers: [
           BlocProvider<DashboardCubit>(
-            create: (_) => DashboardCubit(repository)..watchMedications(),
+            create: (_) => DashboardCubit(
+              repository: repository,
+              domainService: DashboardDomainService(),
+            )..watchMedications(),
           ),
         ],
         child: MaterialApp.router(

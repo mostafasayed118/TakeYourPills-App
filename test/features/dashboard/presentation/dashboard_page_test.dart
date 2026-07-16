@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:takeyourpills_healthcare_app/core/domain/dashboard_domain_service.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/dose_log.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
 import 'package:takeyourpills_healthcare_app/core/error/result.dart';
@@ -30,7 +31,10 @@ void main() {
 
   Widget pumpDashboard() => MaterialApp(
         home: BlocProvider(
-          create: (_) => DashboardCubit(mockRepository),
+          create: (_) => DashboardCubit(
+            repository: mockRepository,
+            domainService: DashboardDomainService(),
+          ),
           child: const DashboardPage(),
         ),
       );

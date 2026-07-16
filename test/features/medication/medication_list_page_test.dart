@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
 import 'package:takeyourpills_healthcare_app/core/error/result.dart';
@@ -26,6 +27,11 @@ void main() {
   setUp(() {
     mockRepository = MockMedicationRepository();
     mockScheduler = MockReminderScheduler();
+    GetIt.instance.registerSingleton<ReminderSchedulerService>(mockScheduler);
+  });
+
+  tearDown(() {
+    GetIt.instance.unregister<ReminderSchedulerService>();
   });
 
   group('MedicationListPage — widget tests', () {
