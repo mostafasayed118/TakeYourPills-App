@@ -65,7 +65,7 @@ class DashboardDomainService {
     });
 
     // Build dose occurrences for quick logging
-    final doseOccurrences = <DoseOccurrence>[];
+    final doseOccurrences = <ScheduledDose>[];
     for (final med in activeMeds) {
       final schedules = parseScheduleTimes(med.scheduleTimes);
       for (final time in schedules) {
@@ -203,7 +203,7 @@ class DashboardDomainService {
 
 /// A scheduled dose occurrence for quick logging.
 class ScheduledDose {
-  const DoseOccurrence({
+  const ScheduledDose({
     required this.medication,
     required this.scheduledTime,
     required this.isTaken,

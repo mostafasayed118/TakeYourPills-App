@@ -51,7 +51,7 @@ void main() {
       expect(find.text('TakeYourPills'), findsOneWidget);
       expect(find.textContaining('Good'), findsOneWidget);
       expect(
-        find.text('Add a medication to see your next dose here.'),
+        find.text('Add a medication to get started.'),
         findsOneWidget,
       );
     });
