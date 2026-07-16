@@ -136,7 +136,7 @@ void main() {
       dosageAmount: '50',
       dosageUnit: 'mg',
       iconName: 'pill',
-      frequencyDays: [],
+      frequencyDays: '[]',
       scheduleTimes: '["08:00","20:00"]',
       createdAt: DateTime(2026),
       updatedAt: DateTime(2026),
