@@ -128,7 +128,10 @@ void main() {
         ).thenAnswer((_) async {});
         return cubit;
       },
-      seed: () => MedicationListLoaded(medications: testMedications),
+      seed: () => MedicationListLoaded(
+        medications: testMedications,
+        filteredMedications: testMedications,
+      ),
       act: (cubit) => cubit.deleteMedication(1),
       expect: () => [
         isA<MedicationListLoaded>().having(
@@ -156,7 +159,10 @@ void main() {
         ).thenAnswer((_) async {});
         return cubit;
       },
-      seed: () => MedicationListLoaded(medications: [testMedications.first]),
+      seed: () => MedicationListLoaded(
+        medications: [testMedications.first],
+        filteredMedications: [testMedications.first],
+      ),
       act: (cubit) => cubit.deleteMedication(1),
       expect: () => [isA<MedicationListEmpty>()],
     );
@@ -172,7 +178,10 @@ void main() {
         ).thenAnswer((_) async {});
         return cubit;
       },
-      seed: () => MedicationListLoaded(medications: testMedications),
+      seed: () => MedicationListLoaded(
+        medications: testMedications,
+        filteredMedications: testMedications,
+      ),
       act: (cubit) => cubit.pauseMedication(1, true),
       expect: () => [
         isA<MedicationListLoaded>().having(
