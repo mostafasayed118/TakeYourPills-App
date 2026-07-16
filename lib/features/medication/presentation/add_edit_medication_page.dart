@@ -7,7 +7,6 @@ import '../../../shared/components/app_button.dart';
 import '../../../shared/components/app_input.dart';
 import '../../../shared/routing/routes.dart';
 import '../../../shared/services/reminder_scheduler_service.dart';
-import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_text_styles.dart';
 import 'cubit/medication_form_cubit.dart';
 import 'widgets/dosage_unit_dropdown.dart';
@@ -46,13 +45,16 @@ class _AddEditMedicationView extends StatelessWidget {
   final bool isEditing;
 
   @override
-  Widget build(BuildContext context) => BlocListener<MedicationFormCubit, MedicationFormState>(
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return BlocListener<MedicationFormCubit, MedicationFormState>(
       listener: (context, state) {
         if (state is MedicationFormSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.message),
-              backgroundColor: AppColors.primary,
+              backgroundColor: colorScheme.primary,
               behavior: SnackBarBehavior.floating,
             ),
           );
@@ -61,7 +63,7 @@ class _AddEditMedicationView extends StatelessWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.message),
-              backgroundColor: AppColors.error,
+              backgroundColor: colorScheme.error,
               behavior: SnackBarBehavior.floating,
             ),
           );
@@ -70,7 +72,7 @@ class _AddEditMedicationView extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text(isEditing ? 'Edit Medication' : 'Add Medication'),
-          backgroundColor: AppColors.surface,
+          backgroundColor: colorScheme.surface,
           scrolledUnderElevation: 0,
         ),
         body: BlocBuilder<MedicationFormCubit, MedicationFormState>(
@@ -89,24 +91,36 @@ class _AddEditMedicationView extends StatelessWidget {
         ),
       ),
     );
+  }
 
-  Widget _buildErrorView(BuildContext context, String message) => Center(
+  Widget _buildErrorView(BuildContext context, String message) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline, size: 64, color: AppColors.error),
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: colorScheme.error,
+            ),
             const SizedBox(height: 16),
             Text(
               'Error',
-              style: AppTextStyles.headlineMedium,
+              style: AppTextStyles.headlineMedium.copyWith(
+                color: colorScheme.onSurface,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
               message,
-              style: AppTextStyles.bodyMedium,
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
@@ -118,9 +132,11 @@ class _AddEditMedicationView extends StatelessWidget {
         ),
       ),
     );
+  }
 
   Widget _buildForm(BuildContext context, MedicationFormEditing state) {
     final cubit = context.read<MedicationFormCubit>();
+    final colorScheme = Theme.of(context).colorScheme;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
@@ -226,7 +242,7 @@ class _AddEditMedicationView extends StatelessWidget {
             child: Text(
               'Leave empty to disable pill tracking',
               style: AppTextStyles.bodySmall.copyWith(
-                color: AppColors.onSurfaceVariant,
+                color: colorScheme.onSurfaceVariant,
               ),
             ),
           ),
@@ -236,22 +252,22 @@ class _AddEditMedicationView extends StatelessWidget {
               padding: const EdgeInsets.all(12),
               margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
-                color: AppColors.errorContainer,
+                color: colorScheme.errorContainer,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.error_outline,
                     size: 20,
-                    color: AppColors.onErrorContainer,
+                    color: colorScheme.onErrorContainer,
                   ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       state.validationError!,
                       style: AppTextStyles.bodySmall.copyWith(
-                        color: AppColors.onErrorContainer,
+                        color: colorScheme.onErrorContainer,
                       ),
                     ),
                   ),

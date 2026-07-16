@@ -69,6 +69,19 @@ class DashboardCubit extends Cubit<DashboardState> {
       todayDoseLogs: doseLogs,
     );
 
+    // Compute streak from last 30 days of logs
+    final thirtyDaysAgo = todayStart.subtract(const Duration(days: 29));
+    final recentLogsResult = await _repository.getDoseLogsForDateRange(
+      thirtyDaysAgo,
+      todayEnd,
+    );
+    final recentLogs = recentLogsResult.getOrNull() ?? const <DoseLog>[];
+
+    final streak = _domainService.computeStreak(
+      medications: medications,
+      recentLogs: recentLogs,
+    );
+
     emit(
       DashboardLoaded(
         medications: summary.activeMedications,
@@ -78,8 +91,48 @@ class DashboardCubit extends Cubit<DashboardState> {
         nextDose: summary.nextDose,
         nextDoseTime: summary.nextDoseTime,
         upcomingMedications: summary.upcomingMedications,
+        doseOccurrences: summary.doseOccurrences,
+        currentStreak: streak.currentStreak,
+        bestStreak: streak.bestStreak,
+        streakMessage: streak.message,
       ),
     );
+  }
+
+  /// Log a dose as taken for the given medication and scheduled time.
+  Future<void> takeDose({
+    required Medication medication,
+    required DateTime scheduledTime,
+  }) async {
+    final currentState = state;
+    if (currentState is! DashboardLoaded) return;
+
+    emit(currentState.copyWith(isTakingDose: true));
+
+    try {
+      final doseLog = DoseLog(
+        id: 0,
+        medicationId: medication.id,
+        scheduledTime: scheduledTime.toIso8601String(),
+        status: DoseLogStatus.taken,
+        actualTime: DateTime.now(),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
+
+      final result = await _repository.createDoseLog(doseLog);
+
+      result.fold(
+        (_) => loadDashboard(), // Refresh to show updated state
+        (error) {
+          emit(currentState.copyWith(isTakingDose: false));
+          emit(DashboardError(message: 'Failed to log dose: $error'));
+        },
+      );
+    } catch (e) {
+      emit(currentState.copyWith(isTakingDose: false));
+      emit(DashboardError(message: 'Failed to log dose: $e'));
+    }
   }
 
   @override

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../shared/theme/app_colors.dart';
 import '../../../../shared/theme/app_text_styles.dart';
 
 class DosageUnitDropdown extends StatelessWidget {
@@ -23,22 +22,25 @@ class DosageUnitDropdown extends StatelessWidget {
   ];
 
   @override
-  Widget build(BuildContext context) => Column(
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Unit',
           style: AppTextStyles.labelLarge.copyWith(
-            color: AppColors.onSurfaceVariant,
+            color: colorScheme.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
-            color: AppColors.surfaceContainerLowest,
+            color: colorScheme.surfaceContainerLowest,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppColors.surfaceContainerHigh),
+            border: Border.all(color: colorScheme.outlineVariant),
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
@@ -50,11 +52,14 @@ class DosageUnitDropdown extends StatelessWidget {
               onChanged: (v) {
                 if (v != null) onChanged(v);
               },
-              style: AppTextStyles.bodyMedium,
-              dropdownColor: AppColors.surface,
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: colorScheme.onSurface,
+              ),
+              dropdownColor: colorScheme.surface,
             ),
           ),
         ),
       ],
     );
+  }
 }

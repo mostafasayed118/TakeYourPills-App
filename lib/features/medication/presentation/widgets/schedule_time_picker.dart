@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_colors.dart';
 import 'package:takeyourpills_healthcare_app/shared/theme/app_text_styles.dart';
 
 class ScheduleTimePicker extends StatefulWidget {
@@ -38,9 +37,7 @@ class _ScheduleTimePickerState extends State<ScheduleTimePicker> {
         minute: int.parse(parts[1]),
       );
     } catch (_) {
-      // Handle potential malformed time strings from initialTimes
-      // e.g., during development or if data gets corrupted.
-      return TimeOfDay.now(); // Fallback to current time
+      return TimeOfDay.now();
     }
   }
 
@@ -75,13 +72,16 @@ class _ScheduleTimePickerState extends State<ScheduleTimePicker> {
   }
 
   @override
-  Widget build(BuildContext context) => Column(
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Schedule Times',
           style: AppTextStyles.labelLarge.copyWith(
-            color: AppColors.onSurfaceVariant,
+            color: colorScheme.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: 8),
@@ -94,23 +94,23 @@ class _ScheduleTimePickerState extends State<ScheduleTimePicker> {
                 label: Text(_formatTimeOfDay(time)),
                 onDeleted: () => _removeTime(time),
                 deleteIcon: const Icon(Icons.close, size: 18),
-                backgroundColor: AppColors.primaryContainer,
+                backgroundColor: colorScheme.primaryContainer,
                 labelStyle: AppTextStyles.bodyMedium.copyWith(
-                  color: AppColors.onPrimaryContainer,
+                  color: colorScheme.onPrimaryContainer,
                 ),
-                deleteIconColor: AppColors.onPrimaryContainer,
+                deleteIconColor: colorScheme.onPrimaryContainer,
               ),
             ),
             ActionChip(
-              avatar: const Icon(Icons.add, color: AppColors.onSurface),
+              avatar: Icon(Icons.add, color: colorScheme.onSurface),
               label: Text(
                 'Add Time',
                 style: AppTextStyles.bodyMedium.copyWith(
-                  color: AppColors.onSurface,
+                  color: colorScheme.onSurface,
                 ),
               ),
               onPressed: _addTime,
-              backgroundColor: AppColors.surfaceVariant,
+              backgroundColor: colorScheme.surfaceContainerLow,
             ),
           ],
         ),
@@ -118,9 +118,12 @@ class _ScheduleTimePickerState extends State<ScheduleTimePicker> {
           padding: const EdgeInsets.only(top: 6, left: 4),
           child: Text(
             'Tap to add or remove specific times',
-            style: AppTextStyles.bodySmall,
+            style: AppTextStyles.bodySmall.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
           ),
         ),
       ],
     );
+  }
 }

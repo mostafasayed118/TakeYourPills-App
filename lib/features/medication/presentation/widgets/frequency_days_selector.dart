@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:takeyourpills_healthcare_app/shared/theme/app_colors.dart';
 import 'package:takeyourpills_healthcare_app/shared/theme/app_text_styles.dart';
 
 class FrequencyDaysSelector extends StatefulWidget {
@@ -41,13 +40,16 @@ class _FrequencyDaysSelectorState extends State<FrequencyDaysSelector> {
   }
 
   @override
-  Widget build(BuildContext context) => Column(
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Select Days',
           style: AppTextStyles.labelLarge.copyWith(
-            color: AppColors.onSurfaceVariant,
+            color: colorScheme.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: 8),
@@ -56,7 +58,7 @@ class _FrequencyDaysSelectorState extends State<FrequencyDaysSelector> {
           children: List.generate(
             7,
             (index) {
-              final dayValue = index + 1; // 1 = Monday, 7 = Sunday
+              final dayValue = index + 1;
               final isSelected = _selectedDays.contains(dayValue);
               return GestureDetector(
                 onTap: () => _toggleDay(index),
@@ -65,8 +67,9 @@ class _FrequencyDaysSelectorState extends State<FrequencyDaysSelector> {
                   height: 40,
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? AppColors.primary
-                        : AppColors.surfaceVariant,
+                        ? colorScheme.primary
+                        : colorScheme.surfaceContainerHighest
+                            .withValues(alpha: 0.4),
                     shape: BoxShape.circle,
                   ),
                   child: Center(
@@ -74,9 +77,10 @@ class _FrequencyDaysSelectorState extends State<FrequencyDaysSelector> {
                       _dayNames[index],
                       style: AppTextStyles.bodyMedium.copyWith(
                         color: isSelected
-                            ? AppColors.onPrimary
-                            : AppColors.onSurfaceVariant,
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            ? colorScheme.onPrimary
+                            : colorScheme.onSurfaceVariant,
+                        fontWeight:
+                            isSelected ? FontWeight.bold : FontWeight.normal,
                       ),
                     ),
                   ),
@@ -89,9 +93,12 @@ class _FrequencyDaysSelectorState extends State<FrequencyDaysSelector> {
           padding: const EdgeInsets.only(top: 6, left: 4),
           child: Text(
             'Select specific days of the week',
-            style: AppTextStyles.bodySmall,
+            style: AppTextStyles.bodySmall.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
           ),
         ),
       ],
     );
+  }
 }

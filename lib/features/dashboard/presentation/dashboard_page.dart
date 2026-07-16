@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/utils/dose_occurrence_utils.dart';
-import '../../../core/utils/schedule_parser.dart';
+import '../../../core/domain/dashboard_domain_service.dart';
 import '../../../shared/components/reliability_banner.dart';
 import '../../../shared/routing/routes.dart';
 import '../../../shared/theme/app_text_styles.dart';
 import '../../../shared/theme/theme_context.dart';
 import 'cubit/dashboard_cubit.dart';
 import 'widgets/adherence_ring.dart';
-import 'widgets/upcoming_item.dart';
+import 'widgets/dose_card.dart';
+import 'widgets/streak_badge.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -48,9 +48,7 @@ class DashboardPage extends StatelessWidget {
                 child: Text(
                   state.message,
                   textAlign: TextAlign.center,
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    color: scheme.error,
-                  ),
+                  style: AppTextStyles.bodyMedium.copyWith(color: scheme.error),
                 ),
               ),
             );
@@ -60,19 +58,19 @@ class DashboardPage extends StatelessWidget {
           }
 
           final adherence = (state.adherencePercent / 100).clamp(0.0, 1.0);
-          final next = state.nextDose;
-          final nextTime = state.nextDoseTime;
 
           return RefreshIndicator(
             onRefresh: () => context.read<DashboardCubit>().loadDashboard(),
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const ReliabilityBanner(),
                   const SizedBox(height: 16),
+
+                  // ── Greeting ────────────────────────────────────────
                   Text(
                     _greeting(),
                     style: AppTextStyles.headlineMedium.copyWith(
@@ -85,55 +83,65 @@ class DashboardPage extends StatelessWidget {
                       color: context.mutedText,
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 20),
+
+                  // ── Streak badge ───────────────────────────────────
+                  if (state.currentStreak > 0 || state.bestStreak > 0)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: StreakBadge(
+                        currentStreak: state.currentStreak,
+                        bestStreak: state.bestStreak,
+                        message: state.streakMessage,
+                        badge: state.currentStreak >= 100
+                            ? StreakBadgeLevel.legendary
+                            : state.currentStreak >= 30
+                            ? StreakBadgeLevel.gold
+                            : state.currentStreak >= 7
+                            ? StreakBadgeLevel.silver
+                            : state.currentStreak >= 3
+                            ? StreakBadgeLevel.bronze
+                            : StreakBadgeLevel.none,
+                      ),
+                    ),
+
+                  // ── Adherence card ──────────────────────────────────
                   _AdherenceCard(
                     taken: state.takenToday,
                     total: state.totalToday,
                     value: adherence,
                   ),
-                  const SizedBox(height: 24),
-                  if (next != null && nextTime != null)
-                    _NextDoseCard(
-                      name: next.name,
-                      dosage:
-                          '${next.dosageAmount} ${next.dosageUnit}',
-                      timeLabel: formatTimeOfDay(nextTime),
-                      onLog: () => context.go(AppRoutes.medicationById(next.id)),
-                    )
-                  else
-                    DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: context.cardColor,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: Text(
-                            state.medications.isEmpty
-                                ? 'Add a medication to see your next dose here.'
-                                : 'No more doses scheduled for today.',
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              color: context.mutedText,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 20),
+
+                  // ── Today's doses (with take buttons) ───────────────
                   Text(
-                    'Upcoming today',
+                    "Today's doses",
                     style: AppTextStyles.titleSmall.copyWith(
                       color: scheme.onSurface,
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  if (state.upcomingMedications.isEmpty)
-                    Text(
-                      'Nothing else upcoming.',
-                      style: AppTextStyles.bodySmall.copyWith(
-                        color: context.mutedText,
+                  const SizedBox(height: 8),
+                  if (state.doseOccurrences.isEmpty)
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: context.cardColor,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: scheme.outlineVariant,
+                          width: 0.5,
+                        ),
+                      ),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: Text(
+                          state.medications.isEmpty
+                              ? 'Add a medication to get started.'
+                              : 'No doses scheduled for today.',
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: context.mutedText,
+                          ),
+                        ),
                       ),
                     )
                   else
@@ -141,25 +149,36 @@ class DashboardPage extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: context.cardColor,
                         borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: scheme.outlineVariant,
+                          width: 0.5,
+                        ),
                       ),
                       child: Column(
                         children: [
-                          for (var i = 0;
-                              i < state.upcomingMedications.length;
-                              i++) ...[
+                          for (
+                            var i = 0;
+                            i < state.doseOccurrences.length;
+                            i++
+                          ) ...[
                             if (i > 0)
                               Divider(
                                 height: 1,
-                                color: context.dividerColor,
+                                indent: 84,
+                                color: scheme.outlineVariant.withValues(
+                                  alpha: 0.5,
+                                ),
                               ),
-                            UpcomingItem(
-                              name: state.upcomingMedications[i].name,
-                              dosage:
-                                  '${state.upcomingMedications[i].dosageAmount} ${state.upcomingMedications[i].dosageUnit}',
-                              time: _firstUpcomingTimeLabel(
-                                state.upcomingMedications[i].scheduleTimes,
-                              ),
-                              icon: Icons.medication_outlined,
+                            DoseCard(
+                              dose: state.doseOccurrences[i],
+                              isTaking: state.isTakingDose,
+                              onTake: () =>
+                                  context.read<DashboardCubit>().takeDose(
+                                    medication:
+                                        state.doseOccurrences[i].medication,
+                                    scheduledTime:
+                                        state.doseOccurrences[i].scheduledTime,
+                                  ),
                             ),
                           ],
                         ],
@@ -171,22 +190,6 @@ class DashboardPage extends StatelessWidget {
           );
         },
       ),
-    );
-  }
-
-  String _firstUpcomingTimeLabel(String scheduleTimes) {
-    final now = DateTime.now();
-    final times = parseScheduleTimes(scheduleTimes);
-    for (final t in times) {
-      final dt = DateTime(now.year, now.month, now.day, t.hour, t.minute);
-      if (dt.isAfter(now)) {
-        return formatTimeOfDay(dt);
-      }
-    }
-    if (times.isEmpty) return '—';
-    final t = times.first;
-    return formatTimeOfDay(
-      DateTime(now.year, now.month, now.day, t.hour, t.minute),
     );
   }
 }
@@ -212,6 +215,7 @@ class _AdherenceCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: context.cardColor,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: scheme.outlineVariant, width: 0.5),
       ),
       child: Column(
         children: [
@@ -284,103 +288,6 @@ class _AdherenceCard extends StatelessWidget {
               ),
             ),
           ],
-        ],
-      ),
-    );
-  }
-}
-
-class _NextDoseCard extends StatelessWidget {
-  const _NextDoseCard({
-    required this.name,
-    required this.dosage,
-    required this.timeLabel,
-    required this.onLog,
-  });
-
-  final String name;
-  final String dosage;
-  final String timeLabel;
-  final VoidCallback onLog;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = context.scheme;
-
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: scheme.primary,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: scheme.onPrimary.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Text(
-              timeLabel.toUpperCase(),
-              style: AppTextStyles.labelLarge.copyWith(
-                color: scheme.onPrimary,
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      style: AppTextStyles.headlineMedium.copyWith(
-                        color: scheme.onPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      dosage,
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: scheme.onPrimary.withValues(alpha: 0.85),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: scheme.onPrimary.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(Icons.medication, color: scheme.onPrimary),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            height: 48,
-            child: ElevatedButton(
-              onPressed: onLog,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: scheme.onPrimary,
-                foregroundColor: scheme.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: const Text(
-                'View medication',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-            ),
-          ),
         ],
       ),
     );
