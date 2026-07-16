@@ -2,19 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:provider/provider.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
 import 'package:takeyourpills_healthcare_app/core/error/result.dart';
-import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository_impl.dart';
+import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository.dart';
 import 'package:takeyourpills_healthcare_app/features/medication/presentation/cubit/medication_list_cubit.dart';
 import 'package:takeyourpills_healthcare_app/features/medication/presentation/medication_list_page.dart';
+import 'package:takeyourpills_healthcare_app/shared/services/reminder_scheduler_service.dart';
 
 class FakeMedication extends Fake implements Medication {}
 
 class MockMedicationRepository extends Mock implements MedicationRepository {}
 
+class MockReminderScheduler extends Mock implements ReminderSchedulerService {}
+
 void main() {
   late MockMedicationRepository mockRepository;
+  late MockReminderScheduler mockScheduler;
 
   setUpAll(() {
     registerFallbackValue(FakeMedication());
@@ -22,6 +25,7 @@ void main() {
 
   setUp(() {
     mockRepository = MockMedicationRepository();
+    mockScheduler = MockReminderScheduler();
   });
 
   group('MedicationListPage — widget tests', () {
@@ -34,10 +38,10 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Provider<MedicationRepository>.value(
+          home: RepositoryProvider<MedicationRepository>.value(
             value: mockRepository,
             child: BlocProvider(
-              create: (context) => MedicationListCubit(mockRepository),
+              create: (context) => MedicationListCubit(mockRepository, scheduler: mockScheduler),
               child: const MedicationListPage(),
             ),
           ),
@@ -84,10 +88,10 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Provider<MedicationRepository>.value(
+          home: RepositoryProvider<MedicationRepository>.value(
             value: mockRepository,
             child: BlocProvider(
-              create: (context) => MedicationListCubit(mockRepository),
+              create: (context) => MedicationListCubit(mockRepository, scheduler: mockScheduler),
               child: const MedicationListPage(),
             ),
           ),
@@ -111,10 +115,10 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Provider<MedicationRepository>.value(
+          home: RepositoryProvider<MedicationRepository>.value(
             value: mockRepository,
             child: BlocProvider(
-              create: (context) => MedicationListCubit(mockRepository),
+              create: (context) => MedicationListCubit(mockRepository, scheduler: mockScheduler),
               child: const MedicationListPage(),
             ),
           ),

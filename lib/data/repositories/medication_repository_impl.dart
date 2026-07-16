@@ -1,4 +1,6 @@
+import '../../core/entities/dose_log.dart';
 import '../../core/entities/medication.dart';
+import '../../core/entities/schedule.dart';
 import '../../core/error/result.dart';
 import '../datasources/medication_local_datasource.dart';
 import 'medication_read_repository.dart';

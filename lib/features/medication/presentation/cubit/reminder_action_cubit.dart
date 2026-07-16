@@ -1,8 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:get_it/get_it.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/dose_log.dart';
-import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
 import 'package:takeyourpills_healthcare_app/core/error/result.dart';
 import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository.dart';
 import 'package:takeyourpills_healthcare_app/shared/services/notification_service.dart';
@@ -15,12 +13,12 @@ class ReminderActionCubit extends Cubit<ReminderActionState> {
     required this.medicationId,
     required this.doseId,
     required this.scheduledTime,
-    MedicationRepository? repository,
-    ReminderSchedulerService? scheduler,
-    NotificationService? notificationService,
-  })  : _repository = repository ?? GetIt.instance<MedicationRepository>(),
-        _scheduler = scheduler ?? GetIt.instance<ReminderSchedulerService>(),
-        _notificationService = notificationService ?? GetIt.instance<NotificationService>(),
+    required MedicationRepository repository,
+    required ReminderSchedulerService scheduler,
+    required NotificationService notificationService,
+  })  : _repository = repository,
+        _scheduler = scheduler,
+        _notificationService = notificationService,
         super(const ReminderActionInitial());
 
   final int medicationId;

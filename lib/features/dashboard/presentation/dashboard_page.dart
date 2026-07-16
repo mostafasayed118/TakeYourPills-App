@@ -98,7 +98,7 @@ class DashboardPage extends StatelessWidget {
                       dosage:
                           '${next.dosageAmount} ${next.dosageUnit}',
                       timeLabel: formatTimeOfDay(nextTime),
-                      onLog: () => context.go('/medication/${next.id}'),
+                      onLog: () => context.go(AppRoutes.medicationById(next.id)),
                     )
                   else
                     DecoratedBox(

@@ -1,196 +1,169 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/entities/dose_log.dart';
-import '../../../core/entities/medication.dart';
-import '../../../core/error/result.dart';
 import '../../../core/utils/dose_occurrence_utils.dart';
 import '../../../data/repositories/medication_repository.dart';
+import '../../../shared/routing/routes.dart';
 import '../../../shared/theme/app_text_styles.dart';
 import '../../../shared/theme/theme_context.dart';
+import 'cubit/calendar_cubit.dart';
 
-class CalendarPage extends StatefulWidget {
+class CalendarPage extends StatelessWidget {
   const CalendarPage({super.key});
 
   @override
-  State<CalendarPage> createState() => _CalendarPageState();
+  Widget build(BuildContext context) => BlocProvider(
+      create: (context) => CalendarCubit(
+        repository: context.read<MedicationRepository>(),
+      )..loadWeek(),
+      child: const _CalendarView(),
+    );
 }
 
-class _CalendarPageState extends State<CalendarPage> {
-  late DateTime _weekStart;
-  DateTime _selectedDay = DateTime.now();
-  bool _loading = true;
-  String? _error;
-  List<Medication> _meds = const [];
-  List<DoseLog> _logs = const [];
-
-  @override
-  void initState() {
-    super.initState();
-    final now = DateTime.now();
-    _selectedDay = DateTime(now.year, now.month, now.day);
-    _weekStart = _selectedDay.subtract(Duration(days: _selectedDay.weekday - 1));
-    _load();
-  }
-
-  Future<void> _load() async {
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
-    try {
-      final repo = GetIt.instance<MedicationRepository>();
-      final medsResult = await repo.getAllMedications();
-      final rangeStart = _weekStart;
-      final rangeEnd = _weekStart.add(const Duration(days: 7));
-      final logsResult = await repo.getDoseLogsForDateRange(rangeStart, rangeEnd);
-
-      final meds = medsResult.getOrNull() ?? const <Medication>[];
-      final logs = logsResult.getOrNull() ?? const <DoseLog>[];
-
-      if (!mounted) return;
-      setState(() {
-        _meds = meds;
-        _logs = logs;
-        _loading = false;
-        if (medsResult.isFailure) {
-          _error = 'Could not load medications';
-        }
-      });
-    } on Object catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _loading = false;
-        _error = e.toString();
-      });
-    }
-  }
-
-  void _shiftWeek(int delta) {
-    setState(() {
-      _weekStart = _weekStart.add(Duration(days: 7 * delta));
-      _selectedDay = _weekStart;
-    });
-    _load();
-  }
-
-  List<DoseOccurrence> get _dayOccurrences {
-    final start = _selectedDay;
-    final end = start.add(const Duration(days: 1));
-    return occurrencesForRange(
-      medications: _meds,
-      rangeStart: start,
-      rangeEnd: end,
-    );
-  }
-
-  DoseLogStatus? _statusFor(DoseOccurrence occ) {
-    for (final log in _logs) {
-      if (logMatchesOccurrence(log, occ)) return log.status;
-    }
-    final now = DateTime.now();
-    if (occ.scheduledTime.isBefore(now)) return DoseLogStatus.missed;
-    return DoseLogStatus.pending;
-  }
+class _CalendarView extends StatelessWidget {
+  const _CalendarView();
 
   @override
   Widget build(BuildContext context) {
     final scheme = context.scheme;
-    final weekLabel =
-        '${DateFormat.MMMd().format(_weekStart)} – ${DateFormat.MMMd().format(_weekStart.add(const Duration(days: 6)))}';
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Calendar'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.chevron_left),
-            onPressed: () => _shiftWeek(-1),
+    return BlocBuilder<CalendarCubit, CalendarState>(
+      builder: (context, state) {
+        final weekStart = state is CalendarLoading
+            ? state.weekStart
+            : state is CalendarLoaded
+                ? state.weekStart
+                : state is CalendarError
+                    ? state.weekStart
+                    : DateTime.now();
+        final selectedDay = state is CalendarLoading
+            ? state.selectedDay
+            : state is CalendarLoaded
+                ? state.selectedDay
+                : state is CalendarError
+                    ? state.selectedDay
+                    : DateTime.now();
+
+        final weekLabel =
+            '${DateFormat.MMMd().format(weekStart)} – ${DateFormat.MMMd().format(weekStart.add(const Duration(days: 6)))}';
+
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Calendar'),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.chevron_left),
+                onPressed: () =>
+                    context.read<CalendarCubit>().shiftWeek(-1),
+              ),
+              IconButton(
+                icon: const Icon(Icons.chevron_right),
+                onPressed: () =>
+                    context.read<CalendarCubit>().shiftWeek(1),
+              ),
+            ],
           ),
-          IconButton(
-            icon: const Icon(Icons.chevron_right),
-            onPressed: () => _shiftWeek(1),
+          body: _buildBody(context, state, weekStart, selectedDay, weekLabel, scheme),
+        );
+      },
+    );
+  }
+
+  Widget _buildBody(
+    BuildContext context,
+    CalendarState state,
+    DateTime weekStart,
+    DateTime selectedDay,
+    String weekLabel,
+    ColorScheme scheme,
+  ) {
+    if (state is CalendarLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (state is CalendarError) {
+      return Center(child: Text(state.message));
+    }
+    if (state is! CalendarLoaded) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    final cubit = context.read<CalendarCubit>();
+    final dayOccurrences = cubit.occurrencesForDay(selectedDay);
+
+    return RefreshIndicator(
+      onRefresh: () => cubit.loadWeek(),
+      child: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Text(
+            weekLabel,
+            style: AppTextStyles.titleSmall.copyWith(
+              color: scheme.onSurface,
+            ),
           ),
-        ],
-      ),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : _error != null
-              ? Center(child: Text(_error!))
-              : RefreshIndicator(
-                  onRefresh: _load,
-                  child: ListView(
-                    padding: const EdgeInsets.all(16),
-                    children: [
-                      Text(
-                        weekLabel,
-                        style: AppTextStyles.titleSmall.copyWith(
-                          color: scheme.onSurface,
-                        ),
+          const SizedBox(height: 12),
+          _WeekStrip(
+            weekStart: weekStart,
+            selected: selectedDay,
+            onSelect: (d) => cubit.selectDay(d),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            DateFormat.yMMMMEEEEd().format(selectedDay),
+            style: AppTextStyles.bodySmall.copyWith(
+              color: context.mutedText,
+            ),
+          ),
+          const SizedBox(height: 12),
+          if (dayOccurrences.isEmpty)
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: context.cardColor,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Text(
+                'No doses scheduled this day.',
+                textAlign: TextAlign.center,
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: context.mutedText,
+                ),
+              ),
+            )
+          else
+            ...dayOccurrences.map((occ) {
+              final status = cubit.statusFor(occ);
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Material(
+                  color: context.cardColor,
+                  borderRadius: BorderRadius.circular(12),
+                  child: ListTile(
+                    onTap: () => context.go(
+                      AppRoutes.medicationById(occ.medication.id),
+                    ),
+                    leading: CircleAvatar(
+                      backgroundColor: scheme.primaryContainer,
+                      child: Icon(
+                        Icons.medication_outlined,
+                        color: scheme.onPrimaryContainer,
                       ),
-                      const SizedBox(height: 12),
-                      _WeekStrip(
-                        weekStart: _weekStart,
-                        selected: _selectedDay,
-                        onSelect: (d) => setState(() => _selectedDay = d),
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        DateFormat.yMMMMEEEEd().format(_selectedDay),
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: context.mutedText,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      if (_dayOccurrences.isEmpty)
-                        Container(
-                          padding: const EdgeInsets.all(24),
-                          decoration: BoxDecoration(
-                            color: context.cardColor,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Text(
-                            'No doses scheduled this day.',
-                            textAlign: TextAlign.center,
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              color: context.mutedText,
-                            ),
-                          ),
-                        )
-                      else
-                        ..._dayOccurrences.map((occ) {
-                          final status = _statusFor(occ);
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 8),
-                            child: Material(
-                              color: context.cardColor,
-                              borderRadius: BorderRadius.circular(12),
-                              child: ListTile(
-                                onTap: () => context.go(
-                                  '/medication/${occ.medication.id}',
-                                ),
-                                leading: CircleAvatar(
-                                  backgroundColor: scheme.primaryContainer,
-                                  child: Icon(
-                                    Icons.medication_outlined,
-                                    color: scheme.onPrimaryContainer,
-                                  ),
-                                ),
-                                title: Text(occ.medication.name),
-                                subtitle: Text(
-                                  '${formatTimeOfDay(occ.scheduledTime)} · '
-                                  '${occ.medication.dosageAmount} ${occ.medication.dosageUnit}',
-                                ),
-                                trailing: _StatusChip(status: status),
-                              ),
-                            ),
-                          );
-                        }),
-                    ],
+                    ),
+                    title: Text(occ.medication.name),
+                    subtitle: Text(
+                      '${formatTimeOfDay(occ.scheduledTime)} · '
+                      '${occ.medication.dosageAmount} ${occ.medication.dosageUnit}',
+                    ),
+                    trailing: _StatusChip(status: status),
                   ),
                 ),
+              );
+            }),
+        ],
+      ),
     );
   }
 }

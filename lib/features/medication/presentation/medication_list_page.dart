@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/entities/medication.dart';
 import '../../../data/repositories/medication_repository.dart';
+import '../../../shared/routing/routes.dart';
+import '../../../shared/services/reminder_scheduler_service.dart';
 import 'cubit/medication_list_cubit.dart';
 import 'widgets/medication_card.dart';
 import 'widgets/medication_list_empty_view.dart';
@@ -15,9 +18,10 @@ class MedicationListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => BlocProvider(
-      create: (context) =>
-          MedicationListCubit(context.read<MedicationRepository>())
-            ..loadMedications(),
+      create: (context) => MedicationListCubit(
+        context.read<MedicationRepository>(),
+        scheduler: GetIt.instance<ReminderSchedulerService>(),
+      )..loadMedications(),
       child: const MedicationListView(),
     );
 }
@@ -75,7 +79,7 @@ class MedicationListFab extends StatelessWidget {
     );
 
   Future<void> _navigateToAddMedication(BuildContext context) async {
-    await context.push('/add-medication/new');
+    await context.push(AppRoutes.addMedicationForId('new'));
     if (context.mounted) {
       context.read<MedicationListCubit>().loadMedications();
     }
@@ -110,7 +114,7 @@ class MedicationListBody extends StatelessWidget {
     );
 
   Future<void> _navigateToAddMedication(BuildContext context) async {
-    await context.push('/add-medication/new');
+    await context.push(AppRoutes.addMedicationForId('new'));
     if (context.mounted) {
       context.read<MedicationListCubit>().loadMedications();
     }
@@ -144,14 +148,14 @@ class MedicationListContent extends StatelessWidget {
     );
 
   Future<void> _handleTap(BuildContext context, Medication medication) async {
-    await context.push('/medication/${medication.id}');
+    await context.push(AppRoutes.medicationById(medication.id));
     if (context.mounted) {
       context.read<MedicationListCubit>().loadMedications();
     }
   }
 
   Future<void> _handleEdit(BuildContext context, Medication medication) async {
-    await context.push('/add-medication/${medication.id}');
+    await context.push(AppRoutes.addMedicationForId('${medication.id}'));
     if (context.mounted) {
       context.read<MedicationListCubit>().loadMedications();
     }

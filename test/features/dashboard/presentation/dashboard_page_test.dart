@@ -5,7 +5,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/dose_log.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
 import 'package:takeyourpills_healthcare_app/core/error/result.dart';
-import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository_impl.dart';
+import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository.dart';
 import 'package:takeyourpills_healthcare_app/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'package:takeyourpills_healthcare_app/features/dashboard/presentation/dashboard_page.dart';
 

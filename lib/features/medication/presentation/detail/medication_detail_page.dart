@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/entities/medication.dart';
@@ -7,6 +8,7 @@ import '../../../../core/utils/schedule_parser.dart';
 import '../../../../data/repositories/medication_repository.dart';
 import '../../../../shared/components/app_button.dart';
 import '../../../../shared/routing/routes.dart';
+import '../../../../shared/services/reminder_scheduler_service.dart';
 import '../../../../shared/theme/app_colors.dart';
 import '../../../../shared/theme/app_text_styles.dart';
 import '../cubit/medication_detail_cubit.dart';
@@ -24,6 +26,7 @@ class MedicationDetailPage extends StatelessWidget {
       create: (context) => MedicationDetailCubit(
         repository: context.read<MedicationRepository>(),
         medicationId: medicationId,
+        scheduler: GetIt.instance<ReminderSchedulerService>(),
       ),
       child: const _MedicationDetailView(),
     );
@@ -113,7 +116,7 @@ class _MedicationDetailView extends StatelessWidget {
             icon: const Icon(Icons.edit_outlined),
             tooltip: 'Edit',
             onPressed: () async {
-              await context.push('/add-medication/${medication.id}');
+              await context.push(AppRoutes.addMedicationForId('${medication.id}'));
               if (context.mounted) {
                 context.read<MedicationDetailCubit>().loadMedication();
               }

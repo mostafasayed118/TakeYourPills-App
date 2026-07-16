@@ -14,6 +14,7 @@ class AppRoutes {
   static const String progress = '/progress';
   static const String settings = '/settings';
   static const String messaging = '/messaging';
+  static const String reminderActionSheet = '/reminder-action-sheet';
 
   // Settings sub-routes
   static const String settingsNotifications = '/settings/notifications';
@@ -27,8 +28,11 @@ class AppRoutes {
   static const String composer = '/messaging/compose';
 
   // Hidden routes
-  static const String reminderActionSheet = '/reminder-action-sheet';
   static const String refillTracker = '/refill-tracker';
+
+  // Helpers for building parameterized paths
+  static String medicationById(int id) => '/medication/$id';
+  static String addMedicationForId(String medId) => '$addMedication/$medId';
 }
 
 class RouteNames {

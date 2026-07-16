@@ -3,15 +3,19 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
 import 'package:takeyourpills_healthcare_app/core/error/result.dart';
-import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository_impl.dart';
+import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository.dart';
 import 'package:takeyourpills_healthcare_app/features/medication/presentation/cubit/medication_form_cubit.dart';
+import 'package:takeyourpills_healthcare_app/shared/services/reminder_scheduler_service.dart';
 
 class MockMedicationRepository extends Mock implements MedicationRepository {}
+
+class MockReminderScheduler extends Mock implements ReminderSchedulerService {}
 
 class FakeMedication extends Fake implements Medication {}
 
 void main() {
   late MockMedicationRepository mockRepository;
+  late MockReminderScheduler mockScheduler;
 
   setUpAll(() {
     registerFallbackValue(FakeMedication());
@@ -19,13 +23,14 @@ void main() {
 
   setUp(() {
     mockRepository = MockMedicationRepository();
+    mockScheduler = MockReminderScheduler();
   });
 
   group('MedicationFormCubit — create mode', () {
     late MedicationFormCubit cubit;
 
     setUp(() {
-      cubit = MedicationFormCubit(repository: mockRepository);
+      cubit = MedicationFormCubit(repository: mockRepository, scheduler: mockScheduler);
     });
 
     tearDown(() => cubit.close());
@@ -150,6 +155,7 @@ void main() {
         ).thenAnswer((_) async => Success<Medication?>(existingMed));
         return MedicationFormCubit(
           repository: mockRepository,
+          scheduler: mockScheduler,
           isEditing: true,
           existingMedId: 42,
         );
@@ -171,6 +177,7 @@ void main() {
         ).thenAnswer((_) async => const Success<Medication?>(null));
         return MedicationFormCubit(
           repository: mockRepository,
+          scheduler: mockScheduler,
           isEditing: true,
           existingMedId: 999,
         );

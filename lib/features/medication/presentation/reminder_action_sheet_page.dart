@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 
+import '../../../data/repositories/medication_repository.dart';
 import '../../../shared/components/app_button.dart';
 import '../../../shared/routing/routes.dart';
+import '../../../shared/services/notification_service.dart';
+import '../../../shared/services/reminder_scheduler_service.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_text_styles.dart';
 import 'cubit/reminder_action_cubit.dart';
@@ -25,6 +29,9 @@ class ReminderActionSheetPage extends StatelessWidget {
       medicationId: medicationId,
       doseId: doseId,
       scheduledTime: scheduledTime,
+      repository: GetIt.instance<MedicationRepository>(),
+      scheduler: GetIt.instance<ReminderSchedulerService>(),
+      notificationService: GetIt.instance<NotificationService>(),
     ),
     child: const _ReminderActionSheetView(),
   );

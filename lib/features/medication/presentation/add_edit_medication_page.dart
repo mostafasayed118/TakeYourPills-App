@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:get_it/get_it.dart';
 
 import '../../../data/repositories/medication_repository.dart';
 import '../../../shared/components/app_button.dart';
 import '../../../shared/components/app_input.dart';
 import '../../../shared/routing/routes.dart';
+import '../../../shared/services/reminder_scheduler_service.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_text_styles.dart';
 import 'cubit/medication_form_cubit.dart';
@@ -29,6 +30,7 @@ class AddEditMedicationPage extends StatelessWidget {
   Widget build(BuildContext context) => BlocProvider(
       create: (context) => MedicationFormCubit(
         repository: context.read<MedicationRepository>(),
+        scheduler: GetIt.instance<ReminderSchedulerService>(),
         isEditing: isEditing,
         existingMedId: medicationId != null
             ? int.tryParse(medicationId!)

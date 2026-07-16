@@ -3,12 +3,10 @@ import 'dart:io';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
-import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
-import '../../core/entities/dose_log.dart';
 import '../../core/error/app_error.dart';
 import '../routing/app_router.dart';
 import 'notification_service.dart';

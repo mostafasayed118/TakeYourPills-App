@@ -110,7 +110,7 @@ class AppRouter {
               },
             ),
             GoRoute(
-              path: '/medication/:id',
+              path: AppRoutes.medicationDetail,
               name: 'medicationDetail',
               pageBuilder: (c, s) {
                 final medId = int.tryParse(s.pathParameters['id'] ?? '');
@@ -241,54 +241,32 @@ class _MainScaffold extends StatelessWidget {
   const _MainScaffold({required this.child});
   final Widget child;
 
+  static const _tabRoutes = [
+    AppRoutes.dashboard,
+    AppRoutes.medications,
+    AppRoutes.calendar,
+    AppRoutes.progress,
+    AppRoutes.settings,
+  ];
+
+  int _currentIndex(BuildContext context) {
+    final path = GoRouter.of(context).routeInformationProvider.value.uri.path;
+    return _tabRoutes.indexOf(path).clamp(0, _tabRoutes.length - 1);
+  }
+
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Scaffold(
       body: child,
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        currentIndex: GoRouter.of(context).routeInformationProvider.value.uri.path ==
-                AppRoutes.dashboard
-            ? 0
-            : GoRouter.of(context)
-                    .routeInformationProvider
-                    .value
-                    .uri
-                    .path ==
-                AppRoutes.medications
-                ? 1
-                : GoRouter.of(context)
-                        .routeInformationProvider
-                        .value
-                        .uri
-                        .path ==
-                    AppRoutes.calendar
-                    ? 2
-                    : GoRouter.of(context)
-                            .routeInformationProvider
-                            .value
-                            .uri
-                            .path ==
-                        AppRoutes.progress
-                        ? 3
-                        : 4,
-        selectedItemColor: Theme.of(context).colorScheme.primary,
-        unselectedItemColor: Theme.of(context).colorScheme.onSurfaceVariant,
-        backgroundColor: Theme.of(context).colorScheme.surface,
+        currentIndex: _currentIndex(context),
+        selectedItemColor: theme.colorScheme.primary,
+        unselectedItemColor: theme.colorScheme.onSurfaceVariant,
+        backgroundColor: theme.colorScheme.surface,
         elevation: 8,
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              GoRouter.of(context).go(AppRoutes.dashboard);
-            case 1:
-              GoRouter.of(context).go(AppRoutes.medications);
-            case 2:
-              GoRouter.of(context).go(AppRoutes.calendar);
-            case 3:
-              GoRouter.of(context).go(AppRoutes.progress);
-            case 4:
-              GoRouter.of(context).go(AppRoutes.settings);
-          }
-        },
+        onTap: (index) => GoRouter.of(context).go(_tabRoutes[index]),
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
@@ -319,3 +297,4 @@ class _MainScaffold extends StatelessWidget {
       ),
     );
   }
+}

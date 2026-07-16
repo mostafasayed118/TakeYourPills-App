@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:get_it/get_it.dart';
 import '../../../../core/entities/medication.dart';
 import '../../../../core/error/result.dart';
 import '../../../../data/repositories/medication_repository.dart';
@@ -16,13 +15,10 @@ class MedicationDetailCubit extends Cubit<MedicationDetailState> {
 
   MedicationDetailCubit({
     required MedicationRepository repository,
-    required this.medicationId, ReminderSchedulerService? scheduler,
+    required this.medicationId,
+    required ReminderSchedulerService scheduler,
   }) : _repository = repository,
-       _scheduler =
-           scheduler ??
-           (GetIt.instance.isRegistered<ReminderSchedulerService>()
-               ? GetIt.instance<ReminderSchedulerService>()
-               : NoOpReminderSchedulerService()),
+       _scheduler = scheduler,
        super(MedicationDetailLoading()) {
     loadMedication();
   }

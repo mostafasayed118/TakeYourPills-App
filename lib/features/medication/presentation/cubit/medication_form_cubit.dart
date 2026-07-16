@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:get_it/get_it.dart';
 import '../../../../core/entities/medication.dart';
 import '../../../../core/error/result.dart';
 import '../../../../core/utils/validators.dart';
@@ -19,15 +18,11 @@ class MedicationFormCubit extends Cubit<MedicationFormState> {
 
   MedicationFormCubit({
     required MedicationRepository repository,
-    ReminderSchedulerService? scheduler,
+    required ReminderSchedulerService scheduler,
     this.isEditing = false,
     this.existingMedId,
   }) : _repository = repository,
-       _scheduler =
-           scheduler ??
-           (GetIt.instance.isRegistered<ReminderSchedulerService>()
-               ? GetIt.instance<ReminderSchedulerService>()
-               : NoOpReminderSchedulerService()),
+       _scheduler = scheduler,
        super(MedicationFormInitial()) {
     if (isEditing && existingMedId != null) {
       _loadExistingData(existingMedId!);

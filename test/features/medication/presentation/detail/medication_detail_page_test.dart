@@ -5,16 +5,20 @@ import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:takeyourpills_healthcare_app/core/entities/medication.dart';
 import 'package:takeyourpills_healthcare_app/core/error/result.dart';
-import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository_impl.dart';
+import 'package:takeyourpills_healthcare_app/data/repositories/medication_repository.dart';
 import 'package:takeyourpills_healthcare_app/features/medication/presentation/cubit/medication_detail_cubit.dart';
 import 'package:takeyourpills_healthcare_app/features/medication/presentation/detail/medication_detail_page.dart';
+import 'package:takeyourpills_healthcare_app/shared/services/reminder_scheduler_service.dart';
 
 class FakeMedication extends Fake implements Medication {}
 
 class MockMedicationRepository extends Mock implements MedicationRepository {}
 
+class MockReminderScheduler extends Mock implements ReminderSchedulerService {}
+
 void main() {
   late MockMedicationRepository mockRepository;
+  late MockReminderScheduler mockScheduler;
   final testMed = Medication(
     id: 1,
     name: 'Aspirin',
@@ -36,6 +40,7 @@ void main() {
 
   setUp(() {
     mockRepository = MockMedicationRepository();
+    mockScheduler = MockReminderScheduler();
   });
 
   Widget createTestWidget({required Widget child}) {
@@ -62,7 +67,7 @@ void main() {
       create: (c) => mockRepository,
       child: BlocProvider<MedicationDetailCubit>(
         create: (c) =>
-            MedicationDetailCubit(repository: mockRepository, medicationId: 1),
+            MedicationDetailCubit(repository: mockRepository, medicationId: 1, scheduler: mockScheduler),
         child: MaterialApp.router(
           routeInformationParser: router.routeInformationParser,
           routerDelegate: router.routerDelegate,
